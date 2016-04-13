@@ -60,17 +60,16 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private void initBle() {
         BluetoothAdapter
                 mAdapter= BluetoothAdapter.getDefaultAdapter();
-        mAdapter.startDiscovery();
+
         if(!mAdapter.isEnabled()) {
 
-//弹出对话框提示用户是后打开
-
-            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-            startActivityForResult(enabler, REQUEST_ENABLE);
-
+        //弹出对话框提示用户是后打开
+        Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enabler, REQUEST_ENABLE);
 
         }
+        mAdapter.startDiscovery();
+
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         receiver = new BluetoothReceiver();
         registerReceiver(receiver, filter);
