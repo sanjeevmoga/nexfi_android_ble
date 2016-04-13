@@ -16,7 +16,7 @@ public class CommonFileMsgOperation {
      * @param filePath
      * @param userId
      */
-    public void sendCommonFileMsg(String filePath,String userId){
+    private void sendCommonFileMsg(String filePath,String userId){
 
     }
 
@@ -24,7 +24,7 @@ public class CommonFileMsgOperation {
     /***
      * 接收文件
      */
-    public void receiveCommonFileMsg(){
+    private void receiveCommonFileMsg(){
 
     }
 
@@ -34,24 +34,24 @@ public class CommonFileMsgOperation {
      * @param filePath
      * @param userId
      */
-    public void sendImageFileMsg(String filePath,String userId){
+    private void sendImageFileMsg(String filePath,String userId){
 
     }
 
     /**
      * 接收图片
      */
-    public void receiveImageFileMsg(){
+    private void receiveImageFileMsg(){
 
     }
 
 
     //设置回调接口(监听器)的方法
-    public void setSendCommonFileListener(SendCommonFileListener sendCommonFileListener) {
+    private void setSendCommonFileListener(SendCommonFileListener sendCommonFileListener) {
         mSendCommonFileListener = sendCommonFileListener;
     }
 
-    public void setReceiveCommonFileListener(ReceiveCommonFileListener receiveCommonFileListener) {
+    private void setReceiveCommonFileListener(ReceiveCommonFileListener receiveCommonFileListener) {
         mReceiveCommonFileListener = receiveCommonFileListener;
     }
 
