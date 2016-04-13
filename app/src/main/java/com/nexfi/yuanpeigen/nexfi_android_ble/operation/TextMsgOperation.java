@@ -16,24 +16,24 @@ public class TextMsgOperation {
      * @param textMsg
      * @param userId
      */
-    public void sendTextMessage(String textMsg,String userId){
+    private void sendTextMessage(String textMsg,String userId){
 
     }
 
     /**
      * 接收文本消息
      */
-    public void receiveTextMessage(){
+    private void receiveTextMessage(){
 
     }
 
 
     //设置回调接口(监听器)的方法
-    public void setSendTextMsgListener(SendTextMsgListener sendTextMsgListener) {
+    private void setSendTextMsgListener(SendTextMsgListener sendTextMsgListener) {
         mSendTextMsgListener = sendTextMsgListener;
     }
 
-    public void setReceiveTextMsgListener(ReceiveTextMsgListener receiveTextMsgListener) {
+    private void setReceiveTextMsgListener(ReceiveTextMsgListener receiveTextMsgListener) {
         mReceiveTextMsgListener = receiveTextMsgListener;
     }
 

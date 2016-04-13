@@ -22,6 +22,9 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentMine;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentNearby;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
+
+import java.util.Set;
 
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener {
@@ -42,8 +45,9 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        node = new Node(this);
-        initBle();
+        node = new Node(this);
+//        getBle();
+//        initBle();
         initView();
         initNearByFragment();
         rb_nearby.setChecked(true);
@@ -58,6 +62,15 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
     BluetoothReceiver receiver;
 
+<<<<<<< HEAD
+=======
+
+
+    private void getBle(){
+
+    }
+
+>>>>>>> ffa8eb38035b286ee75bbaf64d66e186914b78a2
     private void initBle() {
         BluetoothAdapter
                 mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -69,11 +82,34 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
             startActivityForResult(enabler, REQUEST_ENABLE);
 
         }
-        mAdapter.startDiscovery();
+
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> devices = adapter.getBondedDevices();
+        for(int i=0; i<devices.size(); i++)
+        {
+            BluetoothDevice device = (BluetoothDevice) devices.iterator().next();
+            System.out.println(device.getName());
+            if(Debug.DEBUG){
+                Log.e("TAG","open bluetooth----------------------------------------"+device.getName());
+            }
+        }
+
+
+        if(Debug.DEBUG){
+            Log.e("TAG","open bluetooth----------------------------------------");
+        }
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         receiver = new BluetoothReceiver();
         registerReceiver(receiver, filter);
+        if(Debug.DEBUG){
+            Log.e("TAG","send broadcast------------------------------------------------------");
+        }
+        mAdapter.startDiscovery();
+        if(Debug.DEBUG){
+            Log.e("TAG","start discovery------------------------------------------------------");
+        }
+
     }
 
 
@@ -81,7 +117,14 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            if(Debug.DEBUG){
+                Log.e("TAG","receive action------------------------------------------------------");
+            }
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+
+                if(Debug.DEBUG){
+                    Log.e("TAG","ACTION_FOUND------------------------------------------------------------------------------------");
+                }
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.v("TAG", "find device:" + device.getName()
 
@@ -171,7 +214,8 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     @Override
     protected void onStart() {
         super.onStart();
-//        node.start();
+        node.start();
+        sendFrames();
     }
 
     @Override
@@ -182,8 +226,39 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 ////            node.stop();
     }
 
-//    public void refreshPeers()
-//    {
-//        Log.e("TAG",node.getLinks().size() + " connected");
-//    }
+    //得到的连接个数
+    public void refreshPeers()
+    {
+        Log.e("TAG", node.getLinks().size() + " connected------------------------------------------------------------------------------------------");
+//        for (int i = 0; i <node.getLinks().size(); i++) {
+//            Log.e("TAG",node.getLinks().size() + " connected------------------------"+node.getLinks().get(i).getNodeId());//1 connected------------------------229689687511020547
+//            //拿到连接个数
+//            //怎么获得具体用户信息呢？？给每个用户发送请求，然后对方把自己的信息发过来
+            sendFrames();
+//        }
+    }
+
+    //接收到的数据
+    public void refreshFrames(byte[] fromData)
+    {
+        Log.e("TAG", new String(fromData)+ " -----refreshFrames------------------------------------");
+    }
+
+
+    //发送数据
+    public void sendFrames()
+    {
+        //发送请求
+        byte[] frameData = "request_user_info".getBytes();//发送获取用户数据的请求
+
+        node.broadcastFrame(frameData);
+
+//        for(int i = 0; i < 100; ++i)
+//        {
+//            byte[] frameData = new byte[1024];
+//            new Random().nextBytes(frameData);
+//
+//            node.broadcastFrame(frameData);
+//        }
+    }
 }

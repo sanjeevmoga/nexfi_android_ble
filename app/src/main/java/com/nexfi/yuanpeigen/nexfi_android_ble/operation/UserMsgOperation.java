@@ -18,7 +18,7 @@ public class UserMsgOperation {
      * @param userId
      * @return
      */
-    public UserMessage getUserInfo(String userId){
+    private UserMessage getUserInfo(String userId){
         return null;
     }
 
@@ -26,17 +26,17 @@ public class UserMsgOperation {
      * 获取用户集合
      * @return
      */
-    public List<UserMessage> getUserInfoLists(){
+    private List<UserMessage> getUserInfoLists(){
         return null;
     }
 
 
     //设置回调接口(监听器)的方法
-    public void setLoginListener(LoginListener loginListener) {
+    private void setLoginListener(LoginListener loginListener) {
         mLoginListener = loginListener;
     }
 
-    public void setLogoutListener(LogoutListener logoutListener) {
+    private void setLogoutListener(LogoutListener logoutListener) {
         mLogoutListener = logoutListener;
     }
 }
