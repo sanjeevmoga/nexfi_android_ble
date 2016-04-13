@@ -21,7 +21,7 @@
             android:textSize="19sp" />
 
         <RelativeLayout
-            android:id="@+id/iv_backGroup"
+            android:id="@+id/layout_backGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -84,7 +84,7 @@
                 android:src="@mipmap/icon_add" />
 
             <EditText
-                android:id="@+id/et_chatRoom"
+                android:id="@+id/et_chatGroup"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_centerInParent="true"
@@ -131,28 +131,21 @@
                 <ImageView
                     android:id="@+id/iv_photo"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:src="@mipmap/icon_pohoto" />
 
                 <ImageView
-                    android:id="@+id/iv_camera"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@mipmap/icon_camera" />
-
-                <ImageView
                     android:id="@+id/iv_position"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:src="@mipmap/icon_position" />
 
                 <ImageView
                     android:id="@+id/iv_pic"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:src="@mipmap/icon_pic" />
             </LinearLayout>
@@ -162,7 +155,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/layout_viewGroup"
                 android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
@@ -175,13 +167,6 @@
                     android:text="拍照"
                     android:textSize="18sp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="摄像"
-                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
