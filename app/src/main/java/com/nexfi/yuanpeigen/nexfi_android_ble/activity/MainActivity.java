@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentMine;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentNearby;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener {
@@ -26,11 +28,14 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private Handler mHandler;
     private boolean isExit;
 
+    private Node node;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        node = new Node(this);
         initView();
         initNearByFragment();
         rb_nearby.setChecked(true);
@@ -99,5 +104,27 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
             }
         }
         return true;
+    }
+
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        node.start();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        if(node != null)
+            node.stop();
+    }
+
+    public void refreshPeers()
+    {
+        Log.e("TAG",node.getLinks().size() + " connected");
     }
 }
