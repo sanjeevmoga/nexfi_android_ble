@@ -21,6 +21,15 @@
             android:text="附近的人"
             android:textColor="#FFF"
             android:textSize="19sp" />
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/icon_popmenu" />
     </RelativeLayout>
 
     <ListView

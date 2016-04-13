@@ -13,7 +13,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
  */
 public class FragmentMine extends Fragment {
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mine, container, false);
