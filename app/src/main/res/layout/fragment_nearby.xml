@@ -8,7 +8,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/layout_topRoom"
+        android:id="@+id/layout_topGroup"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentTop="true"
@@ -36,11 +36,12 @@
         android:id="@+id/lv_userlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/layout_topRoom"
+        android:layout_below="@+id/layout_topGroup"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="67dp"
         android:cacheColorHint="#0000"
         android:divider="@null"
-        android:dividerHeight="9dp"
-        android:scrollbarStyle="outsideOverlay"
-        android:stackFromBottom="true" />
+        android:dividerHeight="6dp"
+        android:scrollbarStyle="outsideOverlay" />
 
 </RelativeLayout>

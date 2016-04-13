@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private boolean isExit;
 
     private Node node;
-    private int REQUEST_ENABLE=1;
+    private int REQUEST_ENABLE = 1;
 
 
     @Override
@@ -57,15 +57,16 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     }
 
     BluetoothReceiver receiver;
+
     private void initBle() {
         BluetoothAdapter
-                mAdapter= BluetoothAdapter.getDefaultAdapter();
+                mAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if(!mAdapter.isEnabled()) {
+        if (!mAdapter.isEnabled()) {
 
-        //弹出对话框提示用户是后打开
-        Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enabler, REQUEST_ENABLE);
+            //弹出对话框提示用户是后打开
+            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enabler, REQUEST_ENABLE);
 
         }
         mAdapter.startDiscovery();
@@ -74,7 +75,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         receiver = new BluetoothReceiver();
         registerReceiver(receiver, filter);
     }
-
 
 
     private class BluetoothReceiver extends BroadcastReceiver {
@@ -86,7 +86,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 Log.v("TAG", "find device:" + device.getName()
 
                         + device.getAddress());
-
 
 
 //                if (isLock(device)) {
@@ -176,8 +175,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     }
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         super.onStop();
 
 //        if(node != null)

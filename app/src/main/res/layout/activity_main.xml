@@ -15,13 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#E3E3E6"
+        android:background="#FFF"
         android:paddingTop="4dp">
 
         <RadioGroup
             android:id="@+id/tab_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:orientation="horizontal">
 
             <RadioButton
