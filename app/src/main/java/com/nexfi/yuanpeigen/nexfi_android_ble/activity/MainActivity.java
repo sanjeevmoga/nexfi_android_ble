@@ -1,6 +1,17 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.app.FragmentManager;
+<<<<<<< HEAD
+=======
+import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+>>>>>>> 89950ace7134c73f3097e243c1dc427532ffcc8f
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -23,11 +34,12 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
     private FragmentManager mFragmentManager;
     private RadioGroup myTabRg;
-    private RadioButton rb_nearby, rb_settings;
+    private RadioButton rb_nearby, rb_mine;
     private FragmentMine fragmentMine;
     private FragmentNearby fragmentNearby;
     private Handler mHandler;
-    private boolean isExit;
+    private boolean isExit, isFirstIn = false;
+    private static final String SHAREDPREFERENCES_NAME = "first_pref";
 
     private Node node;
     private int REQUEST_ENABLE = 1;
@@ -37,7 +49,9 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initConfigurationInformation();
         node = new Node(this);
+<<<<<<< HEAD
         button= (Button) findViewById(R.id.button_send);
         button.setOnClickListener(this);
         textView= (TextView) findViewById(R.id.tv_text);
@@ -51,6 +65,66 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 //                isExit = false;
 //            }
 //        };
+=======
+//        getBle();
+        initBle();
+//        initBle();
+        initView();
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                isExit = false;
+            }
+        };
+    }
+
+    BluetoothReceiver receiver;
+
+
+    private void getBle() {
+
+    }
+
+    private void initBle() {
+        BluetoothAdapter
+                mAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (!mAdapter.isEnabled()) {
+
+            //弹出对话框提示用户是后打开
+            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enabler, REQUEST_ENABLE);
+
+        }
+
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> devices = adapter.getBondedDevices();
+        for (int i = 0; i < devices.size(); i++) {
+            BluetoothDevice device = (BluetoothDevice) devices.iterator().next();
+            System.out.println(device.getName());
+            if (Debug.DEBUG) {
+                Log.e("TAG", "open bluetooth----------------------------------------" + device.getName());
+            }
+        }
+
+
+        if (Debug.DEBUG) {
+            Log.e("TAG", "open bluetooth----------------------------------------");
+        }
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        receiver = new BluetoothReceiver();
+        registerReceiver(receiver, filter);
+        if (Debug.DEBUG) {
+            Log.e("TAG", "send broadcast------------------------------------------------------");
+        }
+        mAdapter.startDiscovery();
+        if (Debug.DEBUG) {
+            Log.e("TAG", "start discovery------------------------------------------------------");
+        }
+
+>>>>>>> 89950ace7134c73f3097e243c1dc427532ffcc8f
     }
 
 //    private void initView() {
@@ -70,6 +144,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 //                .add(R.id.container, fragmentNearby)
 //                .hide(fragmentMine).commit();
 //    }
+<<<<<<< HEAD
 //
 //    private void initMineFragment() {
 //        mFragmentManager = getFragmentManager();
@@ -82,6 +157,50 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 //    }
 //
 //
+=======
+
+    private void initView() {
+        myTabRg = (RadioGroup) findViewById(R.id.tab_menu);
+        rb_nearby = (RadioButton) findViewById(R.id.rb_nearby);
+        rb_mine = (RadioButton) findViewById(R.id.rb_mine);
+        myTabRg.setOnCheckedChangeListener(this);
+        if (!isFirstIn) {
+            initNearByFragment();
+            rb_nearby.setChecked(true);
+        } else {
+            initMineFragment();
+            rb_mine.setChecked(true);
+        }
+
+    }
+
+    private void initConfigurationInformation() {
+        SharedPreferences preferences = getSharedPreferences(SHAREDPREFERENCES_NAME, Context.MODE_PRIVATE);
+        isFirstIn = preferences.getBoolean("isFirstIn", true);
+    }
+
+    private void initNearByFragment() {
+        mFragmentManager = getFragmentManager();
+        fragmentNearby = new FragmentNearby();
+        fragmentMine = new FragmentMine();
+        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+        mFragmentTransaction.add(R.id.container, fragmentMine)
+                .add(R.id.container, fragmentNearby)
+                .hide(fragmentMine).commit();
+    }
+
+    private void initMineFragment() {
+        mFragmentManager = getFragmentManager();
+        fragmentNearby = new FragmentNearby();
+        fragmentMine = new FragmentMine();
+        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+        mFragmentTransaction.add(R.id.container, fragmentMine)
+                .add(R.id.container, fragmentNearby)
+                .hide(fragmentNearby).commit();
+    }
+
+
+>>>>>>> 89950ace7134c73f3097e243c1dc427532ffcc8f
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 //        switch (checkedId) {

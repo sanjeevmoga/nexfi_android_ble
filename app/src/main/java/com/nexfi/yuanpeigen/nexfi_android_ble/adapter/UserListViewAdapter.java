@@ -75,7 +75,7 @@ public class UserListViewAdapter extends BaseAdapter {
         holder.btn_chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(mContext, ChatActivity.class);
+                Intent intent = new Intent(mContext, ChatActivity.class);
                 mContext.startActivity(intent);
             }
         });
