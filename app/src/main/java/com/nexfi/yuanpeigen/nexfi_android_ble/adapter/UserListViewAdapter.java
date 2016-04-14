@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ChatActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import java.util.List;
@@ -20,6 +22,11 @@ import java.util.List;
  * Created by Mark on 2016/4/13.
  */
 public class UserListViewAdapter extends BaseAdapter {
+
+    private final String USER_AGE = "userAge";
+    private final String USER_AVATAR = "userAvatar";
+    private final String USER_GENDER = "userGender";
+    private final String USER_NICK = "userNick";
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -61,6 +68,7 @@ public class UserListViewAdapter extends BaseAdapter {
             holder.iv_sex = (ImageView) convertView.findViewById(R.id.iv_sex);
             holder.iv_userhead_icon = (ImageView) convertView.findViewById(R.id.iv_userhead_icon);
             holder.tv_username = (TextView) convertView.findViewById(R.id.tv_username);
+            holder.layout_userList = (RelativeLayout) convertView.findViewById(R.id.layout_userList);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -79,6 +87,19 @@ public class UserListViewAdapter extends BaseAdapter {
                 mContext.startActivity(intent);
             }
         });
+
+        holder.layout_userList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, UserInformationActivity.class);
+                intent.putExtra(USER_AGE,entity.userAge);
+                intent.putExtra(USER_AVATAR, entity.userAvatar);
+                intent.putExtra(USER_GENDER, entity.userGender);
+                intent.putExtra(USER_NICK, entity.userNick);
+                mContext.startActivity(intent);
+            }
+        });
+
         return convertView;
     }
 
@@ -86,6 +107,7 @@ public class UserListViewAdapter extends BaseAdapter {
         public ImageView iv_userhead_icon, iv_sex;
         public Button btn_chat;
         public TextView tv_username;
+        public RelativeLayout layout_userList;
     }
 
 

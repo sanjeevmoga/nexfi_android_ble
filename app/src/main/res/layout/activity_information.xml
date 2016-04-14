@@ -71,8 +71,9 @@
                 android:layout_centerInParent="true"
                 android:layout_toLeftOf="@+id/ImageView"
                 android:gravity="center"
+                android:text="未填写"
                 android:textColor="#000"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
 
             <ImageView
                 android:id="@+id/ImageView"
@@ -113,8 +114,9 @@
                 android:layout_centerInParent="true"
                 android:layout_toLeftOf="@+id/ImageView_age"
                 android:gravity="center"
+                android:text="未填写"
                 android:textColor="#000"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
 
             <ImageView
                 android:id="@+id/ImageView_age"
@@ -187,7 +189,7 @@
             android:background="@color/textNormol" />
 
         <LinearLayout
-            android:id="@+id/layout_show"
+            android:id="@+id/linearlayout_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"

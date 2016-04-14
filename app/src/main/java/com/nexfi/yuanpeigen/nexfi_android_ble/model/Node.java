@@ -148,8 +148,7 @@ public class Node implements TransportListener
 			//在这封装用户数据后发送
 			byte[] fam="wo shou dao l".getBytes();
 			link.sendFrame(fam);
-			activity.refreshFrames(fam);
-
+//			activity.refreshFrames(fam);
 //		++framesCount;
 //		activity.refreshFrames();
 	}

@@ -6,6 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:id="@+id/layout_userList"
         android:background="#FFF">
 
 

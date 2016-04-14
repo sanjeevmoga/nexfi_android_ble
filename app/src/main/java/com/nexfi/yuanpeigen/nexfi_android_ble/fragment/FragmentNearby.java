@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -16,7 +15,6 @@ import android.widget.PopupWindow;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupChatActivity;
-import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
@@ -27,11 +25,6 @@ import java.util.List;
  * Created by Mark on 2016/4/12.
  */
 public class FragmentNearby extends Fragment implements View.OnClickListener {
-
-    private final String USER_AGE = "userAge";
-    private final String USER_AVATAR = "userAvatar";
-    private final String USER_GENDER = "userGender";
-    private final String USER_NICK = "userNick";
 
     private PopupWindow mPopupWindow = null, mPopupWindow_share = null;
     private ImageView iv_add;
@@ -55,17 +48,19 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         userMessage1.userAvatar = R.mipmap.img_head_3;
         userMessage1.userNick = "Mark";
         userMessage1.userGender = "男";
-        userMessage1.userAge = "男";
+        userMessage1.userAge = 23;
         userMessageList.add(userMessage1);
         UserMessage userMessage2 = new UserMessage();
         userMessage2.userAvatar = R.mipmap.img_head_6;
         userMessage2.userNick = "高圆圆";
         userMessage2.userGender = "女";
+        userMessage2.userAge = 27;
         userMessageList.add(userMessage2);
         UserMessage userMessage3 = new UserMessage();
         userMessage3.userAvatar = R.mipmap.img_head_9;
         userMessage3.userNick = "周星驰";
         userMessage3.userGender = "男";
+        userMessage3.userAge = 18;
         userMessageList.add(userMessage3);
         userListViewAdapter = new UserListViewAdapter(FragmentNearby.this.getActivity(), userMessageList);
         lv_userlist.setAdapter(userListViewAdapter);
@@ -85,18 +80,6 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         addChatRoom = (LinearLayout) View_pop.findViewById(R.id.add_chatRoom);
         share = (LinearLayout) View_pop.findViewById(R.id.share);
         iv_add = (ImageView) v_parent.findViewById(R.id.iv_add);
-        lv_userlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(FragmentNearby.this.getActivity(), UserInformationActivity.class);
-                intent.putExtra(USER_AGE, userMessageList.get(position).userAge);
-                intent.putExtra(USER_AVATAR, userMessageList.get(position).userAvatar);
-                intent.putExtra(USER_GENDER, userMessageList.get(position).userGender);
-                intent.putExtra(USER_NICK, userMessageList.get(position).userNick);
-                FragmentNearby.this.startActivity(intent);
-                FragmentNearby.this.getActivity().finish();
-            }
-        });
     }
 
 
