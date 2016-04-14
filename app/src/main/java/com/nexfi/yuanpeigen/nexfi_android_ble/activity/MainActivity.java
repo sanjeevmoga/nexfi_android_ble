@@ -47,7 +47,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         setContentView(R.layout.activity_main);
         node = new Node(this);
 //        getBle();
-//        initBle();
+        initBle();
         initView();
         initNearByFragment();
         rb_nearby.setChecked(true);
@@ -62,15 +62,13 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
     BluetoothReceiver receiver;
 
-<<<<<<< HEAD
-=======
+
 
 
     private void getBle(){
 
     }
 
->>>>>>> ffa8eb38035b286ee75bbaf64d66e186914b78a2
     private void initBle() {
         BluetoothAdapter
                 mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -109,8 +107,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         if(Debug.DEBUG){
             Log.e("TAG","start discovery------------------------------------------------------");
         }
-
-    }
 
 
     private class BluetoothReceiver extends BroadcastReceiver {
