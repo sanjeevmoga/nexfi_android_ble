@@ -6,7 +6,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.bean;
 public class UserMessage extends BaseMessage {
     public String userId;
     public String userNick;
-    public String userAge;
+    public int userAge;
     public String userGender;
     public int userAvatar;
 }

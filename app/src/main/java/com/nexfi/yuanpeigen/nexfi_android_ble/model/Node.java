@@ -3,7 +3,6 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -97,14 +96,19 @@ public class Node implements TransportListener
 	//发送数据
 	public void broadcastFrame(byte[] frameData)
 	{
-		if(links.isEmpty())
+		if(links.size()==0){
 			return;
+		}
 
-		++framesCount;
-//		activity.refreshFrames();
 
-		for(Link link : links)
+//		++framesCount;
+////		activity.refreshFrames();
+//
+		for(Link link : links){
+			Log.e("TAG", links.size() + "----------------for------links.size()------------------");
 			link.sendFrame(frameData);
+		}
+
 	}
 
 	//region TransportListener
@@ -119,14 +123,15 @@ public class Node implements TransportListener
 	public void transportLinkConnected(Transport transport, Link link)
 	{
 		links.add(link);
-		activity.refreshPeers();
+		Log.e("TAG",links.size()+"------连接数");
+//		activity.refreshPeers();
 	}
 	//断开连接
 	@Override
 	public void transportLinkDisconnected(Transport transport, Link link)
 	{
 		links.remove(link);
-		activity.refreshPeers();
+//		activity.refreshPeers();
 
 		if(links.isEmpty())
 		{
@@ -138,15 +143,12 @@ public class Node implements TransportListener
 	@Override
 	public void transportLinkDidReceiveFrame(Transport transport, Link link, byte[] frameData)
 	{
-		Log.e("TAG","---------------run======================================================"+link.toString());//2428422316790765964
+		Log.e("TAG",transport.toString()+"-------transportLinkDidReceiveFrame===="+link.toString()+"----data==="+new String(frameData));//2428422316790765964
 		//接收到数据后将用户数据发送给对方
-		if(true){
 			//在这封装用户数据后发送
-			UserMessage user=new UserMessage();
 			byte[] fam="wo shou dao l".getBytes();
 			link.sendFrame(fam);
 			activity.refreshFrames(fam);
-		}
 
 //		++framesCount;
 //		activity.refreshFrames();
