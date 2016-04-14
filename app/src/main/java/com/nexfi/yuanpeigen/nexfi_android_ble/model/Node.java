@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -140,6 +141,8 @@ public class Node implements TransportListener
 		Log.e("TAG","---------------run======================================================"+link.toString());//2428422316790765964
 		//接收到数据后将用户数据发送给对方
 		if(true){
+			//在这封装用户数据后发送
+			UserMessage user=new UserMessage();
 			byte[] fam="wo shou dao l".getBytes();
 			link.sendFrame(fam);
 			activity.refreshFrames(fam);
