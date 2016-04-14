@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,11 +32,12 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
     private FragmentManager mFragmentManager;
     private RadioGroup myTabRg;
-    private RadioButton rb_nearby, rb_settings;
+    private RadioButton rb_nearby, rb_mine;
     private FragmentMine fragmentMine;
     private FragmentNearby fragmentNearby;
     private Handler mHandler;
-    private boolean isExit;
+    private boolean isExit, isFirstIn = false;
+    private static final String SHAREDPREFERENCES_NAME = "first_pref";
 
     private Node node;
     private int REQUEST_ENABLE = 1;
@@ -45,13 +47,12 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initConfigurationInformation();
         node = new Node(this);
 //        getBle();
         initBle();
 //        initBle();
         initView();
-        initNearByFragment();
-        rb_nearby.setChecked(true);
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -151,10 +152,22 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private void initView() {
         myTabRg = (RadioGroup) findViewById(R.id.tab_menu);
         rb_nearby = (RadioButton) findViewById(R.id.rb_nearby);
-        rb_settings = (RadioButton) findViewById(R.id.rb_mine);
+        rb_mine = (RadioButton) findViewById(R.id.rb_mine);
         myTabRg.setOnCheckedChangeListener(this);
+        if (!isFirstIn) {
+            initNearByFragment();
+            rb_nearby.setChecked(true);
+        } else {
+            initMineFragment();
+            rb_mine.setChecked(true);
+        }
+
     }
 
+    private void initConfigurationInformation() {
+        SharedPreferences preferences = getSharedPreferences(SHAREDPREFERENCES_NAME, Context.MODE_PRIVATE);
+        isFirstIn = preferences.getBoolean("isFirstIn", true);
+    }
 
     private void initNearByFragment() {
         mFragmentManager = getFragmentManager();
