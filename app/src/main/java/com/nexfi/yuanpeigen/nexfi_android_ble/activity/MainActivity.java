@@ -47,11 +47,8 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         setContentView(R.layout.activity_main);
         node = new Node(this);
 //        getBle();
-<<<<<<< HEAD
         initBle();
-=======
 //        initBle();
->>>>>>> b9292b7d67cf61994d007c0fbbf88f1e37e5fc3f
         initView();
         initNearByFragment();
         rb_nearby.setChecked(true);
@@ -67,12 +64,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     BluetoothReceiver receiver;
 
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> b9292b7d67cf61994d007c0fbbf88f1e37e5fc3f
-    private void getBle(){
+    private void getBle() {
 
     }
 
@@ -90,49 +82,44 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> devices = adapter.getBondedDevices();
-        for(int i=0; i<devices.size(); i++)
-        {
+        for (int i = 0; i < devices.size(); i++) {
             BluetoothDevice device = (BluetoothDevice) devices.iterator().next();
             System.out.println(device.getName());
-            if(Debug.DEBUG){
-                Log.e("TAG","open bluetooth----------------------------------------"+device.getName());
+            if (Debug.DEBUG) {
+                Log.e("TAG", "open bluetooth----------------------------------------" + device.getName());
             }
         }
 
 
-        if(Debug.DEBUG){
-            Log.e("TAG","open bluetooth----------------------------------------");
+        if (Debug.DEBUG) {
+            Log.e("TAG", "open bluetooth----------------------------------------");
         }
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         receiver = new BluetoothReceiver();
         registerReceiver(receiver, filter);
-        if(Debug.DEBUG){
-            Log.e("TAG","send broadcast------------------------------------------------------");
+        if (Debug.DEBUG) {
+            Log.e("TAG", "send broadcast------------------------------------------------------");
         }
         mAdapter.startDiscovery();
-        if(Debug.DEBUG){
-            Log.e("TAG","start discovery------------------------------------------------------");
+        if (Debug.DEBUG) {
+            Log.e("TAG", "start discovery------------------------------------------------------");
         }
-<<<<<<< HEAD
-=======
 
     }
-
->>>>>>> b9292b7d67cf61994d007c0fbbf88f1e37e5fc3f
 
 
     private class BluetoothReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(Debug.DEBUG){
-                Log.e("TAG","receive action------------------------------------------------------");
+            if (Debug.DEBUG) {
+                Log.e("TAG", "receive action------------------------------------------------------");
             }
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
-                if(Debug.DEBUG){
-                    Log.e("TAG","ACTION_FOUND------------------------------------------------------------------------------------");
+                if (Debug.DEBUG) {
+                    Log.e("TAG", "ACTION_FOUND------------------------------------------------------------------------------------");
                 }
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.v("TAG", "find device:" + device.getName()
@@ -236,27 +223,24 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     }
 
     //得到的连接个数
-    public void refreshPeers()
-    {
+    public void refreshPeers() {
         Log.e("TAG", node.getLinks().size() + " connected------------------------------------------------------------------------------------------");
 //        for (int i = 0; i <node.getLinks().size(); i++) {
 //            Log.e("TAG",node.getLinks().size() + " connected------------------------"+node.getLinks().get(i).getNodeId());//1 connected------------------------229689687511020547
 //            //拿到连接个数
 //            //怎么获得具体用户信息呢？？给每个用户发送请求，然后对方把自己的信息发过来
-            sendFrames();
+        sendFrames();
 //        }
     }
 
     //接收到的数据
-    public void refreshFrames(byte[] fromData)
-    {
-        Log.e("TAG", new String(fromData)+ " -----refreshFrames------------------------------------");
+    public void refreshFrames(byte[] fromData) {
+        Log.e("TAG", new String(fromData) + " -----refreshFrames------------------------------------");
     }
 
 
     //发送数据
-    public void sendFrames()
-    {
+    public void sendFrames() {
         //发送请求
         byte[] frameData = "request_user_info".getBytes();//发送获取用户数据的请求
 
