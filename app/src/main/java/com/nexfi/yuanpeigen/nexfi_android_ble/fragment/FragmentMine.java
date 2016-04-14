@@ -101,11 +101,11 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
-        UserInfo.initUserAge(userAge, FragmentMine.this.getActivity());
-        UserInfo.initUserAvatar(userAvatar, FragmentMine.this.getActivity());
-        UserInfo.initUserGender(userGender, FragmentMine.this.getActivity());
-        UserInfo.initUserNick(userNick, FragmentMine.this.getActivity());
-        UserInfo.initConfigurationInformation(isFirstIn, FragmentMine.this.getActivity());
+        userAge = UserInfo.initUserAge(userAge, FragmentMine.this.getActivity());
+        userAvatar = UserInfo.initUserAvatar(userAvatar, FragmentMine.this.getActivity());
+        userGender = UserInfo.initUserGender(userGender, FragmentMine.this.getActivity());
+        userNick = UserInfo.initUserNick(userNick, FragmentMine.this.getActivity());
+        isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, FragmentMine.this.getActivity());
     }
 
     private void radioSetOnCheckedListener() {

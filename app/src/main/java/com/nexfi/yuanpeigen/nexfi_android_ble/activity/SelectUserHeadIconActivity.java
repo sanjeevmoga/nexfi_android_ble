@@ -46,7 +46,7 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
         mGridViewAdapter = new SelectUserHeadIconGridViewAdapter(this);
         gridView.setAdapter(mGridViewAdapter);
         gridViewSetOnclickLisener();
-        UserInfo.initUserAvatar(userAvatar, this);
+        userAvatar = UserInfo.initUserAvatar(userAvatar, this);
     }
 
     private void gridViewSetOnclickLisener() {

@@ -63,28 +63,33 @@ public class UserInfo {
     }
 
 
-    public static void initUserAvatar(int userAvatar, Context context) {
+    public static int initUserAvatar(int userAvatar, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("UserHeadIcon", Context.MODE_PRIVATE);
         userAvatar = preferences.getInt("userhead", R.mipmap.img_default);
+        return userAvatar;
     }
 
-    public static void initUserNick(String userNick, Context context) {
+    public static String initUserNick(String userNick, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("username", Context.MODE_PRIVATE);
         userNick = preferences.getString("userName", "未填写");
+        return userNick;
     }
 
-    public static void initUserGender(String userGender, Context context) {
+    public static String initUserGender(String userGender, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("usersex", Context.MODE_PRIVATE);
         userGender = preferences.getString("userSex", null);
+        return userGender;
     }
 
-    public static void initUserAge(int userAge, Context context) {
+    public static int initUserAge(int userAge, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("UserAge", Context.MODE_PRIVATE);
         userAge = preferences.getInt("userage", 0);
+        return userAge;
     }
 
-    public static void initConfigurationInformation(boolean isFirstIn, Context context) {
+    public static boolean initConfigurationInformation(boolean isFirstIn, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("first_pref", Context.MODE_PRIVATE);
         isFirstIn = preferences.getBoolean("isFirstIn", true);
+        return isFirstIn;
     }
 }
