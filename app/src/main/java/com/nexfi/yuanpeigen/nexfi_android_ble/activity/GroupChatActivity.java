@@ -20,7 +20,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RelativeLayout layout_backGroup;
-    private ImageView iv_addGroup, iv_camera, iv_position, iv_pic;
+    private ImageView iv_addGroup, iv_camera, iv_position, iv_pic, iv_showUserInfo;
     private EditText et_chatGroup;
     private Button btn_sendMsgGroup;
     private boolean visibility_Flag = false;
@@ -46,6 +46,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         iv_pic.setOnClickListener(this);
         iv_position.setOnClickListener(this);
         iv_camera.setOnClickListener(this);
+        iv_showUserInfo.setOnClickListener(this);
     }
 
     private void initView() {
@@ -58,6 +59,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         iv_position = (ImageView) findViewById(R.id.iv_position);
         layout_view = (LinearLayout) findViewById(R.id.layout_viewGroup);
         lv_chatGroup = (ListView) findViewById(R.id.lv_chatGroup);
+        iv_showUserInfo = (ImageView) findViewById(R.id.iv_showUserInfo);
     }
 
 
@@ -87,6 +89,9 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.iv_position:
+                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.iv_showUserInfo:
                 Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
                 break;
         }

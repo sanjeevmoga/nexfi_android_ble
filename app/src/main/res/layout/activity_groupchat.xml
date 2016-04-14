@@ -20,6 +20,15 @@
             android:textColor="#FFF"
             android:textSize="19sp" />
 
+        <ImageView
+            android:id="@+id/iv_showUserInfo"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/img_chat" />
+
         <RelativeLayout
             android:id="@+id/layout_backGroup"
             android:layout_width="wrap_content"

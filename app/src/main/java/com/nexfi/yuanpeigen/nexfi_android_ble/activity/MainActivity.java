@@ -2,8 +2,6 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +14,7 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentMine;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentNearby;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener {
@@ -27,13 +26,12 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private FragmentNearby fragmentNearby;
     private Handler mHandler;
     private boolean isExit, isFirstIn = false;
-    private static final String SHAREDPREFERENCES_NAME = "first_pref";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initConfigurationInformation();
+        UserInfo.initConfigurationInformation(isFirstIn, this);
         initView();
         mHandler = new Handler() {
             @Override
@@ -48,21 +46,20 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         myTabRg = (RadioGroup) findViewById(R.id.tab_menu);
         rb_nearby = (RadioButton) findViewById(R.id.rb_nearby);
         rb_mine = (RadioButton) findViewById(R.id.rb_mine);
-        myTabRg.setOnCheckedChangeListener(this);
+
         if (!isFirstIn) {
             initNearByFragment();
+            myTabRg.setOnCheckedChangeListener(this);
             rb_nearby.setChecked(true);
         } else {
             initMineFragment();
             rb_mine.setChecked(true);
+            rb_nearby.setEnabled(false);
+            rb_mine.setEnabled(false);
         }
 
     }
 
-    private void initConfigurationInformation() {
-        SharedPreferences preferences = getSharedPreferences(SHAREDPREFERENCES_NAME, Context.MODE_PRIVATE);
-        isFirstIn = preferences.getBoolean("isFirstIn", true);
-    }
 
     private void initNearByFragment() {
         mFragmentManager = getFragmentManager();
@@ -86,7 +83,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
 
 
     @Override
-
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.rb_nearby:
