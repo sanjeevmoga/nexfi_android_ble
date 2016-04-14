@@ -11,6 +11,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+<<<<<<< HEAD
+>>>>>>> 89950ace7134c73f3097e243c1dc427532ffcc8f
+=======
 >>>>>>> 89950ace7134c73f3097e243c1dc427532ffcc8f
 import android.os.Bundle;
 import android.os.Handler;
