@@ -141,17 +141,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.iv_userhead_icon:
                 Intent intent1 = new Intent(this, SelectUserHeadIconActivity.class);
                 startActivityForResult(intent1, 1);
-                finish();
                 break;
             case R.id.layout_username:
                 Intent intent2 = new Intent(this, InputUsernameActivity.class);
                 startActivityForResult(intent2, 2);
-                finish();
                 break;
             case R.id.layout_userAge:
                 Intent intent3 = new Intent(this, InputUserAgeActivity.class);
                 startActivityForResult(intent3, 3);
-                finish();
                 break;
         }
     }
@@ -178,7 +175,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (!isExit) {
                 isExit = true;
                 mHandler.sendEmptyMessageDelayed(0, 1500);
-                Toast.makeText(this, "您还未输入完信息哦", Toast.LENGTH_SHORT).show();
+                if (userAvatar == R.mipmap.img_default || userAge != 0 || userGender != null || !userNick.equals("未填写")) {
+                    Toast.makeText(this, "您还未输入完信息哦", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "再按一次退出NexFi", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             } else {
                 finish();

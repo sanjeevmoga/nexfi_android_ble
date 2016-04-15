@@ -23,7 +23,6 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
     private EditText et_inputUserAge;
 
     private int userAge;
-    private boolean isFirstIn = false;
 
     private final String USER_AGE = "userAge";
     private final String ISINPUTUSERAGE = "isInputUserAgeActivity";
@@ -48,9 +47,8 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
         layout_back = (RelativeLayout) findViewById(R.id.layout_back);
         tv_save = (TextView) findViewById(R.id.tv_save);
         et_inputUserAge = (EditText) findViewById(R.id.et_inputUserAge);
-        isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, this);
-        if (!isFirstIn) {
-            userAge = UserInfo.initUserAge(userAge, this);
+        userAge = UserInfo.initUserAge(userAge, this);
+        if (userAge!=0){
             et_inputUserAge.setText(userAge + "");
         }
     }

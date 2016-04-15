@@ -112,8 +112,10 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     }
 
     private void modify_userGender(String sex) {
-        if (!userGender.equals(sex)) {
-            Toast.makeText(FragmentMine.this.getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+        if (userGender!=null) {
+            if (!userGender.equals(sex)) {
+                Toast.makeText(FragmentMine.this.getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+            }
         }
         userGender = sex;
         UserInfo.saveUsersex(FragmentMine.this.getActivity(), userGender);

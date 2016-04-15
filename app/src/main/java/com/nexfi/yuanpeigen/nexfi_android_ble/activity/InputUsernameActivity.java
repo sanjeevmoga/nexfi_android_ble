@@ -24,7 +24,6 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
     private EditText et_inputUsername;
 
     private String userNick;
-    private boolean isFirstIn = false;
 
     private final String USER_NICK = "userNick";
     private final String ISINPUTUSERNAME = "isInputUsernameActivity";
@@ -49,9 +48,8 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
         layout_back = (RelativeLayout) findViewById(R.id.layout_back);
         tv_save = (TextView) findViewById(R.id.tv_save);
         et_inputUsername = (EditText) findViewById(R.id.et_inputUsername);
-        isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, this);
-        if (!isFirstIn) {
-            userNick = UserInfo.initUserNick(userNick, this);
+        userNick = UserInfo.initUserNick(userNick, this);
+        if (!userNick.equals("未填写")){
             et_inputUsername.setText(userNick);
         }
     }

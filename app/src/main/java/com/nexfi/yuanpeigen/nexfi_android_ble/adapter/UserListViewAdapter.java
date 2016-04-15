@@ -84,7 +84,7 @@ public class UserListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(USER_AGE,entity.userAge);
+                intent.putExtra(USER_AGE, entity.userAge);
                 intent.putExtra(USER_AVATAR, entity.userAvatar);
                 intent.putExtra(USER_GENDER, entity.userGender);
                 intent.putExtra(USER_NICK, entity.userNick);
@@ -96,7 +96,7 @@ public class UserListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, UserInformationActivity.class);
-                intent.putExtra(USER_AGE,entity.userAge);
+                intent.putExtra(USER_AGE, entity.userAge);
                 intent.putExtra(USER_AVATAR, entity.userAvatar);
                 intent.putExtra(USER_GENDER, entity.userGender);
                 intent.putExtra(USER_NICK, entity.userNick);
