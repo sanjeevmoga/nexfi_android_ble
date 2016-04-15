@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ChatActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import java.util.List;
 

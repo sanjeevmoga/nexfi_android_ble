@@ -1,6 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.operation;
 
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.LoginListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.LogoutListener;
 

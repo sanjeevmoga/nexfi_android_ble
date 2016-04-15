@@ -1,7 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.util;
 
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
-
 import java.util.List;
 
 /**

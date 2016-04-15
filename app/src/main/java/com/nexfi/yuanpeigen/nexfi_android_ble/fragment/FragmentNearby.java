@@ -16,7 +16,6 @@ import android.widget.PopupWindow;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupChatActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import java.util.ArrayList;
 import java.util.List;

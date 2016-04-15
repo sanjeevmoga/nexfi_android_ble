@@ -3,12 +3,17 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 
 import org.slf4j.impl.StaticLoggerBinder;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Random;
+import java.util.UUID;
 
 import io.underdark.Underdark;
 import io.underdark.transport.Link;
@@ -27,7 +32,7 @@ public class Node implements TransportListener
 
 	private ArrayList<Link> links = new ArrayList<>();
 	private int framesCount = 0;
-
+	BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());//geng
 	public Node(MainActivity activity)
 	{
 		this.activity = activity;
@@ -124,6 +129,14 @@ public class Node implements TransportListener
 	{
 		links.add(link);
 		Log.e("TAG",links.size()+"------连接数");
+		if(null!=links && links.size()>0){//搜索到设备后就发送请求，并把自己的信息携带过去
+			UserMessage user=new UserMessage();
+			user.userNick="大宝";
+			user.userId= BleApplication.getUUID();
+			user.messageType="REQUEST_USER_INFO";
+			byte[] data= ObjectBytesUtils.ObjectToByte(user);
+			broadcastFrame(data);
+		}
 //		activity.refreshPeers();
 	}
 	//断开连接
@@ -145,12 +158,28 @@ public class Node implements TransportListener
 	{
 		Log.e("TAG",transport.toString()+"-------transportLinkDidReceiveFrame===="+link.toString()+"----data==="+new String(frameData));//2428422316790765964
 		//接收到数据后将用户数据发送给对方
-			//在这封装用户数据后发送
-			byte[] fam="wo shou dao l".getBytes();
-			link.sendFrame(fam);
-//			activity.refreshFrames(fam);
-//		++framesCount;
-//		activity.refreshFrames();
+		UserMessage userMessage= (UserMessage) ObjectBytesUtils.ByteToObject(frameData);
+		if("REQUEST_USER_INFO".equals(userMessage.messageType)){
+			//收到请求之后，将自己的信息封装发给对方
+			byte[] data="我收到了".getBytes();
+			//把数据发送给对方
+			UserMessage userM=new UserMessage();
+			userM.userNick="longbaobao";
+			userM.messageType="ROEPONSE_USER_INFO";
+			userM.userId= UUID.randomUUID().toString();
+			byte[] dataM= ObjectBytesUtils.ObjectToByte(userM);
+			link.sendFrame(dataM);
+			Log.e("TAG","send--------------------------------");
+		}else if("ROEPONSE_USER_INFO".equals(userMessage.messageType)){
+			//接收对方反馈的用户信息
+			userMessage.nodeId=link.getNodeId();//这是很重要的一步，将所连接的link跟连接的用户绑定，这样通过nodeId就可以找到对应的link,这样就可以给指定的人发消息了
+			//然后将接收到的用户信息保存到数据库
+			if(!bleDBDao.findSameUserByUserId(userMessage.userId)){
+				bleDBDao.add(userMessage);
+			}
+			activity.refreshFrames("USER".getBytes());
+			Log.e("TAG","收到反馈-------------------------------------");
+		}
 	}
 	//endregion
 } // Node

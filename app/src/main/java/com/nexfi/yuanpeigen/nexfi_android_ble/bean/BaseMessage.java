@@ -1,10 +1,12 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by gengbaolong on 2016/4/13.
  */
-public class BaseMessage {
-    public String type;
+public class BaseMessage implements Serializable{
+    public String messageType;
     public String sendTime;
     public String chat_id;//会话id
 

@@ -111,5 +111,12 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         return true;
     }
 
+
+    public void refreshFrames(byte[] by)
+    {
+//		framesTextView.setText(node.getFramesCount() + " frames");
+//        text_view.setText(new String(by) + " frames");
+    }
+
 }
 
