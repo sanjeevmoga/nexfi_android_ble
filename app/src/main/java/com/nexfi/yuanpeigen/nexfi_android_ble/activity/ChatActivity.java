@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
@@ -23,10 +24,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView iv_addPrivate, iv_camera, iv_position, iv_pic;
     private EditText et_chatPrivate;
     private Button btn_sendMsgPrivate;
-    private boolean visibility_Flag = false;
     private LinearLayout layout_view;
     private ListView lv_chatPrivate;
+    private TextView textView_private;
 
+    private boolean visibility_Flag = false;
+
+    private final String USER_SEX = "男";
+    private final String USER_AGE = "userAge";
+    private final String USER_AVATAR = "userAvatar";
+    private final String USER_GENDER = "userGender";
+    private final String USER_NICK = "userNick";
+
+    private String userNick, userGender;
+    private int userAge, userAvatar;
 
     @Override
 
@@ -34,6 +45,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        initIntentData();
         initView();
         setClicklistener();
 
@@ -58,8 +70,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         iv_position = (ImageView) findViewById(R.id.iv_position);
         layout_view = (LinearLayout) findViewById(R.id.layout_viewPrivate);
         lv_chatPrivate = (ListView) findViewById(R.id.lv_chatPrivate);
+        textView_private = (TextView) findViewById(R.id.textView_private);
+        textView_private.setText(userNick);
+
     }
 
+    private void initIntentData() {
+        Intent intent = getIntent();
+        userNick = intent.getStringExtra(USER_NICK);
+        userGender = intent.getStringExtra(USER_GENDER);
+        userAge = intent.getIntExtra(USER_AGE, 18);
+        userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
+    }
 
     @Override
     public void onClick(View v) {
@@ -83,17 +105,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 et_chatPrivate.setText(null);
                 break;
             case R.id.iv_pic:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
             case R.id.iv_camera:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
             case R.id.iv_position:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
         }
     }
 
+    private void showToast() {
+        Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+    }
 
     private void sendMsg() {
         final String contString = et_chatPrivate.getText().toString();

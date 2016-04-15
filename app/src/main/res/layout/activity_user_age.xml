@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="头像"
+            android:text="年龄"
             android:textColor="#FFF"
             android:textSize="18sp" />
 
@@ -61,16 +61,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_top"
-        android:padding="7dp">
+        android:layout_marginTop="3dp"
+        android:padding="15dp">
 
-        <GridView
-            android:id="@+id/gridView"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/et_inputUserAge"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:horizontalSpacing="10dp"
-            android:layoutAnimation="@anim/layout_grid_inverse_fade"
-            android:listSelector="@android:color/transparent"
-            android:numColumns="4" />
+            android:layout_centerInParent="true"
+            android:background="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:inputType="number"
+            android:maxLength="2" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/et_inputUserAge"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_et" />
     </RelativeLayout>
 
+
 </RelativeLayout>
+

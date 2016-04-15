@@ -30,7 +30,7 @@
         <LinearLayout
             android:id="@+id/set_userheadIcon"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="150dp"
             android:background="#4B4B4B"
             android:gravity="center"
             android:orientation="vertical">
@@ -49,7 +49,7 @@
         <RelativeLayout
             android:id="@+id/layout_username"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="45dp"
             android:background="#FFF"
             android:paddingLeft="10dp">
 
@@ -91,7 +91,7 @@
         <RelativeLayout
             android:id="@+id/layout_userAge"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="45dp"
             android:background="#FFF"
             android:paddingLeft="10dp">
 
@@ -133,7 +133,7 @@
         <RelativeLayout
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="45dp"
             android:background="#FFF"
             android:paddingLeft="10dp">
 
@@ -185,6 +185,36 @@
             android:layout_height="0.3dp"
             android:background="@color/textNormol" />
 
+        <LinearLayout
+            android:id="@+id/layout_show"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:background="#FFF"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/v1"
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:background="@color/textNormol" />
+
+            <Button
+                android:id="@+id/btn_finish"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@null"
+                android:text="去看看"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View
+                android:id="@+id/v2"
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:background="@color/textNormol" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

@@ -81,19 +81,25 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 }
                 break;
             case R.id.btn_sendMsgGroup:
+                showToast();
                 break;
             case R.id.iv_pic:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
             case R.id.iv_camera:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
             case R.id.iv_position:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
             case R.id.iv_showUserInfo:
-                Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                showToast();
                 break;
         }
+
+    }
+
+    private void showToast() {
+        Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
     }
 }

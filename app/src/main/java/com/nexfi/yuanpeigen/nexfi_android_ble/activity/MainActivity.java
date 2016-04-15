@@ -2,6 +2,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentMine;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentNearby;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener {
@@ -25,13 +25,21 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private FragmentMine fragmentMine;
     private FragmentNearby fragmentNearby;
     private Handler mHandler;
-    private boolean isExit, isFirstIn = false;
+
+    private final String ISSELECT = "isSelectUserHeadIconActivity";
+    private final String ISINPUTUSERNAME = "isInputUsernameActivity";
+    private final String ISINPUTUSERAGE = "isInputUserAgeActivity";
+
+    private boolean isExit;
+    private boolean isSelectUserHeadIconActivity = false;
+    private boolean isInputUsernameActivity = false;
+    private boolean isInputUserAgeActivity = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, this);
         initView();
         mHandler = new Handler() {
             @Override
@@ -46,22 +54,26 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         myTabRg = (RadioGroup) findViewById(R.id.tab_menu);
         rb_nearby = (RadioButton) findViewById(R.id.rb_nearby);
         rb_mine = (RadioButton) findViewById(R.id.rb_mine);
+        myTabRg.setOnCheckedChangeListener(this);
+        getIntentData();
+    }
 
-        if (!isFirstIn) {
-            initNearByFragment();
-            myTabRg.setOnCheckedChangeListener(this);
-            rb_nearby.setChecked(true);
-        } else {
+    private void getIntentData() {
+        Intent intent = getIntent();
+        isSelectUserHeadIconActivity = intent.getBooleanExtra(ISSELECT, false);
+        isInputUsernameActivity = intent.getBooleanExtra(ISINPUTUSERNAME, false);
+        isInputUserAgeActivity = intent.getBooleanExtra(ISINPUTUSERAGE, false);
+        if (isSelectUserHeadIconActivity || isInputUserAgeActivity || isInputUsernameActivity) {
             initMineFragment();
             rb_mine.setChecked(true);
-            rb_nearby.setEnabled(false);
-            rb_mine.setEnabled(false);
+        } else {
+            initNearByFragment();
+            rb_nearby.setChecked(true);
         }
-
     }
 
 
-    private void initNearByFragment() {
+    public void initNearByFragment() {
         mFragmentManager = getFragmentManager();
         fragmentNearby = new FragmentNearby();
         fragmentMine = new FragmentMine();
@@ -112,8 +124,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     }
 
 
-    public void refreshFrames(byte[] by)
-    {
+    public void refreshFrames(byte[] by) {
 //		framesTextView.setText(node.getFramesCount() + " frames");
 //        text_view.setText(new String(by) + " frames");
     }

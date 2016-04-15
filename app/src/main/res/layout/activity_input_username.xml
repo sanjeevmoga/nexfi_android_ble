@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="头像"
+            android:text="昵称"
             android:textColor="#FFF"
             android:textSize="18sp" />
 
@@ -61,16 +61,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_top"
-        android:padding="7dp">
+        android:layout_marginTop="3dp"
+        android:padding="15dp">
 
-        <GridView
-            android:id="@+id/gridView"
+        <EditText
+            android:id="@+id/et_inputUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@null"
+            android:gravity="center"
+            android:maxLength="6"
+            android:singleLine="true" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/et_inputUsername"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/shape_et" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:horizontalSpacing="10dp"
-            android:layoutAnimation="@anim/layout_grid_inverse_fade"
-            android:listSelector="@android:color/transparent"
-            android:numColumns="4" />
+            android:layout_below="@+id/view"
+            android:layout_marginTop="2dp"
+            android:text="好名字可以让你的朋友更容易记住你哦"
+            android:textColor="#575757" />
+
     </RelativeLayout>
 
 </RelativeLayout>
+

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ChatActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import java.util.List;
 
@@ -83,6 +84,10 @@ public class UserListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra(USER_AGE,entity.userAge);
+                intent.putExtra(USER_AVATAR, entity.userAvatar);
+                intent.putExtra(USER_GENDER, entity.userGender);
+                intent.putExtra(USER_NICK, entity.userNick);
                 mContext.startActivity(intent);
             }
         });

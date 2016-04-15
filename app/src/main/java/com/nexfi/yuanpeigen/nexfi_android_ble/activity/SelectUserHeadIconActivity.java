@@ -24,6 +24,7 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
     private GridView gridView;
 
     private final String USER_AVATAR = "userAvatar";
+    private final String ISSELECT = "isSelectUserHeadIconActivity";
 
     private int userAvatar;
 
@@ -67,7 +68,9 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
-                startActivity(new Intent(this, MainActivity.class));
+                Intent intent1 = new Intent(this, MainActivity.class);
+                intent1.putExtra(ISSELECT, true);
+                startActivity(intent1);
                 finish();
                 break;
             case R.id.tv_save:

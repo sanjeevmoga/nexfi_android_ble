@@ -38,8 +38,8 @@
 
             <ImageView
                 android:id="@+id/ImageViewGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="20dp"
@@ -49,7 +49,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="2dp"
                 android:layout_toRightOf="@id/ImageViewGroup"
                 android:text="附近的人"
                 android:textColor="#FFF"
