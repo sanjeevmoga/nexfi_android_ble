@@ -52,8 +52,6 @@ public class UserInformationActivity extends AppCompatActivity {
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(UserInformationActivity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
