@@ -1,6 +1,8 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.operation;
 
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.LoginListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.LogoutListener;
 
@@ -13,12 +15,18 @@ public class UserMsgOperation {
 
     LoginListener mLoginListener=null;
     LogoutListener mLogoutListener=null;
+    BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
+
     /**
      * 根据用户id获取用户信息
      * @param userId
      * @return
      */
-    private UserMessage getUserInfo(String userId){
+    public UserMessage getUserInfo(String userId){
+        UserMessage userMessage=bleDBDao.findUserByUserId(userId);
+        if(null!=userMessage){
+            return userMessage;
+        }
         return null;
     }
 
@@ -26,7 +34,11 @@ public class UserMsgOperation {
      * 获取用户集合
      * @return
      */
-    private List<UserMessage> getUserInfoLists(){
+    public List<UserMessage> getUserInfoLists(String userId){
+        List<UserMessage> userLists=bleDBDao.findAllUsers(userId);
+        if(null!=userLists && userLists.size()>0){
+            return userLists;
+        }
         return null;
     }
 

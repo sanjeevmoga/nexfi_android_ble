@@ -6,9 +6,11 @@ import java.io.Serializable;
  * Created by gengbaolong on 2016/4/13.
  */
 public class BaseMessage implements Serializable{
+    private static  final long serialVersionUID = 1L;
     public String messageType;
     public String sendTime;
     public String chat_id;//会话id
+    public EntiyMessage entiyMessage;//消息实体
 
     public enum MessageType{
         USER_LOGIN_MESSAGE_TYPE,//用户数据类型
@@ -25,5 +27,7 @@ public class BaseMessage implements Serializable{
         VIDEO_FILE_MESSAGE_TYPE,//音频文件
         AUDIO_FILE_MESSAGE_TYPE//视频文件
     }
+
+
 
 }

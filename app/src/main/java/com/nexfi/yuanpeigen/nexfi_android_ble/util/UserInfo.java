@@ -62,6 +62,12 @@ public class UserInfo {
         editor.commit();
     }
 
+    public static void saveUserId(Context context, String UserId) {
+        SharedPreferences preferences = context.getSharedPreferences("UserId", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("userId", UserId);
+        editor.commit();
+    }
 
     public static int initUserAvatar(int userAvatar, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("UserHeadIcon", Context.MODE_PRIVATE);
@@ -92,4 +98,11 @@ public class UserInfo {
         isFirstIn = preferences.getBoolean("isFirstIn", true);
         return isFirstIn;
     }
+
+    public static String  initUserId(String  UserId, Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("UserId", Context.MODE_PRIVATE);
+        UserId = preferences.getString("userId", null);
+        return UserId;
+    }
+
 }

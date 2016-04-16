@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentMine;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentNearby;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener {
@@ -35,11 +37,14 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private boolean isInputUsernameActivity = false;
     private boolean isInputUserAgeActivity = false;
 
+    private Node node;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //进入附近的人界面时开始搜索
+        startScan();
         initView();
         mHandler = new Handler() {
             @Override
@@ -48,6 +53,11 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 isExit = false;
             }
         };
+    }
+
+    private void startScan() {
+        node = new Node(this);
+        node.start();
     }
 
     private void initView() {
@@ -127,6 +137,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     public void refreshFrames(byte[] by) {
 //		framesTextView.setText(node.getFramesCount() + " frames");
 //        text_view.setText(new String(by) + " frames");
+        Log.e("TAG",new String(by));
     }
 
 }

@@ -5,7 +5,8 @@ import java.io.Serializable;
 /**
  * Created by gengbaolong on 2016/4/13.
  */
-public class UserMessage extends BaseMessage implements Serializable {
+public class UserMessage extends EntiyMessage implements Serializable {
+    private static  final long serialVersionUID = 4L;
     public String userId;
     public long nodeId;
     public String userNick;
@@ -15,6 +16,6 @@ public class UserMessage extends BaseMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "userId="+userId+",userNick="+userNick+",messageType="+messageType+",nodeId"+nodeId;
+        return "userId="+userId+",userNick="+userNick+",nodeId"+nodeId;
     }
 }

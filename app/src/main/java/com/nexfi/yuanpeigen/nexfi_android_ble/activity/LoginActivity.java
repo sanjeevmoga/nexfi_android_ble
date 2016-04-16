@@ -16,7 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
+
+import java.util.UUID;
 
 /**
  * Created by Mark on 2016/4/15.
@@ -45,6 +51,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean isFirstIn = false;
     private boolean isExit;
 
+    BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
+    public String userIdOfFirstLogin=UUID.randomUUID().toString();//第一次进入登录时会生成一个用户id
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +139,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btn_finish:
                 if (userAvatar != R.mipmap.img_default && userAge != 0 && userGender != null && !userNick.equals("未填写")) {
                     UserInfo.setConfigurationInformation(this);
+                    UserInfo.saveUserId(this,userIdOfFirstLogin);
+                    saveUserInfo();
                     Toast.makeText(this, "去看看附近的小伙伴吧", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
@@ -151,6 +161,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivityForResult(intent3, 3);
                 break;
         }
+    }
+
+    /**
+     * 保存用户信息
+     */
+    private void saveUserInfo() {
+        BaseMessage baseMessage=new BaseMessage();
+        baseMessage.messageType = "REQUEST_USER_INFO";
+        UserMessage userMessage = new UserMessage();
+        userMessage.userNick = userNick;
+        userMessage.userAvatar = userAvatar;
+        userMessage.userAge = userAge;
+        userMessage.userGender = userGender;
+        userMessage.userId = userIdOfFirstLogin;//每个用户第一次登录的时候生成一个用户id
+        baseMessage.entiyMessage = userMessage;
+        bleDBDao.add(baseMessage,userMessage);
     }
 
     @Override
@@ -187,6 +213,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         return true;
     }
-
-
 }

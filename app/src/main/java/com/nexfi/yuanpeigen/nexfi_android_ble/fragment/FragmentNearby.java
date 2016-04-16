@@ -2,8 +2,12 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +20,11 @@ import android.widget.PopupWindow;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupChatActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,37 +42,54 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
     private List<UserMessage> userMessageList = new ArrayList<UserMessage>();
     private UserListViewAdapter userListViewAdapter;
 
+    private String userId;
 
+    BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         initView(inflater, container);
         setClickListener();
-        initVirtualData();
+        initData();
+
+        getActivity().getContentResolver().registerContentObserver(
+                Uri.parse("content://www.nexfi_ble_user.com"), true,
+                new Myobserve(new Handler()));
+
         return v_parent;
     }
 
-    private void initVirtualData() {
-        UserMessage userMessage1 = new UserMessage();
-        userMessage1.userAvatar = R.mipmap.img_head_3;
-        userMessage1.userNick = "Mark";
-        userMessage1.userGender = "男";
-        userMessage1.userAge = 23;
-        userMessageList.add(userMessage1);
-        UserMessage userMessage2 = new UserMessage();
-        userMessage2.userAvatar = R.mipmap.img_head_6;
-        userMessage2.userNick = "高圆圆";
-        userMessage2.userGender = "女";
-        userMessage2.userAge = 27;
-        userMessageList.add(userMessage2);
-        UserMessage userMessage3 = new UserMessage();
-        userMessage3.userAvatar = R.mipmap.img_head_9;
-        userMessage3.userNick = "周星驰";
-        userMessage3.userGender = "男";
-        userMessage3.userAge = 18;
-        userMessageList.add(userMessage3);
-        userListViewAdapter = new UserListViewAdapter(FragmentNearby.this.getActivity(), userMessageList);
-        lv_userlist.setAdapter(userListViewAdapter);
+
+    private class Myobserve extends ContentObserver {
+        public Myobserve(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            initData();
+            super.onChange(selfChange);
+        }
     }
+
+
+    private void initData() {
+        userMessageList.clear();//每次取之前清空
+        userId=UserInfo.initUserId(userId, BleApplication.getContext());
+        //从数据库中获取用户数据
+        userMessageList=bleDBDao.findAllUsers(userId);
+        Log.e("TAG","--=initData======---------------------------------===FragmentNearby");
+        if(null!=userMessageList && userMessageList.size()>0){
+            if(Debug.DEBUG){
+                Log.e("TAG",userMessageList.size()+"------获取的用户人数");
+                for (UserMessage user:userMessageList) {
+                    Log.e("TAG",user.toString()+"--===========User");
+                }
+            }
+            userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
+            lv_userlist.setAdapter(userListViewAdapter);
+        }
+    }
+
 
     private void setClickListener() {
         share.setOnClickListener(this);
