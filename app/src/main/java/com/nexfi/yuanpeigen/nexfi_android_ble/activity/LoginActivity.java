@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
@@ -168,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void saveUserInfo() {
         BaseMessage baseMessage=new BaseMessage();
-        baseMessage.messageType = "REQUEST_USER_INFO";
+        baseMessage.messageType = MessageType.REQUEST_USER_INFO;
         UserMessage userMessage = new UserMessage();
         userMessage.userNick = userNick;
         userMessage.userAvatar = userAvatar;

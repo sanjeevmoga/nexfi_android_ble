@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,14 +17,23 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
+import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.underdark.transport.Link;
+
 /**
  * Created by Mark on 2016/4/14.
  */
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener,ReceiveTextMsgListener {
 
     private RelativeLayout layout_backPrivate;
     private ImageView iv_addPrivate, iv_camera, iv_position, iv_pic;
@@ -40,9 +50,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private final String USER_AVATAR = "userAvatar";
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
+    private final String USER_NODE_ID="nodeId";
 
     private String userNick, userGender;
     private int userAge, userAvatar;
+
+    private long nodeId;
+    private Node node;
+    TextMsgOperation textMsgOperation;
 
     private ChatMessageAdapater chatMessageAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
@@ -53,7 +68,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
+        node = MainActivity.getNode();
+        textMsgOperation=new TextMsgOperation();
+//        node=new Node(ChatActivity.this);
         initIntentData();
         initView();
         setClicklistener();
@@ -67,6 +84,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         iv_pic.setOnClickListener(this);
         iv_position.setOnClickListener(this);
         iv_camera.setOnClickListener(this);
+        node.setReceiveTextMsgListener(this);
     }
 
     private void initView() {
@@ -90,6 +108,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         userGender = intent.getStringExtra(USER_GENDER);
         userAge = intent.getIntExtra(USER_AGE, 18);
         userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
+        nodeId=intent.getLongExtra(USER_NODE_ID,1234568L);
     }
 
     @Override
@@ -110,7 +129,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_sendMsgPrivate:
-//                sendMsg();
+                sendMsg();
                 et_chatPrivate.setText(null);
                 break;
             case R.id.iv_pic:
@@ -130,9 +149,39 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void sendMsg() {
-        final String contString = et_chatPrivate.getText().toString();
+        String contString = et_chatPrivate.getText().toString();
         if (contString.length() > 0) {
-
+            if (Debug.DEBUG) {
+                Log.e("TAG","---ChatActivity-------------sendMsg------------------");
+            }
+            BaseMessage baseMessage=new BaseMessage();
+            baseMessage.messageType= MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
+            TextMessage textMessage=new TextMessage();
+            textMessage.textMessageContent=contString;
+            baseMessage.entiyMessage=textMessage;
+            byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+            Link link=node.getLink(nodeId);
+            if (Debug.DEBUG) {
+                Log.e("TAG",link+"---ChatActivity-----"+nodeId);
+            }
+            if(null!=link){
+                if (Debug.DEBUG) {
+                    Log.e("TAG","---ChatActivity-------------sendMsg------------link------");
+                }
+                link.sendFrame(send_text_data);
+            }
         }
+    }
+
+    @Override
+    public void onReceiveTextMsg(Object obj) {
+        Log.e("TAG", obj + "----===回调------------------------------9999");
+        BaseMessage baseMesage= (BaseMessage) obj;
+        mDataArrays.add(baseMesage);
+        if(null==chatMessageAdapater){
+            chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this,mDataArrays);
+            lv_chatPrivate.setAdapter(chatMessageAdapater);
+        }
+        chatMessageAdapater.notifyDataSetChanged();
     }
 }

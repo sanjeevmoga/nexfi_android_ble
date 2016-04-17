@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
@@ -55,18 +56,18 @@ public class ChatMessageAdapater extends BaseAdapter {
     public int getItemViewType(int position) {
         BaseMessage entity = coll.get(position);
         switch (entity.messageType) {
-            case MESSAGE_TYPE_SEND_CHAT_CONTEXT:
-                return MESSAGE_TYPE_SEND_CHAT_CONTEXT;
-            case MESSAGE_TYPE_RECV_CHAT_CONTEXT:
-                return MESSAGE_TYPE_RECV_CHAT_CONTEXT;
-            case MESSAGE_TYPE_SEND_FOLDER:
-                return MESSAGE_TYPE_SEND_FOLDER;
-            case MESSAGE_TYPE_RECV_FOLDER:
-                return MESSAGE_TYPE_RECV_FOLDER;
-            case MESSAGE_TYPE_SEND_IMAGE:
-                return MESSAGE_TYPE_SEND_IMAGE;
-            case MESSAGE_TYPE_RECV_IMAGE:
-                return MESSAGE_TYPE_RECV_IMAGE;
+            case 7:
+                return MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
+            case 8:
+                return MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
+            case 9:
+                return MessageType.MESSAGE_TYPE_SEND_FOLDER;
+            case 10:
+                return MessageType.MESSAGE_TYPE_RECV_FOLDER;
+            case 11:
+                return MessageType.MESSAGE_TYPE_SEND_IMAGE;
+            case 12:
+                return MessageType.MESSAGE_TYPE_RECV_IMAGE;
         }
         return -1;
     }
@@ -89,10 +90,17 @@ public class ChatMessageAdapater extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final BaseMessage entity = coll.get(position);
-        UserMessage user = (UserMessage) entity.entiyMessage;
-        TextMessage textMessage = (TextMessage) entity.entiyMessage;
-        FileMessage fileMessage = (FileMessage) entity.entiyMessage;
         int msgType = entity.messageType;
+        TextMessage textMessage=null;
+        FileMessage fileMessage=null;
+        if(msgType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || msgType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+            textMessage = (TextMessage) entity.entiyMessage;
+        }else if(msgType==MessageType.MESSAGE_TYPE_SEND_FOLDER || msgType==MessageType.MESSAGE_TYPE_RECV_FOLDER || msgType==MessageType.MESSAGE_TYPE_SEND_IMAGE || msgType==MessageType.MESSAGE_TYPE_RECV_IMAGE){
+            fileMessage = (FileMessage) entity.entiyMessage;
+        }
+        UserMessage user = (UserMessage) entity.entiyMessage;
+
+
         ViewHolder_chatSend viewHolder_chatSend = null;
         ViewHolder_chatReceive viewHolder_chatReceive = null;
         ViewHolder_sendFile viewHolder_sendFile = null;
@@ -101,7 +109,7 @@ public class ChatMessageAdapater extends BaseAdapter {
         ViewHolder_ReceiveImage viewHolder_receiveImage = null;
         if (convertView == null) {
             switch (msgType) {
-                case MESSAGE_TYPE_SEND_CHAT_CONTEXT:
+                case 7:
                     viewHolder_chatSend = new ViewHolder_chatSend();
                     convertView = mInflater.inflate(R.layout.item_chatting_msg_send, null);
                     viewHolder_chatSend.tv_chatText_send = (TextView) convertView.findViewById(R.id.tv_chatText_send);
@@ -109,7 +117,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_chatSend.iv_userhead_send_chat = (ImageView) convertView.findViewById(R.id.iv_userhead_send);
                     convertView.setTag(viewHolder_chatSend);
                     break;
-                case MESSAGE_TYPE_RECV_CHAT_CONTEXT:
+                case 8:
                     viewHolder_chatReceive = new ViewHolder_chatReceive();
                     convertView = mInflater.inflate(R.layout.item_chatting_msg_receive, null);
                     viewHolder_chatReceive.tv_chatText_receive = (TextView) convertView.findViewById(R.id.tv_chatText_receive);
@@ -117,7 +125,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_chatReceive.iv_userhead_receive_chat = (ImageView) convertView.findViewById(R.id.iv_userhead_receive);
                     convertView.setTag(viewHolder_chatReceive);
                     break;
-                case MESSAGE_TYPE_SEND_FOLDER:
+                case 9:
                     viewHolder_sendFile = new ViewHolder_sendFile();
                     convertView = mInflater.inflate(R.layout.item_send_file, null);
                     viewHolder_sendFile.tv_sendTime_send_folder = (TextView) convertView.findViewById(R.id.tv_sendTime_send_folder);
@@ -129,7 +137,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_sendFile.chatcontent_send = (RelativeLayout) convertView.findViewById(R.id.chatcontent_send);
                     convertView.setTag(viewHolder_sendFile);
                     break;
-                case MESSAGE_TYPE_RECV_FOLDER:
+                case 10:
                     viewHolder_receiveFile = new ViewHolder_ReceiveFile();
                     convertView = mInflater.inflate(R.layout.item_recevied_file, null);
                     viewHolder_receiveFile.tv_sendTime_receive_folder = (TextView) convertView.findViewById(R.id.tv_sendTime_receive_folder);
@@ -141,7 +149,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_receiveFile.chatcontent_receive = (RelativeLayout) convertView.findViewById(R.id.chatcontent_receive);
                     convertView.setTag(viewHolder_receiveFile);
                     break;
-                case MESSAGE_TYPE_SEND_IMAGE:
+                case 11:
                     viewHolder_sendImage = new ViewHolder_sendImage();
                     convertView = mInflater.inflate(R.layout.item_send_imge, null);
                     viewHolder_sendImage.chatcontent_send = (RelativeLayout) convertView.findViewById(R.id.chatcontent_send);
@@ -151,7 +159,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_sendImage.pb_send = (ProgressBar) convertView.findViewById(R.id.pb_send);
                     convertView.setTag(viewHolder_sendImage);
                     break;
-                case MESSAGE_TYPE_RECV_IMAGE:
+                case 12:
                     viewHolder_receiveImage = new ViewHolder_ReceiveImage();
                     convertView = mInflater.inflate(R.layout.item_recevied_imge, null);
                     viewHolder_receiveImage.chatcontent_receive = (RelativeLayout) convertView.findViewById(R.id.chatcontent_receive);
@@ -164,10 +172,10 @@ public class ChatMessageAdapater extends BaseAdapter {
             }
         } else {
             switch (msgType) {
-                case MESSAGE_TYPE_SEND_CHAT_CONTEXT:
+                case 7:
                     viewHolder_chatSend = (ViewHolder_chatSend) convertView.getTag();
                     break;
-                case MESSAGE_TYPE_RECV_CHAT_CONTEXT:
+                case 8:
                     viewHolder_chatReceive = (ViewHolder_chatReceive) convertView.getTag();
                     break;
                 case MESSAGE_TYPE_SEND_FOLDER:
@@ -188,17 +196,17 @@ public class ChatMessageAdapater extends BaseAdapter {
 
 
         switch (msgType) {
-            case MESSAGE_TYPE_SEND_CHAT_CONTEXT:
+            case 7:
                 viewHolder_chatSend.iv_userhead_send_chat.setImageResource(user.userAvatar);
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.sendTime);
                 viewHolder_chatSend.tv_chatText_send.setText(textMessage.textMessageContent);
                 break;
-            case MESSAGE_TYPE_RECV_CHAT_CONTEXT:
+            case 8:
                 viewHolder_chatReceive.iv_userhead_receive_chat.setImageResource(user.userAvatar);
                 viewHolder_chatReceive.tv_sendTime_receive.setText(entity.sendTime);
                 viewHolder_chatReceive.tv_chatText_receive.setText(textMessage.textMessageContent);
                 break;
-            case MESSAGE_TYPE_SEND_FOLDER:
+            case 9:
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(user.userAvatar);
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
@@ -216,7 +224,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_sendFile.pb_send.setVisibility(View.VISIBLE);
                 }
                 break;
-            case MESSAGE_TYPE_RECV_FOLDER:
+            case 10:
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(user.userAvatar);
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
@@ -236,7 +244,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 }
                 break;
 
-            case MESSAGE_TYPE_SEND_IMAGE:
+            case 11:
                 viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -253,7 +261,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 }
                 break;
 
-            case MESSAGE_TYPE_RECV_IMAGE:
+            case 12:
                 viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

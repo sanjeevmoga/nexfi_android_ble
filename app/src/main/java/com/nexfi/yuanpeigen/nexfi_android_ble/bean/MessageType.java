@@ -8,12 +8,21 @@ public class MessageType {
     public static int RESPONSE_USER_INFO=2;//反馈消息
     public static int OFFINE_USER_INFO=3;//下线消息
     public static int SINGLE_CHAT_MESSAGE_TYPE=4;//单聊
-    public static int TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
-    public static int EMOJI_ONLY_MESSAGE_TYPE=6;//表情消息
-    public static int COMMON_FILE_MESSAGE_TYPE=7;//普通文件
-    public static int IMAGE_FILE_MESSAGE_TYPE=8;//图片文件
-    public static int VIDEO_FILE_MESSAGE_TYPE=9;//音频文件
-    public static int AUDIO_FILE_MESSAGE_TYPE=10;//视频文件
-    public static int CHAT_ROOM_MESSAGE_TYPE=11;//群聊消息
+    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=7;//文本消息
+    public static int RECEIVE_TEXT_ONLY_MESSAGE_TYPE=8;//接收文本消息
+    public static final int MESSAGE_TYPE_SEND_FOLDER = 9;
+    public static final int MESSAGE_TYPE_RECV_FOLDER = 10;
+    public static final int MESSAGE_TYPE_SEND_IMAGE = 11;
+    public static final int MESSAGE_TYPE_RECV_IMAGE = 12;
+//    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
+//    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
+//    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
+//    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
+//    public static int EMOJI_ONLY_MESSAGE_TYPE=6;//表情消息
+//    public static int COMMON_FILE_MESSAGE_TYPE=7;//普通文件
+//    public static int IMAGE_FILE_MESSAGE_TYPE=8;//图片文件
+//    public static int VIDEO_FILE_MESSAGE_TYPE=9;//音频文件
+//    public static int AUDIO_FILE_MESSAGE_TYPE=10;//视频文件
+//    public static int CHAT_ROOM_MESSAGE_TYPE=11;//群聊消息
 
 }

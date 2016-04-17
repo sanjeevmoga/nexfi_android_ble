@@ -16,6 +16,6 @@ public class UserMessage extends EntiyMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "userId="+userId+",userNick="+userNick+",nodeId"+nodeId;
+        return "userId="+userId+",userNick="+userNick+",nodeId="+nodeId;
     }
 }

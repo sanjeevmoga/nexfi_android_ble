@@ -37,7 +37,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private boolean isInputUsernameActivity = false;
     private boolean isInputUserAgeActivity = false;
 
-    private Node node;
+    private static Node node;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,13 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         };
     }
 
+
+    public static Node getNode(){
+        return node;
+    }
+
     private void startScan() {
-        node = new Node(this);
+        node=new Node(MainActivity.this);
         node.start();
     }
 

@@ -1,14 +1,15 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 
+import android.app.Activity;
 import android.util.Log;
 
-import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
@@ -30,7 +31,7 @@ import io.underdark.util.nslogger.NSLoggerAdapter;
 
 public class Node implements TransportListener {
     private boolean running;
-    private MainActivity activity;
+    private Activity activity;
     private long nodeId;
     private Transport transport;
 
@@ -38,9 +39,13 @@ public class Node implements TransportListener {
     private int framesCount = 0;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());//geng
     TextMsgOperation textMsgOperation=new TextMsgOperation();
+    ReceiveTextMsgListener mReceiveTextMsgListener=null;
+    public void setReceiveTextMsgListener(ReceiveTextMsgListener receiveTextMsgListener) {
+        this.mReceiveTextMsgListener = receiveTextMsgListener;
+    }
     private String userSelfId;
 
-    public Node(MainActivity activity) {
+    public Node(Activity activity) {
         this.activity = activity;
 
         do {
@@ -154,13 +159,12 @@ public class Node implements TransportListener {
         byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
         broadcastFrame(data);
 
-        activity.refreshFrames("USER_OFFLINE".getBytes());
+//        activity.refreshFrames("USER_OFFLINE".getBytes());
     }
 
     //接收数据，自动调用
     @Override
     public void transportLinkDidReceiveFrame(Transport transport, Link link, byte[] frameData) {
-        Log.e("TAG", transport.toString() + "-------transportLinkDidReceiveFrame====" + link.toString() + "----data===" + new String(frameData));//2428422316790765964
         //接收到数据后将用户数据发送给对方
         BaseMessage baseMessage = (BaseMessage) ObjectBytesUtils.ByteToObject(frameData);
         if (Debug.DEBUG) {
@@ -169,6 +173,8 @@ public class Node implements TransportListener {
         if (MessageType.REQUEST_USER_INFO==baseMessage.messageType) {
             //对方发过来的请求消息中包含有对方的信息,此时可以将对方的数据保存到本地数据库
             UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
+            userMsg.nodeId = link.getNodeId();
+            Log.e("TAG",link.getNodeId()+"-----========##########################=========request-----------");
             if(!bleDBDao.findSameUserByUserId(userMsg.userId)){
                 Log.e("TAG", bleDBDao.findSameUserByUserId(userMsg.userId)+"-----------收到请求---------------------");
                 bleDBDao.add(baseMessage,userMsg);
@@ -176,34 +182,58 @@ public class Node implements TransportListener {
             //收到请求之后，将自己的信息封装发给对方
             BaseMessage baseMsg = new BaseMessage();
             baseMsg.messageType = MessageType.RESPONSE_USER_INFO;//反馈消息
-            UserMessage userM=bleDBDao.findUserByUserId(userSelfId);
+            UserMessage userM = bleDBDao.findUserByUserId(userSelfId);
             baseMsg.entiyMessage = userM;
             byte[] dataM = ObjectBytesUtils.ObjectToByte(baseMsg);
             link.sendFrame(dataM);
-            Log.e("TAG", "send--------------------------------");
+//            Log.e("TAG", "send--------------------------------");
         } else if (MessageType.RESPONSE_USER_INFO==baseMessage.messageType) {
             //接收对方反馈的用户信息
             UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
             userMsg.nodeId = link.getNodeId();//这是很重要的一步，将所连接的link跟连接的用户绑定，这样通过nodeId就可以找到对应的link,这样就可以给指定的人发消息了
+            Log.e("TAG",link.getNodeId()+"-----========#########################################===========link.getNodeId()-----------");
                 //然后将接收到的用户信息保存到数据库
                 if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
 //                    Log.e("TAG", bleDBDao.findSameUserByUserId(userMsg.userId)+"-----------收到反馈-------------------------------------");
                     bleDBDao.add(baseMessage,userMsg);
                 }
-            activity.refreshFrames("USER_ONLINE".getBytes());
+//            activity.refreshFrames("USER_ONLINE".getBytes());
         } else if (MessageType.OFFINE_USER_INFO==baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
             UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
             bleDBDao.deleteUserByUserId(userMsg.userId);
-            activity.refreshFrames("USER_ONLINE".getBytes());
-        } else if (MessageType.TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
+//            activity.refreshFrames("USER_ONLINE".getBytes());
+        } else if (MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
             TextMessage textMessage = (TextMessage) baseMessage.entiyMessage;
+            baseMessage.messageType=MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
             if (Debug.DEBUG) {
                 Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");
             }
+            if(null!=mReceiveTextMsgListener){
+                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
+            }
+
 //            textMsgOperation.receiveTextMessage(textMessage.textMessageContent);
-            Log.e("TAG", "----触发-------------------------------");
         }
     }
+
+
+    /**
+     * 根据nodeId获取link
+     * @param nodeId
+     * @return
+     */
+    public Link getLink(long nodeId){
+        Log.e("TAG",getLinks().size()+"----getLink---------------------------------------------");
+        for (int i = 0; i <links.size() ; i++) {
+            Link link=links.get(i);
+            Log.e("TAG",link.getNodeId()+"----getLink------------------nodeId---------------------------");
+            if(link.getNodeId()==nodeId){
+                return link;
+            }
+        }
+        return null;
+    }
+
     //endregion
 } // Node

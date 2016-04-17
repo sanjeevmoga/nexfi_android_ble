@@ -52,7 +52,7 @@ public class BleDBDao {
         db.insert("userInfoma", null, values);
         db.close();
         if(Debug.DEBUG){
-            Log.e("TAG", userMessage.userGender+"----dao---add=====------------"+userMessage.userNick);
+            Log.e("TAG", userMessage.userGender+"----dao---add=====------------"+userMessage.nodeId);
         }
         //有新用户上线
         context.getContentResolver().notifyChange(
@@ -66,7 +66,7 @@ public class BleDBDao {
      * @return
      */
     public List<UserMessage> findAllUsers(String userId) {
-        SQLiteDatabase db = helper.getWritableDatabase();//报空指针
+        SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor = db.query("userInfoma", null, null, null, null, null, null);
         List<UserMessage> mDatas = new ArrayList<UserMessage>();
         List<UserMessage> mList = new ArrayList<UserMessage>();

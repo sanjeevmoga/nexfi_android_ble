@@ -25,4 +25,5 @@ public class BleApplication extends Application{
     public static String getUUID(){
         return uuid;
     }
+
 }
