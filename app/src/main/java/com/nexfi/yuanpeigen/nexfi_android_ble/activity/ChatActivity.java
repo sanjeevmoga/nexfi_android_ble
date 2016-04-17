@@ -14,6 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Mark on 2016/4/14.
@@ -38,6 +43,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private String userNick, userGender;
     private int userAge, userAvatar;
+
+    private ChatMessageAdapater chatMessageAdapater;
+    private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
+
 
     @Override
 

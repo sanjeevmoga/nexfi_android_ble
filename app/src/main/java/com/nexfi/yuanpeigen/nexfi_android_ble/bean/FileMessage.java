@@ -9,5 +9,6 @@ public class FileMessage extends EntiyMessage implements Serializable {
     private static  final long serialVersionUID = 2L;
     public String fileName;
     public String fileSize;
-    public String fileIcon;
+    public int fileIcon;
+    public int isPb;
 }
