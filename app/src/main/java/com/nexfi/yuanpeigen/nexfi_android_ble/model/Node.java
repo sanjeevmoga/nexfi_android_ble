@@ -5,6 +5,7 @@ import android.util.Log;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
@@ -133,7 +134,7 @@ public class Node implements TransportListener {
         userSelfId=UserInfo.initUserId(userSelfId,BleApplication.getContext());
         if (null != links && links.size() > 0) {//搜索到设备后就发送请求，并把自己的信息携带过去
             BaseMessage baseMessage = new BaseMessage();
-            baseMessage.messageType = "REQUEST_USER_INFO";
+            baseMessage.messageType = MessageType.REQUEST_USER_INFO;
             UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
             baseMessage.entiyMessage = userMessage;
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
@@ -147,7 +148,7 @@ public class Node implements TransportListener {
         links.remove(link);
         //断开连接时发送下线通知
         BaseMessage baseMessage = new BaseMessage();
-        baseMessage.messageType = "OFFINE_USER_INFO";
+        baseMessage.messageType = MessageType.OFFINE_USER_INFO;
         UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
         baseMessage.entiyMessage = userMessage;
         byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
@@ -165,8 +166,7 @@ public class Node implements TransportListener {
         if (Debug.DEBUG) {
             Log.e("TAG", baseMessage + "---baseMessage-------------Receive------------------");
         }
-
-        if ("REQUEST_USER_INFO".equals(baseMessage.messageType)) {
+        if (MessageType.REQUEST_USER_INFO==baseMessage.messageType) {
             //对方发过来的请求消息中包含有对方的信息,此时可以将对方的数据保存到本地数据库
             UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
             if(!bleDBDao.findSameUserByUserId(userMsg.userId)){
@@ -175,13 +175,13 @@ public class Node implements TransportListener {
             }
             //收到请求之后，将自己的信息封装发给对方
             BaseMessage baseMsg = new BaseMessage();
-            baseMsg.messageType = "ROEPONSE_USER_INFO";
+            baseMsg.messageType = MessageType.RESPONSE_USER_INFO;//反馈消息
             UserMessage userM=bleDBDao.findUserByUserId(userSelfId);
             baseMsg.entiyMessage = userM;
             byte[] dataM = ObjectBytesUtils.ObjectToByte(baseMsg);
             link.sendFrame(dataM);
             Log.e("TAG", "send--------------------------------");
-        } else if ("ROEPONSE_USER_INFO".equals(baseMessage.messageType)) {
+        } else if (MessageType.RESPONSE_USER_INFO==baseMessage.messageType) {
             //接收对方反馈的用户信息
             UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
             userMsg.nodeId = link.getNodeId();//这是很重要的一步，将所连接的link跟连接的用户绑定，这样通过nodeId就可以找到对应的link,这样就可以给指定的人发消息了
@@ -191,18 +191,18 @@ public class Node implements TransportListener {
                     bleDBDao.add(baseMessage,userMsg);
                 }
             activity.refreshFrames("USER_ONLINE".getBytes());
-        } else if ("OFFINE_USER_INFO".equals(baseMessage.messageType)) {//用户下线通知
+        } else if (MessageType.OFFINE_USER_INFO==baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
             UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
             bleDBDao.deleteUserByUserId(userMsg.userId);
             activity.refreshFrames("USER_ONLINE".getBytes());
-        } else if (baseMessage.messageType.equals("TEXT_ONLY_MESSAGE_TYPE")) {
+        } else if (MessageType.TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
             TextMessage textMessage = (TextMessage) baseMessage.entiyMessage;
             if (Debug.DEBUG) {
                 Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");
             }
 //            textMsgOperation.receiveTextMessage(textMessage.textMessageContent);
-            Log.e("TAG","----触发-------------------------------");
+            Log.e("TAG", "----触发-------------------------------");
         }
     }
     //endregion

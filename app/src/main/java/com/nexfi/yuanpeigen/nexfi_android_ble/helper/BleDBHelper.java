@@ -15,7 +15,7 @@ public class BleDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //用户
-        db.execSQL("create table userInfom (_id integer primary key autoincrement,messageType varchar(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20))");
+        db.execSQL("create table userInfoma (_id integer primary key autoincrement,messageType Integer(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20))");
 //        //单聊
 //        db.execSQL("create table messageBase2 (_id integer primary key autoincrement,fromIP varchar(20),fromNick varchar(20),fromAvatar Integer(20),toIP varchar(20),content varchar(20)," +
 //                "type varchar(20),msgType Integer(20),sendTime varchar(20),fileName varchar(20),fileSize varchar(20),fileIcon Integer(20),isPb Integer(20),filePath varchar(20)," +

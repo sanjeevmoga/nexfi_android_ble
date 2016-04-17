@@ -49,7 +49,7 @@ public class BleDBDao {
         values.put("userAge", userMessage.userAge);
         values.put("userGender", userMessage.userGender);
         values.put("userAvatar", userMessage.userAvatar);
-        db.insert("userInfom", null, values);
+        db.insert("userInfoma", null, values);
         db.close();
         if(Debug.DEBUG){
             Log.e("TAG", userMessage.userGender+"----dao---add=====------------"+userMessage.userNick);
@@ -67,7 +67,7 @@ public class BleDBDao {
      */
     public List<UserMessage> findAllUsers(String userId) {
         SQLiteDatabase db = helper.getWritableDatabase();//报空指针
-        Cursor cursor = db.query("userInfom", null, null, null, null, null, null);
+        Cursor cursor = db.query("userInfoma", null, null, null, null, null, null);
         List<UserMessage> mDatas = new ArrayList<UserMessage>();
         List<UserMessage> mList = new ArrayList<UserMessage>();
         while (cursor.moveToNext()) {
@@ -97,7 +97,7 @@ public class BleDBDao {
      */
     public UserMessage findUserByUserId(String userId){
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("userInfom", null, "userId=?", new String[]{userId}, null, null, null);
+        Cursor cursor = db.query("userInfoma", null, "userId=?", new String[]{userId}, null, null, null);
         if(cursor.moveToNext()){
             UserMessage user = new UserMessage();
 //            user.messageType = cursor.getString(cursor.getColumnIndex("messageType"));
@@ -122,7 +122,7 @@ public class BleDBDao {
      */
     public boolean findSameUserByUserId(String userId){
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("userInfom", null, "userId=?", new String[]{userId}, null, null, null);
+        Cursor cursor = db.query("userInfoma", null, "userId=?", new String[]{userId}, null, null, null);
         if(cursor.moveToNext()){
             return true;
         }
@@ -135,7 +135,7 @@ public class BleDBDao {
      */
     public void deleteUserByUserId(String userId) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        int row = db.delete("userInfom", "userId = ?",
+        int row = db.delete("userInfoma", "userId = ?",
                 new String[]{userId});
         db.close();
         //有用户下线
