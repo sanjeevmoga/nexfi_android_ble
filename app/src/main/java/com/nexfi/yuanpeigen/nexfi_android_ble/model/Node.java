@@ -221,7 +221,7 @@ public class Node implements TransportListener {
             TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
             if (Debug.DEBUG) {
-                Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");
+                Log.e("TAG", textMessage.textMessageContent + "---group-------------textMessage------------------");
             }
             if(null!=mReceiveTextMsgListener){
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);

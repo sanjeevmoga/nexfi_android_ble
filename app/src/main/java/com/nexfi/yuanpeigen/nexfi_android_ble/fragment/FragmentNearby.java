@@ -141,7 +141,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
             case R.id.add_chatRoom:
                 Intent intent = new Intent(getActivity(), GroupChatActivity.class);
                 startActivity(intent);
-                getActivity().finish();
+//                getActivity().finish();
                 break;
 
             case R.id.iv_add:

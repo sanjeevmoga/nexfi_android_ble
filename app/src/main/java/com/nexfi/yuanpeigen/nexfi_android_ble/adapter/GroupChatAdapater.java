@@ -48,7 +48,7 @@ public class GroupChatAdapater extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 10;
+        return 15;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class GroupChatAdapater extends BaseAdapter {
                     break;
                 case 14:
                     viewHolder_chatReceive = new ViewHolder_chatReceive();
-                    convertView = mInflater.inflate(R.layout.item_chatting_msg_receive, null);
+                    convertView = mInflater.inflate(R.layout.item_chatting_msg_receive_group, null);
                     viewHolder_chatReceive.tv_chatText_receive = (TextView) convertView.findViewById(R.id.tv_chatText_receive);
                     viewHolder_chatReceive.tv_sendTime_receive = (TextView) convertView.findViewById(R.id.tv_sendtime_receive);
                     viewHolder_chatReceive.iv_userhead_receive_chat = (ImageView) convertView.findViewById(R.id.iv_userhead_receive);
@@ -126,7 +126,7 @@ public class GroupChatAdapater extends BaseAdapter {
                     break;
                 case 15:
                     viewHolder_sendFile = new ViewHolder_sendFile();
-                    convertView = mInflater.inflate(R.layout.item_send_file, null);
+                    convertView = mInflater.inflate(R.layout.item_send_file_group, null);
                     viewHolder_sendFile.tv_sendTime_send_folder = (TextView) convertView.findViewById(R.id.tv_sendTime_send_folder);
                     viewHolder_sendFile.iv_userhead_send_folder = (ImageView) convertView.findViewById(R.id.iv_userhead_send_folder);
                     viewHolder_sendFile.tv_file_name_send = (TextView) convertView.findViewById(R.id.tv_file_name_send);
@@ -152,7 +152,7 @@ public class GroupChatAdapater extends BaseAdapter {
                     break;
                 case 17:
                     viewHolder_sendImage = new ViewHolder_sendImage();
-                    convertView = mInflater.inflate(R.layout.item_send_imge, null);
+                    convertView = mInflater.inflate(R.layout.item_send_image_group, null);
                     viewHolder_sendImage.chatcontent_send = (RelativeLayout) convertView.findViewById(R.id.chatcontent_send);
                     viewHolder_sendImage.iv_icon_send = (ImageView) convertView.findViewById(R.id.iv_icon_send);
                     viewHolder_sendImage.iv_userhead_send_image = (ImageView) convertView.findViewById(R.id.iv_userhead_send_image);
@@ -163,7 +163,7 @@ public class GroupChatAdapater extends BaseAdapter {
                     break;
                 case 18:
                     viewHolder_receiveImage = new ViewHolder_ReceiveImage();
-                    convertView = mInflater.inflate(R.layout.item_recevied_imge, null);
+                    convertView = mInflater.inflate(R.layout.item_recevied_imge_group, null);
                     viewHolder_receiveImage.chatcontent_receive = (RelativeLayout) convertView.findViewById(R.id.chatcontent_receive);
                     viewHolder_receiveImage.iv_icon_receive = (ImageView) convertView.findViewById(R.id.iv_icon_receive);
                     viewHolder_receiveImage.iv_userhead_receive_image = (ImageView) convertView.findViewById(R.id.iv_userhead_receive_image);

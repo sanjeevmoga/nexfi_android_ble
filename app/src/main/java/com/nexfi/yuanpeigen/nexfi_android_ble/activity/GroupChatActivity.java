@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
@@ -103,6 +105,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.btn_sendMsgGroup://发送消息
                 sendGroupMsg();
+                et_chatGroup.setText(null);
                 break;
             case R.id.iv_pic:
                 showToast();
@@ -139,6 +142,10 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             baseMessage.userMessage = textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             node.broadcastFrame(send_text_data);
+            setAdapter(baseMessage);
+            if(Debug.DEBUG){
+                Log.e("TAG","-----group----------------------send============"+contString);
+            }
         }
     }
 
