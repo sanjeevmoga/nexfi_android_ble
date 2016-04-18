@@ -1,9 +1,13 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +42,7 @@ import io.underdark.transport.Link;
 /**
  * Created by Mark on 2016/4/14.
  */
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener,ReceiveTextMsgListener {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable {
 
     private RelativeLayout layout_backPrivate;
     private ImageView iv_addPrivate, iv_camera, iv_position, iv_pic;
@@ -55,14 +59,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private final String USER_AVATAR = "userAvatar";
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
-    private final String USER_NODE_ID="nodeId";
-    private final String USER_ID="userId";
+    private final String USER_NODE_ID = "nodeId";
+    private final String USER_ID = "userId";
 
     private String userNick, userGender;
     private int userAge, userAvatar;
 
     private long nodeId;
     private Node node;
+    private Link link;
     private String userId;
     private String userSelfId;//用户自身
     TextMsgOperation textMsgOperation;
@@ -71,15 +76,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ChatMessageAdapater chatMessageAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
 
+    private AlertDialog mAlertDialog;
+
+    private Handler handler;
+
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         node = MainActivity.getNode();
-        textMsgOperation=new TextMsgOperation();
-        userSelfId= UserInfo.initUserId(userSelfId, BleApplication.getContext());
+        textMsgOperation = new TextMsgOperation();
+        userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
+
         initIntentData();
         initView();
         initAdapter();
@@ -87,9 +96,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void initDialogConnectedStatus() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View v = inflater.inflate(R.layout.dialog_connected, null);
+        mAlertDialog = new AlertDialog.Builder(this).create();
+        mAlertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0x00000000));
+        mAlertDialog.show();
+        mAlertDialog.getWindow().setContentView(v);
+        mAlertDialog.setCancelable(false);
+        handler = new Handler();
+        handler.postDelayed(this, 1500);
+    }
+
+
     private void initAdapter() {
-        mDataArrays=bleDBDao.findMsgByChatId(userId);
-        chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this,mDataArrays);
+        mDataArrays = bleDBDao.findMsgByChatId(userId);
+        chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
         lv_chatPrivate.setAdapter(chatMessageAdapater);
     }
 
@@ -124,8 +146,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         userGender = intent.getStringExtra(USER_GENDER);
         userAge = intent.getIntExtra(USER_AGE, 18);
         userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
-        nodeId=intent.getLongExtra(USER_NODE_ID, 1234568L);
-        userId=intent.getStringExtra(USER_ID);
+        nodeId = intent.getLongExtra(USER_NODE_ID, 1234568L);
+        userId = intent.getStringExtra(USER_ID);
     }
 
     @Override
@@ -144,8 +166,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_sendMsgPrivate:
-                sendMsg();
-                et_chatPrivate.setText(null);
+                if (link != null) {
+                    sendMsg();
+                    et_chatPrivate.setText(null);
+                } else {
+                    initDialogConnectedStatus();
+                }
                 break;
             case R.id.iv_pic:
                 showToast();
@@ -167,30 +193,30 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String contString = et_chatPrivate.getText().toString();
         if (contString.length() > 0) {
             if (Debug.DEBUG) {
-                Log.e("TAG","---ChatActivity-------------sendMsg------------------");
+                Log.e("TAG", "---ChatActivity-------------sendMsg------------------");
             }
-            BaseMessage baseMessage=new BaseMessage();
-            baseMessage.messageType= MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
-            baseMessage.sendTime= TimeUtils.getNowTime();
-            baseMessage.chat_id=userId;
-            UserMessage user=bleDBDao.findUserByUserId(userSelfId);
-            TextMessage textMessage=new TextMessage();
-            textMessage.textMessageContent=contString;
-            textMessage.nodeId=user.nodeId;
-            textMessage.userId=user.userId;
-            textMessage.userNick=user.userNick;
-            textMessage.userGender=user.userGender;
-            textMessage.userAvatar=user.userAvatar;
-            textMessage.userAge=user.userAge;
-            baseMessage.userMessage=textMessage;
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
+            baseMessage.sendTime = TimeUtils.getNowTime();
+            baseMessage.chat_id = userId;
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            TextMessage textMessage = new TextMessage();
+            textMessage.textMessageContent = contString;
+            textMessage.nodeId = user.nodeId;
+            textMessage.userId = user.userId;
+            textMessage.userNick = user.userNick;
+            textMessage.userGender = user.userGender;
+            textMessage.userAvatar = user.userAvatar;
+            textMessage.userAge = user.userAge;
+            baseMessage.userMessage = textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-            Link link=node.getLink(nodeId);
+            link = node.getLink(nodeId);
             if (Debug.DEBUG) {
-                Log.e("TAG",link+"---ChatActivity-----"+nodeId);
+                Log.e("TAG", link + "---ChatActivity-----" + nodeId);
             }
-            if(null!=link){
+            if (null != link) {
                 if (Debug.DEBUG) {
-                    Log.e("TAG","---ChatActivity-------------sendMsg------------link------");
+                    Log.e("TAG", "---ChatActivity-------------sendMsg------------link------");
                 }
                 link.sendFrame(send_text_data);
                 setAdapter(baseMessage);
@@ -201,23 +227,29 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onReceiveTextMsg(Object obj) {
         Log.e("TAG", obj + "----===回调------------------------------9999");
-        BaseMessage baseMesage= (BaseMessage) obj;
-        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-        baseMesage.chat_id=textMessage.userId;
+        BaseMessage baseMesage = (BaseMessage) obj;
+        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+        baseMesage.chat_id = textMessage.userId;
         setAdapter(baseMesage);//设置适配器
     }
 
     private void setAdapter(BaseMessage baseMesage) {
         mDataArrays.add(baseMesage);
-        if(null==chatMessageAdapater){
-            chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this, mDataArrays);
+        if (null == chatMessageAdapater) {
+            chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
             lv_chatPrivate.setAdapter(chatMessageAdapater);
         }
         chatMessageAdapater.notifyDataSetChanged();
         if (mDataArrays.size() > 0) {
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-        bleDBDao.addP2PTextMsg(baseMesage,textMessage);//保存到数据库
+        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+    }
+
+
+    @Override
+    public void run() {
+        mAlertDialog.dismiss();
     }
 }

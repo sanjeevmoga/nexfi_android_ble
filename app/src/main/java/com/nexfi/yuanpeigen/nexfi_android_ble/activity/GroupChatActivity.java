@@ -48,7 +48,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groupchat);
