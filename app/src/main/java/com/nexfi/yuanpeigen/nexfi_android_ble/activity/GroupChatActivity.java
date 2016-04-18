@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.GroupChatAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
@@ -50,15 +51,22 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groupchat);
         node = MainActivity.getNode();
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
         initView();
+        initAdapter();
         setClicklistener();
 
+    }
+
+
+    private void initAdapter() {
+        mDataArrays=bleDBDao.findGroupMsg();
+        groupChatAdapater=new GroupChatAdapater(ChatActivity.this,mDataArrays);
+        lv_chatGroup.setAdapter(groupChatAdapater);
     }
 
     private void setClicklistener() {
@@ -173,6 +181,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             lv_chatGroup.setSelection(mDataArrays.size() - 1);// 最后一行
         }
         TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+        bleDBDao.addGroupTextMsg(baseMesage, textMessage);//保存到数据库
     }
 }
