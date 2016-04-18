@@ -14,7 +14,12 @@ public class MessageType {
     public static final int MESSAGE_TYPE_RECV_FOLDER = 10;
     public static final int MESSAGE_TYPE_SEND_IMAGE = 11;
     public static final int MESSAGE_TYPE_RECV_IMAGE = 12;
-//    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
+    public static int GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE=13;//群聊发送
+    public static int GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE=14;//群聊接收
+    public static final int GROUP_SEND_FOLDER_MESSAGE_TYPE = 15;
+    public static final int GROUP_RECEIVE_FOLDER_MESSAGE_TYPE = 16;
+    public static final int GROUP_SEND_IMAGE_MESSAGE_TYPE = 17;
+    public static final int GROUP_RECEIVE_IMAGE_MESSAGE_TYPE = 18;
 //    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
 //    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息
 //    public static int SEND_TEXT_ONLY_MESSAGE_TYPE=5;//文本消息

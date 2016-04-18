@@ -27,6 +27,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
@@ -170,6 +171,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
             BaseMessage baseMessage=new BaseMessage();
             baseMessage.messageType= MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
+            baseMessage.sendTime= TimeUtils.getNowTime();
             baseMessage.chat_id=userId;
             UserMessage user=bleDBDao.findUserByUserId(userSelfId);
             TextMessage textMessage=new TextMessage();

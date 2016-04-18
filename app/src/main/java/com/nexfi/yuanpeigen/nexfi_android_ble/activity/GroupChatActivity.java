@@ -13,11 +13,26 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.GroupChatAdapater;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Mark on 2016/4/13.
  */
-public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener {
+public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener,ReceiveTextMsgListener {
 
     private RelativeLayout layout_backGroup;
     private ImageView iv_addGroup, iv_camera, iv_position, iv_pic, iv_showUserInfo;
@@ -26,14 +41,19 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private boolean visibility_Flag = false;
     private LinearLayout layout_view;
     private ListView lv_chatGroup;
-
+    private String userSelfId;//用户自身
+    private Node node;
+    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
+    private GroupChatAdapater groupChatAdapater;
+    private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groupchat);
-
+        node = MainActivity.getNode();
+        userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
         initView();
         setClicklistener();
 
@@ -47,6 +67,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         iv_position.setOnClickListener(this);
         iv_camera.setOnClickListener(this);
         iv_showUserInfo.setOnClickListener(this);
+        node.setReceiveTextMsgListener(this);
     }
 
     private void initView() {
@@ -80,8 +101,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                     visibility_Flag = true;
                 }
                 break;
-            case R.id.btn_sendMsgGroup:
-                showToast();
+            case R.id.btn_sendMsgGroup://发送消息
+                sendGroupMsg();
                 break;
             case R.id.iv_pic:
                 showToast();
@@ -96,10 +117,55 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 showToast();
                 break;
         }
+    }
 
+    private void sendGroupMsg() {
+
+        String contString = et_chatGroup.getText().toString();
+        if (contString.length() > 0) {
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
+            baseMessage.sendTime= TimeUtils.getNowTime();
+//            baseMessage.chat_id=userId;
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            TextMessage textMessage = new TextMessage();
+            textMessage.textMessageContent = contString;
+            textMessage.nodeId = user.nodeId;
+            textMessage.userId = user.userId;
+            textMessage.userNick = user.userNick;
+            textMessage.userGender = user.userGender;
+            textMessage.userAvatar = user.userAvatar;
+            textMessage.userAge = user.userAge;
+            baseMessage.userMessage = textMessage;
+            byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+            node.broadcastFrame(send_text_data);
+        }
     }
 
     private void showToast() {
         Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onReceiveTextMsg(Object obj) {
+        BaseMessage baseMesage= (BaseMessage) obj;
+        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+        baseMesage.chat_id=textMessage.userId;
+        setAdapter(baseMesage);//设置适配器
+    }
+
+
+    private void setAdapter(BaseMessage baseMesage) {
+        mDataArrays.add(baseMesage);
+        if(null==groupChatAdapater){
+            groupChatAdapater=new GroupChatAdapater(GroupChatActivity.this, mDataArrays);
+            lv_chatGroup.setAdapter(groupChatAdapater);
+        }
+        groupChatAdapater.notifyDataSetChanged();
+        if (mDataArrays.size() > 0) {
+            lv_chatGroup.setSelection(mDataArrays.size() - 1);// 最后一行
+        }
+        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
     }
 }

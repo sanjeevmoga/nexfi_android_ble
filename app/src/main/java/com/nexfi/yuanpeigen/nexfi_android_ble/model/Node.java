@@ -13,6 +13,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import org.slf4j.impl.StaticLoggerBinder;
@@ -137,6 +138,7 @@ public class Node implements TransportListener {
         if (null != links && links.size() > 0) {//搜索到设备后就发送请求，并把自己的信息携带过去
             BaseMessage baseMessage = new BaseMessage();
             baseMessage.messageType = MessageType.REQUEST_USER_INFO;
+            baseMessage.sendTime= TimeUtils.getNowTime();
             UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
             baseMessage.userMessage = userMessage;
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
@@ -182,6 +184,7 @@ public class Node implements TransportListener {
             //收到请求之后，将自己的信息封装发给对方
             BaseMessage baseMsg = new BaseMessage();
             baseMsg.messageType = MessageType.RESPONSE_USER_INFO;//反馈消息
+            baseMsg.sendTime=TimeUtils.getNowTime();
             UserMessage userMg = bleDBDao.findUserByUserId(userSelfId);
             baseMsg.userMessage = userMg;
             byte[] dataM = ObjectBytesUtils.ObjectToByte(baseMsg);
@@ -200,14 +203,23 @@ public class Node implements TransportListener {
             if(Debug.DEBUG){
                 Log.e("TAG","----收到断开连接消息-----------------------------------------");
             }
-            UserMessage userMsg= baseMessage.userMessage;
-            bleDBDao.deleteUserByNodeId(userMsg.nodeId);
+//            UserMessage userMsg= baseMessage.userMessage;
+//            bleDBDao.deleteUserByNodeId(userMsg.nodeId);
             if(Debug.DEBUG){
                 Log.e("TAG","----移除断开连接的用户-----------------------------------------");
             }
         } else if (MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
             TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
+            if (Debug.DEBUG) {
+                Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");
+            }
+            if(null!=mReceiveTextMsgListener){
+                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
+            }
+        }else if(MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType){//群聊
+            TextMessage textMessage = (TextMessage) baseMessage.userMessage;
+            baseMessage.messageType=MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
             if (Debug.DEBUG) {
                 Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");
             }
