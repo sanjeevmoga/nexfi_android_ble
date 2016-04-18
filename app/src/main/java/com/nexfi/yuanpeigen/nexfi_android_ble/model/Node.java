@@ -116,9 +116,6 @@ public class Node implements TransportListener {
         if (Debug.DEBUG) {
             Log.e("TAG", "---node-------------return------------------");
         }
-//		++framesCount;
-////		activity.refreshFrames();
-//
         for (Link link : links) {
             Log.e("TAG", links.size() + "----------------for------links.size()------------------");
             link.sendFrame(frameData);
@@ -150,16 +147,19 @@ public class Node implements TransportListener {
     //断开连接
     @Override
     public void transportLinkDisconnected(Transport transport, Link link) {
-        links.remove(link);
         //断开连接时发送下线通知
-        BaseMessage baseMessage = new BaseMessage();
-        baseMessage.messageType = MessageType.OFFINE_USER_INFO;
-        UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
-        baseMessage.userMessage = userMessage;
-        byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
-        broadcastFrame(data);
-
-//        activity.refreshFrames("USER_OFFLINE".getBytes());
+//        BaseMessage baseMessage = new BaseMessage();
+//        baseMessage.messageType = MessageType.OFFINE_USER_INFO;
+//        UserMessage userMessage=bleDBDao.findUserByNodeId(link.getNodeId());
+//        baseMessage.userMessage = userMessage;
+//        byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
+//        broadcastFrame(data);
+        Log.e("TAG", "----发送离线消息-----------------------------------------" + links.size());
+        bleDBDao.deleteUserByNodeId(link.getNodeId());
+        links.remove(link);//移除link
+        if(Debug.DEBUG){
+            Log.e("TAG","----断开连接-----------------------------------------"+links.size());
+        }
     }
 
     //接收数据，自动调用
@@ -186,7 +186,6 @@ public class Node implements TransportListener {
             baseMsg.userMessage = userMg;
             byte[] dataM = ObjectBytesUtils.ObjectToByte(baseMsg);
             link.sendFrame(dataM);
-//            Log.e("TAG", "send--------------------------------");
         } else if (MessageType.RESPONSE_USER_INFO==baseMessage.messageType) {
             //接收对方反馈的用户信息
             UserMessage userMsg= baseMessage.userMessage;
@@ -194,13 +193,18 @@ public class Node implements TransportListener {
             Log.e("TAG",link.getNodeId()+"-----========#########################################===========link.getNodeId()-----------");
                 //然后将接收到的用户信息保存到数据库
                 if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
-//                    Log.e("TAG", bleDBDao.findSameUserByUserId(userMsg.userId)+"-----------收到反馈-------------------------------------");
                     bleDBDao.add(baseMessage,userMsg);
                 }
         } else if (MessageType.OFFINE_USER_INFO==baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
+            if(Debug.DEBUG){
+                Log.e("TAG","----收到断开连接消息-----------------------------------------");
+            }
             UserMessage userMsg= baseMessage.userMessage;
-            bleDBDao.deleteUserByUserId(userMsg.userId);
+            bleDBDao.deleteUserByNodeId(userMsg.nodeId);
+            if(Debug.DEBUG){
+                Log.e("TAG","----移除断开连接的用户-----------------------------------------");
+            }
         } else if (MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
             TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
@@ -210,7 +214,6 @@ public class Node implements TransportListener {
             if(null!=mReceiveTextMsgListener){
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
-
         }
     }
 
@@ -221,10 +224,8 @@ public class Node implements TransportListener {
      * @return
      */
     public Link getLink(long nodeId){
-        Log.e("TAG",getLinks().size()+"----getLink---------------------------------------------");
         for (int i = 0; i <links.size() ; i++) {
             Link link=links.get(i);
-            Log.e("TAG",link.getNodeId()+"----getLink------------------nodeId---------------------------");
             if(link.getNodeId()==nodeId){
                 return link;
             }

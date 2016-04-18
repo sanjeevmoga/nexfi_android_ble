@@ -98,9 +98,28 @@ public class BleDBDao {
         Cursor cursor = db.query("userInfoma", null, "userId=?", new String[]{userId}, null, null, null);
         if(cursor.moveToNext()){
             UserMessage user = new UserMessage();
-//            user.messageType = cursor.getString(cursor.getColumnIndex("messageType"));
-//            user.sendTime = cursor.getString(cursor.getColumnIndex("sendTime"));
-//            user.chat_id = cursor.getString(cursor.getColumnIndex("chat_id"));
+            user.nodeId=cursor.getLong(cursor.getColumnIndex("nodeId"));
+            user.userId = cursor.getString(cursor.getColumnIndex("userId"));
+            user.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
+            user.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+            user.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
+            user.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
+            return user;
+        }
+        return null;
+    }
+
+
+    /**
+     * 根据nodeId查找用户
+     * @param nodeId
+     * @return
+     */
+    public UserMessage findUserByNodeId(long nodeId){
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query("userInfoma", null, "nodeId=?", new String[]{nodeId+""}, null, null, null);
+        if(cursor.moveToNext()){
+            UserMessage user = new UserMessage();
             user.nodeId=cursor.getLong(cursor.getColumnIndex("nodeId"));
             user.userId = cursor.getString(cursor.getColumnIndex("userId"));
             user.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
@@ -131,10 +150,10 @@ public class BleDBDao {
     /**
      * 根据userId删除用户信息
      */
-    public void deleteUserByUserId(String userId) {
+    public void deleteUserByNodeId(long nodeId) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        int row = db.delete("userInfoma", "userId = ?",
-                new String[]{userId});
+        int row = db.delete("userInfoma", "nodeId = ?",
+                new String[]{nodeId+""});
         db.close();
         //有用户下线
         context.getContentResolver().notifyChange(

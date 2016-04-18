@@ -23,7 +23,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
@@ -77,17 +76,22 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         userId=UserInfo.initUserId(userId, BleApplication.getContext());
         //从数据库中获取用户数据
         userMessageList=bleDBDao.findAllUsers(userId);
-        Log.e("TAG","--=initData======---------------------------------===FragmentNearby");
-        if(null!=userMessageList && userMessageList.size()>0){
-            if(Debug.DEBUG){
-                Log.e("TAG",userMessageList.size()+"------获取的用户人数");
-                for (UserMessage user:userMessageList) {
-                    Log.e("TAG",user.toString()+"--===========User");
-                }
-            }
-            userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
-            lv_userlist.setAdapter(userListViewAdapter);
+        userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
+        lv_userlist.setAdapter(userListViewAdapter);
+        if(userListViewAdapter!=null){
+            userListViewAdapter.notifyDataSetChanged();
         }
+        Log.e("TAG","--=initData======---------------------------------===FragmentNearby");
+//        if(null!=userMessageList && userMessageList.size()>0){
+//            if(Debug.DEBUG){
+//                Log.e("TAG",userMessageList.size()+"------获取的用户人数");
+//                for (UserMessage user:userMessageList) {
+//                    Log.e("TAG",user.toString()+"--===========User");
+//                }
+//            }
+//            userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
+//            lv_userlist.setAdapter(userListViewAdapter);
+//        }
     }
 
 

@@ -123,4 +123,13 @@ public class UserListViewAdapter extends BaseAdapter {
     }
 
 
+    // 删除项(自定义方法)
+    public void removeItem(int position) {
+        if (userMessageList.get(position) != null) {
+            userMessageList.remove(position);
+            notifyDataSetChanged();  // 通知适配器数据已改变
+        }
+    }
+
+
 }
