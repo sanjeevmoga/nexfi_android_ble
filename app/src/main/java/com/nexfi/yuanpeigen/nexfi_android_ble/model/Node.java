@@ -197,12 +197,10 @@ public class Node implements TransportListener {
 //                    Log.e("TAG", bleDBDao.findSameUserByUserId(userMsg.userId)+"-----------收到反馈-------------------------------------");
                     bleDBDao.add(baseMessage,userMsg);
                 }
-//            activity.refreshFrames("USER_ONLINE".getBytes());
         } else if (MessageType.OFFINE_USER_INFO==baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
             UserMessage userMsg= baseMessage.userMessage;
             bleDBDao.deleteUserByUserId(userMsg.userId);
-//            activity.refreshFrames("USER_ONLINE".getBytes());
         } else if (MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
             TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
@@ -213,7 +211,6 @@ public class Node implements TransportListener {
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
 
-//            textMsgOperation.receiveTextMessage(textMessage.textMessageContent);
         }
     }
 

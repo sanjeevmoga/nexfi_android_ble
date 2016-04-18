@@ -79,11 +79,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         node = MainActivity.getNode();
         textMsgOperation=new TextMsgOperation();
         userSelfId= UserInfo.initUserId(userSelfId, BleApplication.getContext());
-//        node=new Node(ChatActivity.this);
         initIntentData();
         initView();
+        initAdapter();
         setClicklistener();
 
+    }
+
+    private void initAdapter() {
+        mDataArrays=bleDBDao.findMsgByChatId(userId);
+        chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this,mDataArrays);
+        lv_chatPrivate.setAdapter(chatMessageAdapater);
     }
 
     private void setClicklistener() {
@@ -164,6 +170,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
             BaseMessage baseMessage=new BaseMessage();
             baseMessage.messageType= MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
+            baseMessage.chat_id=userId;
             UserMessage user=bleDBDao.findUserByUserId(userSelfId);
             TextMessage textMessage=new TextMessage();
             textMessage.textMessageContent=contString;
@@ -193,18 +200,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void onReceiveTextMsg(Object obj) {
         Log.e("TAG", obj + "----===回调------------------------------9999");
         BaseMessage baseMesage= (BaseMessage) obj;
-        setAdapter(baseMesage);
+        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+        baseMesage.chat_id=textMessage.userId;
+        setAdapter(baseMesage);//设置适配器
     }
 
     private void setAdapter(BaseMessage baseMesage) {
         mDataArrays.add(baseMesage);
         if(null==chatMessageAdapater){
-            chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this,mDataArrays);
+            chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this, mDataArrays);
             lv_chatPrivate.setAdapter(chatMessageAdapater);
         }
         chatMessageAdapater.notifyDataSetChanged();
         if (mDataArrays.size() > 0) {
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
+        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+        bleDBDao.addP2PTextMsg(baseMesage,textMessage);//保存到数据库
     }
 }

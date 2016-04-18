@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.helper.BleDBHelper;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
@@ -36,9 +37,6 @@ public class BleDBDao {
     public void add(BaseMessage baseMessage,UserMessage userMessage) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-//        values.put("messageType", user.messageType);
-//        values.put("sendTime", user.sendTime);
-//        values.put("chat_id", user.chat_id);
         values.put("messageType",baseMessage.messageType);
         values.put("sendTime",baseMessage.sendTime);
         values.put("chat_id",baseMessage.chat_id);
@@ -142,4 +140,67 @@ public class BleDBDao {
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
     }
+
+
+
+
+
+    /**
+     * 保存单聊文本数据
+     *
+     * @param
+     */
+    public void addP2PTextMsg(BaseMessage baseMessage,TextMessage textMessage) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("messageType",baseMessage.messageType);
+        values.put("sendTime",baseMessage.sendTime);
+        values.put("chat_id",baseMessage.chat_id);
+        baseMessage.userMessage=textMessage;
+        values.put("nodeId",textMessage.nodeId);
+        values.put("userId", textMessage.userId);
+        values.put("textMessageContent",textMessage.textMessageContent);
+        values.put("userNick", textMessage.userNick);
+        values.put("userAge", textMessage.userAge);
+        values.put("userGender", textMessage.userGender);
+        values.put("userAvatar", textMessage.userAvatar);
+        db.insert("textP2PMs", null, values);
+        db.close();
+        if(Debug.DEBUG){
+            Log.e("TAG", textMessage.userGender+"----dao---add=====------------"+textMessage.nodeId);
+        }
+    }
+
+
+    /**
+     * 根据会话id查找对应的单对单聊天记录
+     *
+     * @param chat_id
+     * @return
+     */
+    public List<BaseMessage> findMsgByChatId(String chat_id) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query("textP2PMs", null, "chat_id=?", new String[]{chat_id}, null, null, null);
+        List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
+        while (cursor.moveToNext()) {
+            BaseMessage baseMessage=new BaseMessage();
+            baseMessage.messageType=cursor.getInt(cursor.getColumnIndex("messageType"));
+            baseMessage.sendTime=cursor.getString(cursor.getColumnIndex("sendTime"));
+            baseMessage.chat_id=cursor.getString(cursor.getColumnIndex("chat_id"));
+            TextMessage textMessage = new TextMessage();
+            textMessage.textMessageContent = cursor.getString(cursor.getColumnIndex("textMessageContent"));
+            textMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
+            textMessage.nodeId = cursor.getLong(cursor.getColumnIndex("nodeId"));
+            textMessage.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
+            textMessage.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
+            textMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
+            textMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+            baseMessage.userMessage=textMessage;
+            mDatas.add(baseMessage);
+        }
+        cursor.close();
+        db.close();
+        return mDatas;
+    }
+
 }
