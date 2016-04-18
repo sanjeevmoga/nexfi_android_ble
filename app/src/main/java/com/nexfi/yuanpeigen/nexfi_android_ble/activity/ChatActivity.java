@@ -125,8 +125,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_backPrivate:
-                Intent intent = new Intent(ChatActivity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
                 break;
             case R.id.iv_addPrivate:
@@ -205,5 +203,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             lv_chatPrivate.setAdapter(chatMessageAdapater);
         }
         chatMessageAdapater.notifyDataSetChanged();
+        if (mDataArrays.size() > 0) {
+            lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
+        }
     }
 }

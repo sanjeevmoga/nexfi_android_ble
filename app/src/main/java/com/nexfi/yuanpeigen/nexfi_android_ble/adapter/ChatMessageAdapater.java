@@ -48,7 +48,7 @@ public class ChatMessageAdapater extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 6;
+        return 10;
     }
 
     @Override
