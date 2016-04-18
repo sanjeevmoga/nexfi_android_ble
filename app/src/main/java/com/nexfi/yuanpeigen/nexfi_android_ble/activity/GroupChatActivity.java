@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
-import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.GroupChatAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
@@ -65,7 +64,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     private void initAdapter() {
         mDataArrays=bleDBDao.findGroupMsg();
-        groupChatAdapater=new GroupChatAdapater(ChatActivity.this,mDataArrays);
+        groupChatAdapater=new GroupChatAdapater(GroupChatActivity.this,mDataArrays);
         lv_chatGroup.setAdapter(groupChatAdapater);
     }
 
