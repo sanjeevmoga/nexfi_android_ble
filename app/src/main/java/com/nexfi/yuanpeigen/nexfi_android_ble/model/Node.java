@@ -37,7 +37,7 @@ public class Node implements TransportListener {
 
     private ArrayList<Link> links = new ArrayList<>();
     private int framesCount = 0;
-    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());//geng
+    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     TextMsgOperation textMsgOperation=new TextMsgOperation();
     ReceiveTextMsgListener mReceiveTextMsgListener=null;
     public void setReceiveTextMsgListener(ReceiveTextMsgListener receiveTextMsgListener) {
@@ -141,7 +141,7 @@ public class Node implements TransportListener {
             BaseMessage baseMessage = new BaseMessage();
             baseMessage.messageType = MessageType.REQUEST_USER_INFO;
             UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
-            baseMessage.entiyMessage = userMessage;
+            baseMessage.userMessage = userMessage;
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
             broadcastFrame(data);
         }
@@ -155,7 +155,7 @@ public class Node implements TransportListener {
         BaseMessage baseMessage = new BaseMessage();
         baseMessage.messageType = MessageType.OFFINE_USER_INFO;
         UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
-        baseMessage.entiyMessage = userMessage;
+        baseMessage.userMessage = userMessage;
         byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
         broadcastFrame(data);
 
@@ -172,7 +172,7 @@ public class Node implements TransportListener {
         }
         if (MessageType.REQUEST_USER_INFO==baseMessage.messageType) {
             //对方发过来的请求消息中包含有对方的信息,此时可以将对方的数据保存到本地数据库
-            UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
+            UserMessage userMsg= baseMessage.userMessage;
             userMsg.nodeId = link.getNodeId();
             Log.e("TAG",link.getNodeId()+"-----========##########################=========request-----------");
             if(!bleDBDao.findSameUserByUserId(userMsg.userId)){
@@ -182,14 +182,14 @@ public class Node implements TransportListener {
             //收到请求之后，将自己的信息封装发给对方
             BaseMessage baseMsg = new BaseMessage();
             baseMsg.messageType = MessageType.RESPONSE_USER_INFO;//反馈消息
-            UserMessage userM = bleDBDao.findUserByUserId(userSelfId);
-            baseMsg.entiyMessage = userM;
+            UserMessage userMg = bleDBDao.findUserByUserId(userSelfId);
+            baseMsg.userMessage = userMg;
             byte[] dataM = ObjectBytesUtils.ObjectToByte(baseMsg);
             link.sendFrame(dataM);
 //            Log.e("TAG", "send--------------------------------");
         } else if (MessageType.RESPONSE_USER_INFO==baseMessage.messageType) {
             //接收对方反馈的用户信息
-            UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
+            UserMessage userMsg= baseMessage.userMessage;
             userMsg.nodeId = link.getNodeId();//这是很重要的一步，将所连接的link跟连接的用户绑定，这样通过nodeId就可以找到对应的link,这样就可以给指定的人发消息了
             Log.e("TAG",link.getNodeId()+"-----========#########################################===========link.getNodeId()-----------");
                 //然后将接收到的用户信息保存到数据库
@@ -200,11 +200,11 @@ public class Node implements TransportListener {
 //            activity.refreshFrames("USER_ONLINE".getBytes());
         } else if (MessageType.OFFINE_USER_INFO==baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
-            UserMessage userMsg= (UserMessage) baseMessage.entiyMessage;
+            UserMessage userMsg= baseMessage.userMessage;
             bleDBDao.deleteUserByUserId(userMsg.userId);
 //            activity.refreshFrames("USER_ONLINE".getBytes());
         } else if (MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
-            TextMessage textMessage = (TextMessage) baseMessage.entiyMessage;
+            TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
             if (Debug.DEBUG) {
                 Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");

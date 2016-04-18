@@ -16,14 +16,18 @@ import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +55,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
     private final String USER_NODE_ID="nodeId";
+    private final String USER_ID="userId";
 
     private String userNick, userGender;
     private int userAge, userAvatar;
 
     private long nodeId;
     private Node node;
+    private String userId;
+    private String userSelfId;//用户自身
     TextMsgOperation textMsgOperation;
+    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
 
     private ChatMessageAdapater chatMessageAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
@@ -70,6 +78,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_chat);
         node = MainActivity.getNode();
         textMsgOperation=new TextMsgOperation();
+        userSelfId= UserInfo.initUserId(userSelfId, BleApplication.getContext());
 //        node=new Node(ChatActivity.this);
         initIntentData();
         initView();
@@ -108,7 +117,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         userGender = intent.getStringExtra(USER_GENDER);
         userAge = intent.getIntExtra(USER_AGE, 18);
         userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
-        nodeId=intent.getLongExtra(USER_NODE_ID,1234568L);
+        nodeId=intent.getLongExtra(USER_NODE_ID, 1234568L);
+        userId=intent.getStringExtra(USER_ID);
     }
 
     @Override
@@ -156,9 +166,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
             BaseMessage baseMessage=new BaseMessage();
             baseMessage.messageType= MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
+            UserMessage user=bleDBDao.findUserByUserId(userSelfId);
             TextMessage textMessage=new TextMessage();
             textMessage.textMessageContent=contString;
-            baseMessage.entiyMessage=textMessage;
+            textMessage.nodeId=user.nodeId;
+            textMessage.userId=user.userId;
+            textMessage.userNick=user.userNick;
+            textMessage.userGender=user.userGender;
+            textMessage.userAvatar=user.userAvatar;
+            textMessage.userAge=user.userAge;
+            baseMessage.userMessage=textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             Link link=node.getLink(nodeId);
             if (Debug.DEBUG) {
@@ -169,6 +186,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("TAG","---ChatActivity-------------sendMsg------------link------");
                 }
                 link.sendFrame(send_text_data);
+                setAdapter(baseMessage);
             }
         }
     }
@@ -177,6 +195,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void onReceiveTextMsg(Object obj) {
         Log.e("TAG", obj + "----===回调------------------------------9999");
         BaseMessage baseMesage= (BaseMessage) obj;
+        setAdapter(baseMesage);
+    }
+
+    private void setAdapter(BaseMessage baseMesage) {
         mDataArrays.add(baseMesage);
         if(null==chatMessageAdapater){
             chatMessageAdapater=new ChatMessageAdapater(ChatActivity.this,mDataArrays);

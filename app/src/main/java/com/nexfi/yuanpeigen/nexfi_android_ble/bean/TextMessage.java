@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by gengbaolong on 2016/4/13.
  */
-public class TextMessage extends EntiyMessage implements Serializable {
+public class TextMessage extends UserMessage implements Serializable {
     private static  final long serialVersionUID = 3L;
     public String textMessageContent;//文本消息
 }

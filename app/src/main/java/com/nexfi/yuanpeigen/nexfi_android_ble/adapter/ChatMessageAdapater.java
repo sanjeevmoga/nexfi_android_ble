@@ -16,7 +16,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 
 import java.util.List;
 
@@ -94,11 +93,10 @@ public class ChatMessageAdapater extends BaseAdapter {
         TextMessage textMessage=null;
         FileMessage fileMessage=null;
         if(msgType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || msgType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
-            textMessage = (TextMessage) entity.entiyMessage;
+            textMessage = (TextMessage) entity.userMessage;
         }else if(msgType==MessageType.MESSAGE_TYPE_SEND_FOLDER || msgType==MessageType.MESSAGE_TYPE_RECV_FOLDER || msgType==MessageType.MESSAGE_TYPE_SEND_IMAGE || msgType==MessageType.MESSAGE_TYPE_RECV_IMAGE){
-            fileMessage = (FileMessage) entity.entiyMessage;
+            fileMessage = (FileMessage) entity.userMessage;
         }
-        UserMessage user = (UserMessage) entity.entiyMessage;
 
 
         ViewHolder_chatSend viewHolder_chatSend = null;
@@ -197,17 +195,17 @@ public class ChatMessageAdapater extends BaseAdapter {
 
         switch (msgType) {
             case 7:
-                viewHolder_chatSend.iv_userhead_send_chat.setImageResource(user.userAvatar);
+                viewHolder_chatSend.iv_userhead_send_chat.setImageResource(textMessage.userAvatar);
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.sendTime);
                 viewHolder_chatSend.tv_chatText_send.setText(textMessage.textMessageContent);
                 break;
             case 8:
-                viewHolder_chatReceive.iv_userhead_receive_chat.setImageResource(user.userAvatar);
+                viewHolder_chatReceive.iv_userhead_receive_chat.setImageResource(textMessage.userAvatar);
                 viewHolder_chatReceive.tv_sendTime_receive.setText(entity.sendTime);
                 viewHolder_chatReceive.tv_chatText_receive.setText(textMessage.textMessageContent);
                 break;
             case 9:
-                viewHolder_sendFile.iv_userhead_send_folder.setImageResource(user.userAvatar);
+                viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
                 viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize);
@@ -225,7 +223,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 }
                 break;
             case 10:
-                viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(user.userAvatar);
+                viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
                 viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize);
@@ -252,7 +250,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     }
                 });
                 viewHolder_sendImage.iv_icon_send.setImageResource(fileMessage.fileIcon);
-                viewHolder_sendImage.iv_userhead_send_image.setImageResource(user.userAvatar);
+                viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
                     viewHolder_sendImage.pb_send.setVisibility(View.INVISIBLE);
@@ -269,7 +267,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     }
                 });
                 viewHolder_receiveImage.iv_icon_receive.setImageResource(fileMessage.fileIcon);
-                viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(user.userAvatar);
+                viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
                     viewHolder_receiveImage.pb_receive.setVisibility(View.INVISIBLE);

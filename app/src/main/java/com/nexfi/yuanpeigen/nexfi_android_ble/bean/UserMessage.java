@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by gengbaolong on 2016/4/13.
  */
-public class UserMessage extends EntiyMessage implements Serializable {
+public class UserMessage implements Serializable {
     private static  final long serialVersionUID = 4L;
     public String userId;
     public long nodeId;

@@ -42,7 +42,7 @@ public class BleDBDao {
         values.put("messageType",baseMessage.messageType);
         values.put("sendTime",baseMessage.sendTime);
         values.put("chat_id",baseMessage.chat_id);
-        baseMessage.entiyMessage=userMessage;
+        baseMessage.userMessage=userMessage;
         values.put("nodeId",userMessage.nodeId);
         values.put("userId", userMessage.userId);
         values.put("userNick", userMessage.userNick);

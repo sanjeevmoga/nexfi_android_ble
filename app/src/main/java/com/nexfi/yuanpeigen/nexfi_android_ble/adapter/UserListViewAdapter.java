@@ -29,6 +29,7 @@ public class UserListViewAdapter extends BaseAdapter {
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
     private final String USER_NODE_ID="nodeId";
+    private final String USER_ID="userId";
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -92,6 +93,7 @@ public class UserListViewAdapter extends BaseAdapter {
                 intent.putExtra(USER_GENDER, entity.userGender);
                 intent.putExtra(USER_NICK, entity.userNick);
                 intent.putExtra(USER_NODE_ID, entity.nodeId);
+                intent.putExtra(USER_ID,entity.userId);
                 Log.e("TAG",entity.nodeId+"------点击------");
                 mContext.startActivity(intent);
             }

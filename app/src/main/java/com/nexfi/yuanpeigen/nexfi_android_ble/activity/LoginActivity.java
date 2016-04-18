@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userMessage.userAge = userAge;
         userMessage.userGender = userGender;
         userMessage.userId = userIdOfFirstLogin;//每个用户第一次登录的时候生成一个用户id
-        baseMessage.entiyMessage = userMessage;
+        baseMessage.userMessage = userMessage;
         bleDBDao.add(baseMessage,userMessage);
     }
 
