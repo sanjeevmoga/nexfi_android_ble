@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,8 +30,8 @@ public class UserListViewAdapter extends BaseAdapter {
     private final String USER_AVATAR = "userAvatar";
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
-    private final String USER_NODE_ID="nodeId";
-    private final String USER_ID="userId";
+    private final String USER_NODE_ID = "nodeId";
+    private final String USER_ID = "userId";
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -78,6 +80,10 @@ public class UserListViewAdapter extends BaseAdapter {
         }
         holder.iv_userhead_icon.setImageResource(entity.userAvatar);
         holder.tv_username.setText(entity.userNick);
+        if (position == userMessageList.size() - 1) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.hyperspace_out);
+            holder.tv_username.setAnimation(animation);
+        }
         if (entity.userGender.equals(USER_SEX)) {
             holder.iv_sex.setImageResource(R.mipmap.img_male);
         } else {
@@ -93,8 +99,8 @@ public class UserListViewAdapter extends BaseAdapter {
                 intent.putExtra(USER_GENDER, entity.userGender);
                 intent.putExtra(USER_NICK, entity.userNick);
                 intent.putExtra(USER_NODE_ID, entity.nodeId);
-                intent.putExtra(USER_ID,entity.userId);
-                Log.e("TAG",entity.nodeId+"------点击------");
+                intent.putExtra(USER_ID, entity.userId);
+                Log.e("TAG", entity.nodeId + "------点击------");
                 mContext.startActivity(intent);
             }
         });
