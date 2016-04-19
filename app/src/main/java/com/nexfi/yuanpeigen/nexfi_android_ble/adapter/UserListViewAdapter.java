@@ -2,7 +2,6 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +99,6 @@ public class UserListViewAdapter extends BaseAdapter {
                 intent.putExtra(USER_NICK, entity.userNick);
                 intent.putExtra(USER_NODE_ID, entity.nodeId);
                 intent.putExtra(USER_ID, entity.userId);
-                Log.e("TAG", entity.nodeId + "------点击------");
                 mContext.startActivity(intent);
             }
         });

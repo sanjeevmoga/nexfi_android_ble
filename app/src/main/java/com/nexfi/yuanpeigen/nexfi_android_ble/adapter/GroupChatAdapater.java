@@ -88,6 +88,7 @@ public class GroupChatAdapater extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        convertView=null;
         final BaseMessage entity = coll.get(position);
         int msgType = entity.messageType;
         TextMessage textMessage=null;

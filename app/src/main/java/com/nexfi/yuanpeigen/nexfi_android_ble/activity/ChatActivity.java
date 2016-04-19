@@ -166,6 +166,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_sendMsgPrivate:
+                link = node.getLink(nodeId);
                 if (link != null) {
                     sendMsg();
                     et_chatPrivate.setText(null);
@@ -210,7 +211,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             textMessage.userAge = user.userAge;
             baseMessage.userMessage = textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-            link = node.getLink(nodeId);
             if (Debug.DEBUG) {
                 Log.e("TAG", link + "---ChatActivity-----" + nodeId);
             }
