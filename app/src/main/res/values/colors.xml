@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="textChecked">#F8401C</color>
     <color name="textNormol">#929292</color>
+    <color name="province_line_border">#D0D0D0</color>
 </resources>
