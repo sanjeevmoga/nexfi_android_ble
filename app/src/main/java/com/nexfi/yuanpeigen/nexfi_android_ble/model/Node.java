@@ -140,6 +140,7 @@ public class Node implements TransportListener {
             baseMessage.messageType = MessageType.REQUEST_USER_INFO;
             baseMessage.sendTime= TimeUtils.getNowTime();
             UserMessage userMessage=bleDBDao.findUserByUserId(userSelfId);
+            Log.e("TAG",userMessage.nodeId+"-------------connect---------------");
             baseMessage.userMessage = userMessage;
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
             broadcastFrame(data);

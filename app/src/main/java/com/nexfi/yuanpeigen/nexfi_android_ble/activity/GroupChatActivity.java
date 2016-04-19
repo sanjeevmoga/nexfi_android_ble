@@ -54,11 +54,11 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groupchat);
         node = MainActivity.getNode();
+        Log.e("TAG", node+"-------onCreate---------------------------------------------------");
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
         initView();
         initAdapter();
         setClicklistener();
-
     }
 
 
@@ -151,7 +151,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             node.broadcastFrame(send_text_data);
             setAdapter(baseMessage);
             if(Debug.DEBUG){
-                Log.e("TAG","-----group----------------------send============"+contString);
+                Log.e("TAG",user.nodeId+"-----group----------------------send============"+contString);
             }
         }
     }
@@ -162,10 +162,12 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onReceiveTextMsg(Object obj) {
+        Log.e("TAG", "-------------------------onReceiveTextMsg------------------------");
         BaseMessage baseMesage= (BaseMessage) obj;
         TextMessage textMessage= (TextMessage) baseMesage.userMessage;
         baseMesage.chat_id=textMessage.userId;
         setAdapter(baseMesage);//设置适配器
+        Log.e("TAG", "-------------------------onReceiveTextMsg-----3333333-------------------");
     }
 
 
@@ -181,5 +183,12 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         }
         TextMessage textMessage= (TextMessage) baseMesage.userMessage;
         bleDBDao.addGroupTextMsg(baseMesage, textMessage);//保存到数据库
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        Log.e("TAG",node+"-------group-----onDestroy-----------------------------");
+        super.onDestroy();
     }
 }

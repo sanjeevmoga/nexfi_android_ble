@@ -253,9 +253,7 @@ public class BleDBDao {
     }
 
     /**
-     * 根据会话id查找对应的单对单聊天记录
-     *
-     * @param chat_id
+     * 查找群聊聊天记录
      * @return
      */
     public List<BaseMessage> findGroupMsg() {
