@@ -165,7 +165,7 @@ public class BleDBDao {
 
 
     /**
-     * 保存单聊文本数据
+     * 保存单聊数据
      *
      * @param
      */
@@ -183,7 +183,8 @@ public class BleDBDao {
         values.put("userAge", textMessage.userAge);
         values.put("userGender", textMessage.userGender);
         values.put("userAvatar", textMessage.userAvatar);
-        db.insert("textP2PMs", null, values);
+        //TODO
+        db.insert("textP2PMess", null, values);
         db.close();
         if(Debug.DEBUG){
             Log.e("TAG", textMessage.userGender+"----dao---add=====------------"+textMessage.nodeId);
@@ -199,7 +200,7 @@ public class BleDBDao {
      */
     public List<BaseMessage> findMsgByChatId(String chat_id) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("textP2PMs", null, "chat_id=?", new String[]{chat_id}, null, null, null);
+        Cursor cursor = db.query("textP2PMess", null, "chat_id=?", new String[]{chat_id}, null, null, null);
         List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
         while (cursor.moveToNext()) {
             BaseMessage baseMessage=new BaseMessage();

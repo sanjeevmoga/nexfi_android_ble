@@ -60,7 +60,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:indeterminateDrawable="@drawable/progressbar" />
+                android:indeterminateDrawable="@drawable/progressbar"
+                android:indeterminate="false" />
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
@@ -204,8 +205,6 @@ public class Node implements TransportListener {
             if(Debug.DEBUG){
                 Log.e("TAG","----收到断开连接消息-----------------------------------------");
             }
-//            UserMessage userMsg= baseMessage.userMessage;
-//            bleDBDao.deleteUserByNodeId(userMsg.nodeId);
             if(Debug.DEBUG){
                 Log.e("TAG","----移除断开连接的用户-----------------------------------------");
             }
@@ -227,6 +226,12 @@ public class Node implements TransportListener {
             if(null!=mReceiveTextMsgListener){
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
+        }else if(MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE==baseMessage.messageType){//发送图片
+            FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
+            baseMessage.messageType=MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE;
+            if (Debug.DEBUG) {
+                Log.e("TAG", fileMessage.fileSize + "---fileMessage----接收到图片-------");
+            }
         }
     }
 
@@ -245,6 +250,4 @@ public class Node implements TransportListener {
         }
         return null;
     }
-
-    //endregion
 } // Node

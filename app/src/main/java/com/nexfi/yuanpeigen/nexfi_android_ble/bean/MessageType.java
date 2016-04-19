@@ -10,10 +10,10 @@ public class MessageType {
     public static int SINGLE_CHAT_MESSAGE_TYPE=4;//单聊
     public static int SEND_TEXT_ONLY_MESSAGE_TYPE=7;//文本消息
     public static int RECEIVE_TEXT_ONLY_MESSAGE_TYPE=8;//接收文本消息
-    public static final int MESSAGE_TYPE_SEND_FOLDER = 9;
-    public static final int MESSAGE_TYPE_RECV_FOLDER = 10;
-    public static final int MESSAGE_TYPE_SEND_IMAGE = 11;
-    public static final int MESSAGE_TYPE_RECV_IMAGE = 12;
+    public static final int SINGLE_SEND_FOLDER_MESSAGE_TYPE = 9;
+    public static final int SINGLE_RECV_FOLDER_MESSAGE_TYPE = 10;
+    public static final int SINGLE_SEND_IMAGE_MESSAGE_TYPE = 11;
+    public static final int SINGLE_RECV_IMAGE_MESSAGE_TYPE= 12;
     public static int GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE=13;//群聊发送
     public static int GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE=14;//群聊接收
     public static final int GROUP_SEND_FOLDER_MESSAGE_TYPE = 15;

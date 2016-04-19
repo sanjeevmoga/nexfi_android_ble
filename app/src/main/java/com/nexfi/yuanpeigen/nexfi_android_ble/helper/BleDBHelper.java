@@ -17,7 +17,9 @@ public class BleDBHelper extends SQLiteOpenHelper {
         //用户
         db.execSQL("create table userInfoma (_id integer primary key autoincrement,messageType Integer(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20))");
         //单聊
-        db.execSQL("create table textP2PMs (_id integer primary key autoincrement,messageType Integer(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20),textMessageContent varchar(20))");
+//        db.execSQL("create table textP2PMess(_id integer primary key autoincrement,messageType Integer(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20),textMessageContent varchar(20)," +
+//                "fileName varchar(20),fileSize varchar(20),fileIcon Integer(20),isPb Integer(20))");
+        db.execSQL("create table textP2PMess(_id integer primary key autoincrement,messageType Integer(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20),textMessageContent varchar(20))");
 //        //群聊
         db.execSQL("create table textGroupMs (_id integer primary key autoincrement,messageType Integer(20),sendTime varchar(20),chat_id varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar Integer(20),textMessageContent varchar(20))");
 

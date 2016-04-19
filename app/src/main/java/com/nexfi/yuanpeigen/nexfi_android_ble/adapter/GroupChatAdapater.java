@@ -217,7 +217,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
-                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize);
+                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize+"");
                 viewHolder_sendFile.iv_icon_send.setImageResource(fileMessage.fileIcon);
                 viewHolder_sendFile.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -235,7 +235,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
-                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize);
+                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize+"");
                 viewHolder_receiveFile.tv_userNick_receive_folder.setText(fileMessage.userNick);
                 viewHolder_receiveFile.iv_icon_receive.setImageResource(fileMessage.fileIcon);
                 //选择文件的打开方式

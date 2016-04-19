@@ -2,6 +2,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +23,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
@@ -30,10 +32,13 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +77,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private String userSelfId;//用户自身
     TextMsgOperation textMsgOperation;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
+    public static final int REQUEST_CODE_LOCAL_IMAGE = 1;//图片
 
     private ChatMessageAdapater chatMessageAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
@@ -168,14 +174,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_sendMsgPrivate:
                 link = node.getLink(nodeId);
                 if (link != null) {
-                    sendMsg();
+                    sendTextMsg();
                     et_chatPrivate.setText(null);
                 } else {
                     initDialogConnectedStatus();
                 }
                 break;
             case R.id.iv_pic:
-                showToast();
+                FileTransferUtils.selectPicFromLocal(ChatActivity.this);
                 break;
             case R.id.iv_camera:
                 showToast();
@@ -186,11 +192,72 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    /**
+     * 根据文件路径发送图片
+     * @param filePath
+     */
+    private void sendImageMsg(String filePath) {
+        File fileToSend = new File(filePath);
+        String tFileSize = ("" + fileToSend.length());//文件本身数据大小
+        link = node.getLink(nodeId);
+        if (link != null) {
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE;
+            baseMessage.sendTime = TimeUtils.getNowTime();
+            baseMessage.chat_id = userId;
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.fileSize = tFileSize;
+            fileMessage.fileName=filePath;
+            fileMessage.nodeId = user.nodeId;
+            fileMessage.userId = user.userId;
+            fileMessage.userNick = user.userNick;
+            fileMessage.userGender = user.userGender;
+            fileMessage.userAvatar = user.userAvatar;
+            fileMessage.userAge = user.userAge;
+            baseMessage.userMessage = fileMessage;
+            byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+            link.sendFrame(send_file_data);
+            Log.e("TAG", "------发送数据大小-------------------------------" + fileMessage.fileSize);
+            mDataArrays.add(baseMessage);
+            chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
+            lv_chatPrivate.setAdapter(chatMessageAdapater);
+            if(null!=chatMessageAdapater){
+                chatMessageAdapater.notifyDataSetChanged();
+            }
+            if (mDataArrays.size() > 0) {
+                lv_chatPrivate.setSelection(lv_chatPrivate.getCount() - 1);
+            }
+
+        } else {
+            initDialogConnectedStatus();
+        }
+    }
+
+
+    private void setImageAdapter(BaseMessage baseMesage) {
+        mDataArrays.add(baseMesage);
+        chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
+        lv_chatPrivate.setAdapter(chatMessageAdapater);
+        chatMessageAdapater.notifyDataSetChanged();
+        if (mDataArrays.size() > 0) {
+            lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
+        }
+        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+    }
+
+
+
     private void showToast() {
         Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
     }
 
-    private void sendMsg() {
+    /**
+     * 发送文本消息
+     */
+    private void sendTextMsg() {
         String contString = et_chatPrivate.getText().toString();
         if (contString.length() > 0) {
             if (Debug.DEBUG) {
@@ -244,12 +311,27 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
         TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
     }
 
 
     @Override
     public void run() {
         mAlertDialog.dismiss();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_LOCAL_IMAGE) {
+            if (data != null) {
+                Uri selectedImage = data.getData();
+                if (selectedImage != null) {
+                    final String selectPath = FileUtils.getPath(this, selectedImage);
+                    sendImageMsg(selectPath);
+                }
+            }
+        }
     }
 }
