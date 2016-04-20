@@ -1,6 +1,7 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 
 import android.app.Activity;
+import android.os.Environment;
 import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
@@ -19,6 +20,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import org.slf4j.impl.StaticLoggerBinder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Random;
@@ -229,8 +231,18 @@ public class Node implements TransportListener {
         }else if(MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE==baseMessage.messageType){//发送图片
             FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE;
+            String file_name = fileMessage.fileName;//文件名
+            File fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi");
+            if (!fileDir.exists()) {
+                fileDir.mkdirs();
+            }
+            String rece_file_path = fileDir + "/" + file_name;
+            fileMessage.fileSize=rece_file_path;
             if (Debug.DEBUG) {
                 Log.e("TAG", fileMessage.fileSize + "---fileMessage----接收到图片-------");
+            }
+            if(null!=mReceiveTextMsgListener){
+                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
         }
     }

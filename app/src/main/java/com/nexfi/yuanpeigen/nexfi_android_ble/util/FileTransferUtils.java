@@ -222,8 +222,8 @@ public class FileTransferUtils {
             newOpts.inJustDecodeBounds = false;
             int w = newOpts.outWidth;
             int h = newOpts.outHeight;
-            float hh = 800f;//
-            float ww = 480f;//
+            float hh = 100f;//
+            float ww = 100f;//
             int be = 1;
             if (w > h && w > ww) {
                 be = (int) (newOpts.outWidth / ww);
@@ -253,8 +253,10 @@ public class FileTransferUtils {
         newOpts.inJustDecodeBounds = false;
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
-        float hh = 800f;//
-        float ww = 480f;//
+//        float hh = 800f;//
+//        float ww = 480f;//
+        float hh = 100f;//
+        float ww = 100f;//
         int be = 1;
         if (w > h && w > ww) {
             be = (int) (newOpts.outWidth / ww);
@@ -272,6 +274,63 @@ public class FileTransferUtils {
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
 //      return compressBmpFromBmp(bitmap);//原来的方法调用了这个方法企图进行二次压缩
         //其实是无效的,大家尽管尝试
+        return bitmap;
+    }
+
+
+    public static int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+        // 源图片的高度和宽度
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            // 计算出实际宽高和目标宽高的比率
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+            // 一定都会大于等于目标的宽和高。
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        return inSampleSize;
+    }
+
+
+    public static Bitmap decodeSampledBitmapFromResource(byte[] bytes,
+                                                         int reqWidth, int reqHeight) {
+        // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+        // 调用上面定义的方法计算inSampleSize值
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        // 使用获取到的inSampleSize值再次解析图片
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);
+    }
+
+
+    public static Bitmap zoomBitmap(String path, int width, int height) {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        /*
+         * 官方文档这样写着“If set to true, the decoder will return null (no bitmap),
+         * but the out... fields will still be set, allowing the caller to query
+         * the bitmap without having to allocate the memory for its
+         * pixels.　”，大意就是说inJustDecodeBounds
+         * 为true时，不给出实际的Bitmap对象，但你可以得到这张图片的实际信息，这样你就可以计算缩放 比例了
+         */
+        options.inJustDecodeBounds = true; // 下面的bitmap暂时为null
+
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options); // 此时返回bitmap为空,不占用内存的
+        int multiple = (int) (options.outHeight / 54); // 计算缩放值
+        if (multiple <= 0) // 如果缩放值小于0，则不对图片进行缩放
+            multiple = 1;
+
+        options.inSampleSize = multiple;
+        options.inJustDecodeBounds = false; // 得到缩放后的Bitmap对象
+        bitmap = BitmapFactory.decodeFile(path, options); //
         return bitmap;
     }
 

@@ -200,6 +200,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void sendImageMsg(String filePath) {
         File fileToSend = new File(filePath);
         String tFileSize = ("" + fileToSend.length());//文件本身数据大小
+        String fileName=fileToSend.getName();//文件名
         link = node.getLink(nodeId);
         if (link != null) {
             BaseMessage baseMessage = new BaseMessage();
@@ -208,8 +209,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.chat_id = userId;
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             FileMessage fileMessage = new FileMessage();
-            fileMessage.fileSize = tFileSize;
-            fileMessage.fileName=filePath;
+            fileMessage.fileSize = filePath;
+            fileMessage.fileName=fileName;
             fileMessage.nodeId = user.nodeId;
             fileMessage.userId = user.userId;
             fileMessage.userNick = user.userNick;
@@ -295,8 +296,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void onReceiveTextMsg(Object obj) {
         Log.e("TAG", obj + "----===回调------------------------------9999");
         BaseMessage baseMesage = (BaseMessage) obj;
-        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-        baseMesage.chat_id = textMessage.userId;
+        if(baseMesage.messageType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+            TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+            baseMesage.chat_id = textMessage.userId;
+        }else if(baseMesage.messageType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
+            FileMessage fileMessage= (FileMessage) baseMesage.userMessage;
+            baseMesage.chat_id=fileMessage.userId;
+        }
         setAdapter(baseMesage);//设置适配器
     }
 
@@ -310,7 +316,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if (mDataArrays.size() > 0) {
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+//        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
 //        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
     }
 
@@ -329,6 +335,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 Uri selectedImage = data.getData();
                 if (selectedImage != null) {
                     final String selectPath = FileUtils.getPath(this, selectedImage);
+                    Log.e("TAG",selectPath+"----------------------------------selectPath------------------------");
                     sendImageMsg(selectPath);
                 }
             }

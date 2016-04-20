@@ -16,6 +16,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class ChatMessageAdapater extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 10;
+        return 15;
     }
 
     @Override
@@ -249,7 +250,11 @@ public class ChatMessageAdapater extends BaseAdapter {
                         Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
                     }
                 });
-                viewHolder_sendImage.iv_icon_send.setImageResource(R.drawable.chat_from_bg_normal);
+                //setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(),100,100));
+//                viewHolder_sendImage.iv_icon_send.setImageBitmap(BitmapFactory.decodeFile(fileMessage.fileName));
+                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
+//                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(), 100, 100));
+                viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
@@ -266,7 +271,8 @@ public class ChatMessageAdapater extends BaseAdapter {
                         Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
                     }
                 });
-                viewHolder_receiveImage.iv_icon_receive.setImageResource(R.drawable.chat_from_bg_normal);
+                viewHolder_receiveImage.iv_icon_receive.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
+                viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
