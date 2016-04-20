@@ -26,7 +26,6 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
     private String userNick;
 
     private final String USER_NICK = "userNick";
-    private final String ISINPUTUSERNAME = "isInputUsernameActivity";
 
 
     @Override
@@ -58,9 +57,6 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
-                Intent intent1 = new Intent(this, MainActivity.class);
-                intent1.putExtra(ISINPUTUSERNAME, true);
-                startActivity(intent1);
                 finish();
                 break;
             case R.id.tv_save:

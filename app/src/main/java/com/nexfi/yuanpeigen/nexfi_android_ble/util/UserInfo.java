@@ -10,7 +10,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
  */
 public class UserInfo {
 
-    public static int[] userHeadIcon = {R.mipmap.img_head_1, R.mipmap.img_head_2, R.mipmap.img_head_3, R.mipmap.img_head_5, R.mipmap.img_head_6, R.mipmap.img_head_7, R.mipmap.img_head_8, R.mipmap.img_head_9, R.mipmap.img_head_10, R.mipmap.img_head_11, R.mipmap.img_head_12, R.mipmap.img_head_13, R.mipmap.img_add};
+    public static int[] userHeadIcon = {R.mipmap.img_head_1, R.mipmap.img_head_2, R.mipmap.img_head_3,R.mipmap.img_head_4, R.mipmap.img_head_5, R.mipmap.img_head_6, R.mipmap.img_head_7, R.mipmap.img_head_8, R.mipmap.img_head_9, R.mipmap.img_head_10, R.mipmap.img_head_11, R.mipmap.img_head_12, R.mipmap.img_head_13};
 
     public static void saveUsername(Context context, String username) {
         SharedPreferences sp = context.getSharedPreferences("username", context.MODE_PRIVATE);

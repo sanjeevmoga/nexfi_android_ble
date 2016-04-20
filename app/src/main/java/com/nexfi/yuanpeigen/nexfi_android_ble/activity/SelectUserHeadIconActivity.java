@@ -24,7 +24,6 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
     private GridView gridView;
 
     private final String USER_AVATAR = "userAvatar";
-    private final String ISSELECT = "isSelectUserHeadIconActivity";
 
     private int userAvatar;
 
@@ -54,11 +53,7 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position != UserInfo.userHeadIcon.length - 1) {
                     userAvatar = UserInfo.userHeadIcon[position];
-                } else {
-                    Toast.makeText(SelectUserHeadIconActivity.this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }
@@ -68,9 +63,6 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
-                Intent intent1 = new Intent(this, MainActivity.class);
-                intent1.putExtra(ISSELECT, true);
-                startActivity(intent1);
                 finish();
                 break;
             case R.id.tv_save:

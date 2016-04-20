@@ -2,7 +2,6 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,15 +27,8 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private FragmentNearby fragmentNearby;
     private Handler mHandler;
 
-    private final String ISSELECT = "isSelectUserHeadIconActivity";
-    private final String ISINPUTUSERNAME = "isInputUsernameActivity";
-    private final String ISINPUTUSERAGE = "isInputUserAgeActivity";
 
     private boolean isExit;
-    private boolean isSelectUserHeadIconActivity = false;
-    private boolean isInputUsernameActivity = false;
-    private boolean isInputUserAgeActivity = false;
-
     private static Node node;
 
     @Override
@@ -74,21 +66,12 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         rb_nearby = (RadioButton) findViewById(R.id.rb_nearby);
         rb_mine = (RadioButton) findViewById(R.id.rb_mine);
         myTabRg.setOnCheckedChangeListener(this);
-        getIntentData();
+        initFragment();
     }
 
-    private void getIntentData() {
-        Intent intent = getIntent();
-        isSelectUserHeadIconActivity = intent.getBooleanExtra(ISSELECT, false);
-        isInputUsernameActivity = intent.getBooleanExtra(ISINPUTUSERNAME, false);
-        isInputUserAgeActivity = intent.getBooleanExtra(ISINPUTUSERAGE, false);
-        if (isSelectUserHeadIconActivity || isInputUserAgeActivity || isInputUsernameActivity) {
-            initMineFragment();
-            rb_mine.setChecked(true);
-        } else {
+    private void initFragment() {
             initNearByFragment();
             rb_nearby.setChecked(true);
-        }
     }
 
 

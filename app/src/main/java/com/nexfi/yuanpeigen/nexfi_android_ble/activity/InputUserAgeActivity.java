@@ -46,7 +46,6 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
     private int userAge;
 
     private final String USER_AGE = "userAge";
-    private final String ISINPUTUSERAGE = "isInputUserAgeActivity";
 
 
     @Override
@@ -81,9 +80,6 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
-                Intent intent1 = new Intent(this, MainActivity.class);
-                intent1.putExtra(ISINPUTUSERAGE, true);
-                startActivity(intent1);
                 finish();
                 break;
             case R.id.tv_save:
