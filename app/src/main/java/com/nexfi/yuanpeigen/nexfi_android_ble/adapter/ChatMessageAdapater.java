@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
@@ -42,8 +43,8 @@ public class ChatMessageAdapater extends BaseAdapter {
     private static final int MESSAGE_TYPE_SEND_IMAGE = 4;
     private static final int MESSAGE_TYPE_RECV_IMAGE = 5;
 
-    TextMessage textMessage=null;
-    FileMessage fileMessage=null;
+    TextMessage textMessage = null;
+    FileMessage fileMessage = null;
 
 
     public ChatMessageAdapater(Context context, List<BaseMessage> coll) {
@@ -99,9 +100,9 @@ public class ChatMessageAdapater extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         BaseMessage entity = coll.get(position);
         int msgType = entity.messageType;
-        if(msgType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || msgType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+        if (msgType == MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || msgType == MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
             textMessage = (TextMessage) entity.userMessage;
-        }else if(msgType==MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE || msgType==MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE || msgType==MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || msgType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
+        } else if (msgType == MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE || msgType == MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE || msgType == MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || msgType == MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE) {
             fileMessage = (FileMessage) entity.userMessage;
         }
 
@@ -215,12 +216,23 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
-                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize+"");
+                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize);
                 viewHolder_sendFile.iv_icon_send.setImageResource(fileMessage.fileIcon);
                 viewHolder_sendFile.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                        if (null != fileMessage.filePath) {
+                            Intent intent = FileUtils.openFile(fileMessage.filePath);
+                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----");
+                            try {
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mContext.startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 if (fileMessage.isPb == 0) {
@@ -233,13 +245,24 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
-                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize+"");
+                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize);
                 viewHolder_receiveFile.iv_icon_receive.setImageResource(fileMessage.fileIcon);
                 //选择文件的打开方式
                 viewHolder_receiveFile.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                        if (null != fileMessage.filePath) {
+                            Intent intent = FileUtils.openFile(fileMessage.filePath);
+                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----" + intent);
+                            try {
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mContext.startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 if (fileMessage.isPb == 0) {
@@ -248,23 +271,34 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_receiveFile.pb_receive.setVisibility(View.VISIBLE);
                 }
                 break;
-
             case 11:
                 viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = FileUtils.openFile(fileMessage.filePath);
-                        Log.e("TAG",fileMessage.filePath+"-------------------send路径-----");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity(intent);
+//                        Intent intent = FileUtils.openFile(fileMessage.filePath);
+//                        Log.e("TAG",fileMessage.filePath+"-------------------send路径-----");///storage/emulated/0/20160218_d968438a2434b62ba59dH7q5KEzTS6OH.png.jpg-------------------send路径-----
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        mContext.startActivity(intent);
+                        if (null != fileMessage.filePath) {
+                            Intent intent = FileUtils.openFile(fileMessage.filePath);
+                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----");
+                            try {
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            mContext.startActivity(intent);
+                        } else {
+                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 //setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(),100,100));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(BitmapFactory.decodeFile(fileMessage.fileName));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
-                Bitmap bitmap=null;
-                byte[] bys_send= Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
-                bitmap= FileTransferUtils.getPicFromBytes(bys_send);
+                Bitmap bitmap = null;
+                byte[] bys_send = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                bitmap = FileTransferUtils.getPicFromBytes(bys_send);
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
@@ -280,14 +314,23 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = FileUtils.openFile(fileMessage.filePath);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity(intent);
+                        if (null != fileMessage.filePath) {
+                            Intent intent = FileUtils.openFile(fileMessage.filePath);
+                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----" + intent);
+                            try {
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mContext.startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
-                Bitmap bitmap1=null;
-                byte[] bys_receive= Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
-                bitmap1=FileTransferUtils.getPicFromBytes(bys_receive);
+                Bitmap bitmap1 = null;
+                byte[] bys_receive = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                bitmap1 = FileTransferUtils.getPicFromBytes(bys_receive);
                 viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap1);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
@@ -303,12 +346,12 @@ public class ChatMessageAdapater extends BaseAdapter {
     }
 
 
-    static class ViewHolder_chatSend {
+    class ViewHolder_chatSend {
         public TextView tv_chatText_send, tv_sendTime_send;
         public ImageView iv_userhead_send_chat;
     }
 
-    static class ViewHolder_chatReceive {
+    class ViewHolder_chatReceive {
         public TextView tv_chatText_receive, tv_sendTime_receive;
         public ImageView iv_userhead_receive_chat;
     }

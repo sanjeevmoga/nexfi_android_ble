@@ -237,7 +237,7 @@ public class Node implements TransportListener {
             File fileDir=null;
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 //存在sd卡
-                fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/NexFi_ble");
+                fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/NexFi_ble/image");
                 if(!fileDir.exists()){
                     fileDir.mkdirs();
                 }
@@ -248,7 +248,30 @@ public class Node implements TransportListener {
             File file=FileTransferUtils.getFileFromBytes(bys_receive,rece_file_path);
             fileMessage.filePath=rece_file_path;
             if (Debug.DEBUG) {
-                Log.e("TAG", fileMessage.fileSize + "---fileMessage----接收到图片-------");
+                Log.e("TAG", file_name + "----接收到图片-------"+rece_file_path+"------file-------"+file.getPath());
+            }
+            if(null!=mReceiveTextMsgListener){
+                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
+            }
+        }else if(baseMessage.messageType==MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE){//发送文件
+            FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
+            baseMessage.messageType=MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE;
+            String file_name = fileMessage.fileName;//文件名
+            File fileDir=null;
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                //存在sd卡
+                fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/NexFi_ble/file");
+                if(!fileDir.exists()){
+                    fileDir.mkdirs();
+                }
+            }
+            String rece_file_path = fileDir + "/" + file_name;
+            byte[] bys_receive_data=Base64.decode(fileMessage.fileData, Base64.DEFAULT);
+            byte[] bys_receive_size=Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+            File file=FileTransferUtils.getFileFromBytes(bys_receive_data,rece_file_path);
+            fileMessage.filePath=rece_file_path;
+            if (Debug.DEBUG) {
+                Log.e("TAG", file_name + "----接收到文件-------"+rece_file_path+"------file-------"+file.getPath());
             }
             if(null!=mReceiveTextMsgListener){
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);

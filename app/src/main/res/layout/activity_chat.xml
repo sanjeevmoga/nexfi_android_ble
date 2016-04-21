@@ -131,7 +131,7 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:src="@mipmap/icon_pohoto" />
+                    android:src="@mipmap/icon_pic" />
 
                 <ImageView
                     android:id="@+id/iv_position"
@@ -162,7 +162,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="拍照"
+                    android:text="文件"
                     android:textSize="15sp" />
 
 

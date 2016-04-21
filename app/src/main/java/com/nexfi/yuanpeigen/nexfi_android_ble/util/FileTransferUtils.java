@@ -8,8 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 
-import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +26,6 @@ import java.util.Date;
 public class FileTransferUtils {
     public static final int REQUEST_CODE_SELECT_FILE = 2;
     public static final int REQUEST_CODE_LOCAL_IMAGE = 1;
-    static ChatMessageAdapater mListViewAdapater;
     public static final int SELECT_A_PICTURE=3;//4.4以下
     public static final int SELECET_A_PICTURE_AFTER_KIKAT=4;//4.4以上
 
@@ -336,40 +333,42 @@ public class FileTransferUtils {
 
     public static File scal(String path){
         File outputFile = new File(path);
-        long fileSize = outputFile.length();
-        final long fileMaxSize = 200 * 1024;
-        if (fileSize >= fileMaxSize) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(path, options);
-            int height = options.outHeight;
-            int width = options.outWidth;
+        if(null!=createImageFile()) {
+            long fileSize = outputFile.length();
+            final long fileMaxSize = 200 * 1024;
+            if (fileSize >= fileMaxSize) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(path, options);
+                int height = options.outHeight;
+                int width = options.outWidth;
 
-            double scale = Math.sqrt((float) fileSize / fileMaxSize);
-            options.outHeight = (int) (height / scale);
-            options.outWidth = (int) (width / scale);
-            options.inSampleSize = (int) (scale + 0.5);
-            options.inJustDecodeBounds = false;
+                double scale = Math.sqrt((float) fileSize / fileMaxSize);
+                options.outHeight = (int) (height / scale);
+                options.outWidth = (int) (width / scale);
+                options.inSampleSize = (int) (scale + 0.5);
+                options.inJustDecodeBounds = false;
 
-            Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-            outputFile = new File(createImageFile().getPath());
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(outputFile);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
-                fos.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            if (!bitmap.isRecycled()) {
-                bitmap.recycle();
-            }else{
-                File tempFile = outputFile;
+                Bitmap bitmap = BitmapFactory.decodeFile(path, options);
                 outputFile = new File(createImageFile().getPath());
-                copyFileUsingFileChannels(tempFile, outputFile);
-            }
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(outputFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
+                    fos.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                if (!bitmap.isRecycled()) {
+                    bitmap.recycle();
+                } else {
+                    File tempFile = outputFile;
+                    outputFile = new File(createImageFile().getPath());
+                    copyFileUsingFileChannels(tempFile, outputFile);
+                }
 
+            }
         }
         return outputFile;
 
@@ -379,20 +378,21 @@ public class FileTransferUtils {
 
     public static Uri createImageFile(){
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         String imageFileName = "JPEG_"+ timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
         File image = null;
+        Uri uri=null;
         try {
             image = File.createTempFile(imageFileName,".jpg", storageDir);
+            uri=Uri.fromFile(image);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         // Save a file: path for use with ACTION_VIEW intents
-        return Uri.fromFile(image);
+        return uri;
     }
     public static void copyFileUsingFileChannels(File source, File dest){
         FileChannel inputChannel = null;
@@ -416,5 +416,4 @@ public class FileTransferUtils {
             }
         }
     }
-
 }

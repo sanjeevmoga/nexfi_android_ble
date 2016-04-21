@@ -202,9 +202,10 @@ public class BleDBDao {
             values.put("filePath", fileMessage.filePath);
             values.put("fileIcon", fileMessage.fileIcon);
             values.put("fileSize", fileMessage.fileSize);
+            values.put("fileData",fileMessage.fileData);
             values.put("isPb", fileMessage.isPb);
         }
-        db.insert("textP2PMess1", null, values);
+        db.insert("textP2PMess2", null, values);
         db.close();
     }
 
@@ -217,7 +218,7 @@ public class BleDBDao {
      */
     public List<BaseMessage> findMsgByChatId(String chat_id) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("textP2PMess1", null, "chat_id=?", new String[]{chat_id}, null, null, null);
+        Cursor cursor = db.query("textP2PMess2", null, "chat_id=?", new String[]{chat_id}, null, null, null);
         List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
         while (cursor.moveToNext()) {
             BaseMessage baseMessage=new BaseMessage();
@@ -236,6 +237,7 @@ public class BleDBDao {
             fileMessage.fileName=cursor.getString(cursor.getColumnIndex("fileName"));
             fileMessage.fileSize=cursor.getString(cursor.getColumnIndex("fileSize"));
             fileMessage.fileIcon=cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.fileData=cursor.getString(cursor.getColumnIndex("fileData"));
             fileMessage.isPb=cursor.getInt(cursor.getColumnIndex("isPb"));
             baseMessage.userMessage=fileMessage;
             mDatas.add(baseMessage);

@@ -80,7 +80,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     TextMsgOperation textMsgOperation;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     public static final int REQUEST_CODE_LOCAL_IMAGE = 1;//图片
-
+    public static final int REQUEST_CODE_SELECT_FILE = 2;//文件
     public static final int SELECT_A_PICTURE=3;//4.4以下
     public static final int SELECET_A_PICTURE_AFTER_KIKAT=4;//4.4以上
 
@@ -188,8 +188,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.iv_pic:
                 FileTransferUtils.selectPicFromLocal(ChatActivity.this);
                 break;
-            case R.id.iv_camera:
-                showToast();
+            case R.id.iv_camera://改成发文件了
+                FileTransferUtils.selectFileFromLocal(ChatActivity.this);//选择本地文件
                 break;
             case R.id.iv_position:
                 showToast();
@@ -198,69 +198,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    /**
-     * 根据文件路径发送图片
-     * @param filePath
-     */
-    private void sendImageMsg(String filePath) {
-//        File fileToSend = new File(filePath);
-//        String tFileSize = ("" + fileToSend.length());//文件本身数据大小
-        File fileToSend =FileTransferUtils.scal(filePath);
-        byte[] bys=null;
-        try {
-            bys=FileTransferUtils.getBytesFromFile(fileToSend);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String tFileSize=Base64.encodeToString(bys, Base64.DEFAULT);
-        String fileName=fileToSend.getName();//文件名
-        link = node.getLink(nodeId);
-        if (link != null) {
-            BaseMessage baseMessage = new BaseMessage();
-            baseMessage.messageType = MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE;
-            baseMessage.sendTime = TimeUtils.getNowTime();
-            baseMessage.chat_id = userId;
-            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
-            FileMessage fileMessage = new FileMessage();
-            fileMessage.fileSize = tFileSize;
-            fileMessage.fileName=fileName;
-            fileMessage.filePath=filePath;
-            fileMessage.nodeId = user.nodeId;
-            fileMessage.userId = user.userId;
-            fileMessage.userNick = user.userNick;
-            fileMessage.userGender = user.userGender;
-            fileMessage.userAvatar = user.userAvatar;
-            fileMessage.userAge = user.userAge;
-            baseMessage.userMessage = fileMessage;
-            byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-            link.sendFrame(send_file_data);
-            setAdapter(baseMessage);
-//            mDataArrays.add(baseMessage);
-//            chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
-//            lv_chatPrivate.setAdapter(chatMessageAdapater);
-//            if(null!=chatMessageAdapater){
-//                chatMessageAdapater.notifyDataSetChanged();
-//            }
-//            if (mDataArrays.size() > 0) {
-//                lv_chatPrivate.setSelection(lv_chatPrivate.getCount() - 1);
-//            }
-        } else {
-            initDialogConnectedStatus();
-        }
-    }
-
-
-    private void setImageAdapter(BaseMessage baseMesage) {
-        mDataArrays.add(baseMesage);
-        chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
-        lv_chatPrivate.setAdapter(chatMessageAdapater);
-        chatMessageAdapater.notifyDataSetChanged();
-        if (mDataArrays.size() > 0) {
-            lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
-        }
-        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
-    }
 
 
 
@@ -274,9 +211,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void sendTextMsg() {
         String contString = et_chatPrivate.getText().toString();
         if (contString.length() > 0) {
-            if (Debug.DEBUG) {
-                Log.e("TAG", "---ChatActivity-------------sendMsg------------------");
-            }
             BaseMessage baseMessage = new BaseMessage();
             baseMessage.messageType = MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
             baseMessage.sendTime = TimeUtils.getNowTime();
@@ -305,6 +239,105 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    /**
+     * 根据图片路径发送图片
+     * @param filePath
+     */
+    private void sendImageMsg(String filePath) {
+        File fileToSend =FileTransferUtils.scal(filePath);
+        byte[] bys=null;
+        try {
+            bys=FileTransferUtils.getBytesFromFile(fileToSend);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(null==bys){
+            return;
+        }
+        String tFileSize=Base64.encodeToString(bys, Base64.DEFAULT);
+        String fileName=fileToSend.getName();//文件名
+        link = node.getLink(nodeId);
+        if (link != null) {
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE;
+            baseMessage.sendTime = TimeUtils.getNowTime();
+            baseMessage.chat_id = userId;
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.fileSize = tFileSize;
+            fileMessage.fileName=fileName;
+            fileMessage.filePath=filePath;
+            fileMessage.nodeId = user.nodeId;
+            fileMessage.userId = user.userId;
+            fileMessage.userNick = user.userNick;
+            fileMessage.userGender = user.userGender;
+            fileMessage.userAvatar = user.userAvatar;
+            fileMessage.userAge = user.userAge;
+            baseMessage.userMessage = fileMessage;
+            byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+            link.sendFrame(send_file_data);
+            setAdapter(baseMessage);
+        } else {
+            initDialogConnectedStatus();
+        }
+    }
+
+
+    /**
+     * 根据文件路径发送文件
+     * @param selectFilePath
+     */
+    private void sendFileMsg(String selectFilePath) {
+        File fileToSend =FileTransferUtils.scal(selectFilePath);
+        byte[] bys_send_file =null;
+        byte[] tsize = ("" + fileToSend.length()).getBytes();
+
+        for (int i = 0; i < tsize.length; i++) {
+            bys_send_file[i] = tsize[i];
+        }
+        bys_send_file[tsize.length] = 0;
+        if(null==bys_send_file){
+            return;
+        }
+        String tFileSize=Base64.encodeToString(bys_send_file, Base64.DEFAULT);//文件的大小
+        byte[] bys=null;
+        try {
+            bys=FileTransferUtils.getBytesFromFile(fileToSend);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String tFileData=Base64.encodeToString(bys, Base64.DEFAULT);//文件数据
+        String fileName=fileToSend.getName();//文件名
+        link = node.getLink(nodeId);
+        if (link != null) {
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE;
+            baseMessage.sendTime = TimeUtils.getNowTime();
+            baseMessage.chat_id = userId;
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.fileData= tFileData;
+            fileMessage.fileSize=tFileSize;
+            fileMessage.fileName=fileName;
+            fileMessage.filePath=selectFilePath;
+            fileMessage.nodeId = user.nodeId;
+            fileMessage.userId = user.userId;
+            fileMessage.userNick = user.userNick;
+            fileMessage.userGender = user.userGender;
+            fileMessage.userAvatar = user.userAvatar;
+            fileMessage.userAge = user.userAge;
+            baseMessage.userMessage = fileMessage;
+            byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+            link.sendFrame(send_file_data);
+            setAdapter(baseMessage);
+        } else {
+            initDialogConnectedStatus();
+        }
+    }
+
+
+
     @Override
     public void onReceiveTextMsg(Object obj) {
         Log.e("TAG", obj + "----===回调------------------------------9999");
@@ -313,6 +346,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             TextMessage textMessage = (TextMessage) baseMesage.userMessage;
             baseMesage.chat_id = textMessage.userId;
         }else if(baseMesage.messageType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
+            FileMessage fileMessage= (FileMessage) baseMesage.userMessage;
+            baseMesage.chat_id=fileMessage.userId;
+        }else if(baseMesage.messageType==MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE){
             FileMessage fileMessage= (FileMessage) baseMesage.userMessage;
             baseMesage.chat_id=fileMessage.userId;
         }
@@ -343,16 +379,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE_LOCAL_IMAGE) {
-//            if (data != null) {
-//                Uri selectedImage = data.getData();
-//                if (selectedImage != null) {
-//                    final String selectPath = FileUtils.getPath(this, selectedImage);
-//                    Log.e("TAG",selectPath+"----------------------------------selectPath------------------------");
-//                    sendImageMsg(selectPath);
-//                }
-//            }
-//        }
         String selectPath=null;
         if (requestCode == SELECT_A_PICTURE) {
             if (resultCode == RESULT_OK && null != data) {
@@ -360,16 +386,26 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 Uri selectedImage = data.getData();
                 selectPath = FileUtils.getPath(this, selectedImage);
                 sendImageMsg(selectPath);
-//                Bitmap bitmap = decodeUriAsBitmap(Uri.fromFile(new File(IMGPATH,
-//                        TMP_IMAGE_FILE_NAME)));
-//                mAcountHeadIcon.setImageBitmap(bitmap);
             }
         } else if (requestCode == SELECET_A_PICTURE_AFTER_KIKAT) {
             if (resultCode == RESULT_OK && null != data) {
                 Log.i("zou", "4.4以上上的");
                 selectPath = TUtils.getPath(ChatActivity.this, data.getData());
-                sendImageMsg(selectPath);
+                if(null!=selectPath){
+                    sendImageMsg(selectPath);
+                }
+            }
+        }else if(requestCode==REQUEST_CODE_SELECT_FILE){
+            if(data !=null){
+                Uri uri = data.getData();
+                if(null!=uri){
+                    String select_file_path = FileUtils.getPath(ChatActivity.this, uri);
+                    if(select_file_path!=null){
+                        sendFileMsg(select_file_path);
+                    }
+                }
             }
         }
     }
+
 }
