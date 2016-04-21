@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -202,8 +203,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
      * @param filePath
      */
     private void sendImageMsg(String filePath) {
-        File fileToSend = new File(filePath);
+//        File fileToSend = new File(filePath);
 //        String tFileSize = ("" + fileToSend.length());//文件本身数据大小
+        File fileToSend =FileTransferUtils.scal(filePath);
+        Log.e("TAG",fileToSend.getPath()+"---文件path--------------------------------------");
         byte[] bys=null;
         try {
             bys=FileTransferUtils.getBytesFromFile(fileToSend);
@@ -211,7 +214,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String tFileSize=new String(bys);
+        String tFileSize=Base64.encodeToString(bys, Base64.DEFAULT);
         String fileName=fileToSend.getName();//文件名
         link = node.getLink(nodeId);
         if (link != null) {
@@ -221,7 +224,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.chat_id = userId;
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             FileMessage fileMessage = new FileMessage();
-            fileMessage.fileSize = bys;
+            fileMessage.fileSize = tFileSize;
             fileMessage.fileName=fileName;
             fileMessage.filePath=filePath;
             fileMessage.nodeId = user.nodeId;

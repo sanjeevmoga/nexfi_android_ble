@@ -4,17 +4,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by gengbaolong on 2016/3/31.
@@ -25,161 +31,8 @@ public class FileTransferUtils {
     static ChatMessageAdapater mListViewAdapater;
     public static final int SELECT_A_PICTURE=3;//4.4以下
     public static final int SELECET_A_PICTURE_AFTER_KIKAT=4;//4.4以上
-    /**
-     * 分段发送文件
-     *
-     * @param path
-     */
-//    public static void sendFenDuanFile(final String path,final ChatActivity mContext,final String username,final int myAvatar,final String toIp,final String localIP,final int dynamicClientPort,final ListView lv,final List<ChatMessage> mDataArrays) {
-//
-//
-//        new Thread(){
-//            @Override
-//            public void run() {
-//                super.run();
-//
-//                String fileName;
-//                String fileSize;
-//                Socket s = null;
-//                OutputStream out = null;
-//
-//                String select_file_path = "";//发送端选择的文件的路径
 
-//                final File fileToSend = new File(path);
-//                fileSize = fileToSend.length()+"";
-//                fileName = fileToSend.getName();
-//                String extensionName = FileUtils.getExtensionName(fileName);
-//                ChatMessage chatMessage = new ChatMessage();
-//                chatMessage.isPb = 1;//让进度条显示
-//                if (fileName.length() > 23) {
-//                    fileName = fileName.substring(0, 23) + "\n" + fileName.substring(23);
-//                }
-//
-//                //设置文件图标
-//                FileUtils.setFileIcon(chatMessage, extensionName);
-//                //文件名
-//                byte[] file = new byte[256];//定义字节数组用于存储文件名字大小
-//                byte[] tfile = fileToSend.getName().getBytes();
-//                for (int i = 0; i < tfile.length; i++) {
-//                    file[i] = tfile[i];
-//                }
-//                file[tfile.length] = 0;
-//                try {
-//                    out.write(file, 0, file.length);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //文件本身大小
-//                byte[] size = new byte[64];
-//                byte[] tsize = ("" + fileToSend.length()).getBytes();
-//
-//                for (int i = 0; i < tsize.length; i++) {
-//                    size[i] = tsize[i];
-//                }
-//
-//                size[tsize.length] = 0;
-//                try {
-//                    out.write(size, 0, size.length);//灏嗘枃浠跺ぇ灏忎紶鍒版帴鏀剁
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //读取文件的输入流
-//                FileInputStream fis = null;
-//                byte[] buf = new byte[1024 * 1024];
-//                try {
-//                    fis = new FileInputStream(fileToSend);
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//                int readsize = 0;
-//                //TODO
-//                chatMessage.fromAvatar = myAvatar;
-//                chatMessage.msgType = 2;
-//                chatMessage.toIP = toIp;
-//                chatMessage.fromIP = localIP;
-//                chatMessage.sendTime = FileUtils.getDateNow();
-//                chatMessage.fromNick = username;
-//                chatMessage.type = "chatP2P";
-//                //TODO 2016/3/25 9:50
-//                chatMessage.chat_id = toIp;
-//                mDataArrays.add(chatMessage);
-//                //TODO
-//                mListViewAdapater = new ChatMessageAdapater(mContext, mDataArrays);
-//
-//                //发送开始就显示
-//                mContext.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        lv.setAdapter(mListViewAdapater);
-//                        if (mListViewAdapater != null) {
-//                            mListViewAdapater.notifyDataSetChanged();
-//                        }
-//                        if (mDataArrays.size() > 0) {
-//                            lv.setSelection(lv.getCount() - 1);
-//                        }
-//                    }
-//                });
-//                try {
-//                    while ((readsize = fis.read(buf, 0, buf.length)) > 0) {
-//                        out.write(buf, 0, readsize);
-//                        //等待一会
-//                        try {
-//                            Thread.sleep(10);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        out.flush();
-//                    }
-//                    out.close();
-//                    s.close();
-//                    //TODO
-//                    //隐藏进度条
-//                    chatMessage.isPb = 0;
-//                    mListViewAdapater = new ChatMessageAdapater(mContext, mDataArrays);
-//                    //发送完毕就隐藏
-//                    mContext.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            lv.setAdapter(mListViewAdapater);
-//                            if (mListViewAdapater != null) {
-//                                mListViewAdapater.notifyDataSetChanged();
-//                            }
-//                            if (mDataArrays.size() > 0) {
-//                                lv.setSelection(lv.getCount() - 1);
-//                            }
-//                        }
-//                    });
-//                    BuddyDao buddyDao = new BuddyDao(mContext);
-//                    buddyDao.addP2PMsg(chatMessage);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.start();
-//    }
-//
-//
-//    //开启文件接收端
-//    public static void startServer(final int dynamicServerPort,final ChatActivity context,final String toIp,final int avatar,final ListView lv,final List<ChatMessage> mDataArrays,final ChatMessageAdapater mListViewAdapater){
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                super.run();
-//                ServerSocket serversock = null;  //监听端口
-//                try {
-//                    serversock = new ServerSocket(dynamicServerPort);
-//                    while (true) {
-//                        Socket sock = serversock.accept();            //循环等待客户端连接
-//                        new Thread(new TcpFenDuanThread(sock,context,toIp,avatar,lv,mDataArrays,mListViewAdapater)).start(); //当成功连接客户端后开启新线程接收文件
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.start();
-//    }
+
 
 
     /**
@@ -459,6 +312,109 @@ public class FileTransferUtils {
             }
         }
         return ret;
+    }
+
+
+    public static Bitmap compressImage(Bitmap image) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while ( baos.toByteArray().length / 1024>100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
+    }
+
+
+
+
+
+    public static File scal(String path){
+        File outputFile = new File(path);
+        long fileSize = outputFile.length();
+        final long fileMaxSize = 200 * 1024;
+        if (fileSize >= fileMaxSize) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path, options);
+            int height = options.outHeight;
+            int width = options.outWidth;
+
+            double scale = Math.sqrt((float) fileSize / fileMaxSize);
+            options.outHeight = (int) (height / scale);
+            options.outWidth = (int) (width / scale);
+            options.inSampleSize = (int) (scale + 0.5);
+            options.inJustDecodeBounds = false;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+            outputFile = new File(createImageFile().getPath());
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(outputFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
+                fos.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            if (!bitmap.isRecycled()) {
+                bitmap.recycle();
+            }else{
+                File tempFile = outputFile;
+                outputFile = new File(createImageFile().getPath());
+                copyFileUsingFileChannels(tempFile, outputFile);
+            }
+
+        }
+        return outputFile;
+
+    }
+
+
+
+    public static Uri createImageFile(){
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd HHmmss").format(new Date());
+        String imageFileName = "JPEG_"+ timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = null;
+        try {
+            image = File.createTempFile(imageFileName,".jpg", storageDir);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        // Save a file: path for use with ACTION_VIEW intents
+        return Uri.fromFile(image);
+    }
+    public static void copyFileUsingFileChannels(File source, File dest){
+        FileChannel inputChannel = null;
+        FileChannel outputChannel = null;
+        try {
+            try {
+                inputChannel = new FileInputStream(source).getChannel();
+                outputChannel = new FileOutputStream(dest).getChannel();
+                outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } finally {
+            try {
+                inputChannel.close();
+                outputChannel.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
 }

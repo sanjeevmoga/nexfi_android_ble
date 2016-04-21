@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class FileMessage extends UserMessage implements Serializable {
     private static  final long serialVersionUID = 2L;
     public String fileName;
-    public byte[] fileSize;
+    public String fileSize;
     public int fileIcon;
     public int isPb;
     public String filePath;

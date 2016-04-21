@@ -1,7 +1,9 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 
 import java.util.List;
 
@@ -38,6 +41,9 @@ public class ChatMessageAdapater extends BaseAdapter {
     private static final int MESSAGE_TYPE_RECV_FOLDER = 3;
     private static final int MESSAGE_TYPE_SEND_IMAGE = 4;
     private static final int MESSAGE_TYPE_RECV_IMAGE = 5;
+
+    TextMessage textMessage=null;
+    FileMessage fileMessage=null;
 
 
     public ChatMessageAdapater(Context context, List<BaseMessage> coll) {
@@ -91,10 +97,8 @@ public class ChatMessageAdapater extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final BaseMessage entity = coll.get(position);
+        BaseMessage entity = coll.get(position);
         int msgType = entity.messageType;
-        TextMessage textMessage=null;
-        FileMessage fileMessage=null;
         if(msgType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || msgType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
             textMessage = (TextMessage) entity.userMessage;
         }else if(msgType==MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE || msgType==MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE || msgType==MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || msgType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
@@ -249,21 +253,18 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                        Intent intent = FileUtils.openFile(fileMessage.filePath);
+                        Log.e("TAG",fileMessage.filePath+"-------------------send路径-----");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
                     }
                 });
                 //setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(),100,100));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(BitmapFactory.decodeFile(fileMessage.fileName));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
                 Bitmap bitmap=null;
-//                try {
-//                    bitmap = BitmapFactory.decodeStream(BleApplication.getContext().getContentResolver()
-//                            .openInputStream(Uri.fromFile(new File(fileMessage.filePath))));
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-                bitmap= FileTransferUtils.getPicFromBytes(fileMessage.fileSize);
-                Log.e("TAG",bitmap+"-----------------------------------bitmap---------------------------------");
+                byte[] bys_send= Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                bitmap= FileTransferUtils.getPicFromBytes(bys_send);
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
@@ -279,18 +280,15 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
+                        Intent intent = FileUtils.openFile(fileMessage.filePath);
+                        Log.e("TAG",fileMessage.filePath+"-------------------receive路径-----");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
                     }
                 });
                 Bitmap bitmap1=null;
-//                try {
-//                    bitmap = BitmapFactory.decodeStream(BleApplication.getContext().getContentResolver()
-//                            .openInputStream(Uri.fromFile(new File(fileMessage.filePath))));
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-                bitmap1=FileTransferUtils.getPicFromBytes(fileMessage.fileSize);
-                Log.e("TAG",bitmap1+"-----------------------------------bitmap1---------------------------------");
+                byte[] bys_receive= Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                bitmap1=FileTransferUtils.getPicFromBytes(bys_receive);
                 viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap1);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
