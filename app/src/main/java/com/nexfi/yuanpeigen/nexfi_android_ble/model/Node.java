@@ -14,6 +14,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
@@ -21,6 +22,8 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Random;
@@ -232,12 +235,28 @@ public class Node implements TransportListener {
             FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE;
             String file_name = fileMessage.fileName;//文件名
-            File fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi");
-            if (!fileDir.exists()) {
-                fileDir.mkdirs();
+            File fileDir=null;
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                //存在sd卡
+                fileDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()+"/NexFi_ble");
+                if(!fileDir.exists()){
+                    fileDir.mkdirs();
+                }
+                Log.e("TAG",Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()+"/Pictures");
             }
             String rece_file_path = fileDir + "/" + file_name;
-            fileMessage.fileSize=rece_file_path;
+            File file=FileTransferUtils.getFileFromBytes(fileMessage.fileSize,rece_file_path);
+            File fileout = new File(rece_file_path);
+            FileOutputStream fos=null;
+            try {
+                fos = new FileOutputStream(fileout);
+                fos.write(fileMessage.fileSize);
+                fos.close();
+                Log.e("TAG","-----写数据------------------------------------------");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            fileMessage.filePath=file.getPath();
             if (Debug.DEBUG) {
                 Log.e("TAG", fileMessage.fileSize + "---fileMessage----接收到图片-------");
             }

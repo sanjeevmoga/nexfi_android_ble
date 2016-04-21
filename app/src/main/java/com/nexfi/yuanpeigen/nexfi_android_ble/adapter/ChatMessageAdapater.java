@@ -1,6 +1,8 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -252,8 +254,17 @@ public class ChatMessageAdapater extends BaseAdapter {
                 });
                 //setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(),100,100));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(BitmapFactory.decodeFile(fileMessage.fileName));
-                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
-//                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(), 100, 100));
+//                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
+                Bitmap bitmap=null;
+//                try {
+//                    bitmap = BitmapFactory.decodeStream(BleApplication.getContext().getContentResolver()
+//                            .openInputStream(Uri.fromFile(new File(fileMessage.filePath))));
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+                bitmap= FileTransferUtils.getPicFromBytes(fileMessage.fileSize);
+                Log.e("TAG",bitmap+"-----------------------------------bitmap---------------------------------");
+                viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
@@ -271,7 +282,16 @@ public class ChatMessageAdapater extends BaseAdapter {
                         Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
                     }
                 });
-                viewHolder_receiveImage.iv_icon_receive.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
+                Bitmap bitmap1=null;
+//                try {
+//                    bitmap = BitmapFactory.decodeStream(BleApplication.getContext().getContentResolver()
+//                            .openInputStream(Uri.fromFile(new File(fileMessage.filePath))));
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+                bitmap1=FileTransferUtils.getPicFromBytes(fileMessage.fileSize);
+                Log.e("TAG",bitmap1+"-----------------------------------bitmap1---------------------------------");
+                viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap1);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);

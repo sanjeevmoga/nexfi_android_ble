@@ -35,6 +35,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.TUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
@@ -78,6 +79,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     TextMsgOperation textMsgOperation;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     public static final int REQUEST_CODE_LOCAL_IMAGE = 1;//图片
+
+    public static final int SELECT_A_PICTURE=3;//4.4以下
+    public static final int SELECET_A_PICTURE_AFTER_KIKAT=4;//4.4以上
 
     private ChatMessageAdapater chatMessageAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
@@ -199,7 +203,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void sendImageMsg(String filePath) {
         File fileToSend = new File(filePath);
-        String tFileSize = ("" + fileToSend.length());//文件本身数据大小
+//        String tFileSize = ("" + fileToSend.length());//文件本身数据大小
+        byte[] bys=null;
+        try {
+            bys=FileTransferUtils.getBytesFromFile(fileToSend);
+            Log.e("TAG",new String(bys)+"---文件数据-----------");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String tFileSize=new String(bys);
         String fileName=fileToSend.getName();//文件名
         link = node.getLink(nodeId);
         if (link != null) {
@@ -209,8 +221,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.chat_id = userId;
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             FileMessage fileMessage = new FileMessage();
-            fileMessage.fileSize = filePath;
+            fileMessage.fileSize = bys;
             fileMessage.fileName=fileName;
+            fileMessage.filePath=filePath;
             fileMessage.nodeId = user.nodeId;
             fileMessage.userId = user.userId;
             fileMessage.userNick = user.userNick;
@@ -330,14 +343,32 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_LOCAL_IMAGE) {
-            if (data != null) {
+//        if (requestCode == REQUEST_CODE_LOCAL_IMAGE) {
+//            if (data != null) {
+//                Uri selectedImage = data.getData();
+//                if (selectedImage != null) {
+//                    final String selectPath = FileUtils.getPath(this, selectedImage);
+//                    Log.e("TAG",selectPath+"----------------------------------selectPath------------------------");
+//                    sendImageMsg(selectPath);
+//                }
+//            }
+//        }
+        String selectPath=null;
+        if (requestCode == SELECT_A_PICTURE) {
+            if (resultCode == RESULT_OK && null != data) {
+                Log.i("zou", "4.4以下的");
                 Uri selectedImage = data.getData();
-                if (selectedImage != null) {
-                    final String selectPath = FileUtils.getPath(this, selectedImage);
-                    Log.e("TAG",selectPath+"----------------------------------selectPath------------------------");
-                    sendImageMsg(selectPath);
-                }
+                selectPath = FileUtils.getPath(this, selectedImage);
+                sendImageMsg(selectPath);
+//                Bitmap bitmap = decodeUriAsBitmap(Uri.fromFile(new File(IMGPATH,
+//                        TMP_IMAGE_FILE_NAME)));
+//                mAcountHeadIcon.setImageBitmap(bitmap);
+            }
+        } else if (requestCode == SELECET_A_PICTURE_AFTER_KIKAT) {
+            if (resultCode == RESULT_OK && null != data) {
+                Log.i("zou", "4.4以上上的");
+                selectPath = TUtils.getPath(ChatActivity.this, data.getData());
+                sendImageMsg(selectPath);
             }
         }
     }

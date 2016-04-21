@@ -8,6 +8,14 @@ import android.os.Build;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by gengbaolong on 2016/3/31.
  */
@@ -15,6 +23,8 @@ public class FileTransferUtils {
     public static final int REQUEST_CODE_SELECT_FILE = 2;
     public static final int REQUEST_CODE_LOCAL_IMAGE = 1;
     static ChatMessageAdapater mListViewAdapater;
+    public static final int SELECT_A_PICTURE=3;//4.4以下
+    public static final int SELECET_A_PICTURE_AFTER_KIKAT=4;//4.4以上
     /**
      * 分段发送文件
      *
@@ -197,13 +207,16 @@ public class FileTransferUtils {
         if (Build.VERSION.SDK_INT < 19) {
             intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
-
+            context.startActivityForResult(intent, SELECT_A_PICTURE);
         } else {
             intent = new Intent(
                     Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//            intent = new Intent(Intent.ACTION_PICK);
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            context.startActivityForResult(intent, SELECET_A_PICTURE_AFTER_KIKAT);
         }
-        context.startActivityForResult(intent, REQUEST_CODE_LOCAL_IMAGE);
+//        context.startActivityForResult(intent, REQUEST_CODE_LOCAL_IMAGE);
     }
 
 
@@ -332,6 +345,120 @@ public class FileTransferUtils {
         options.inJustDecodeBounds = false; // 得到缩放后的Bitmap对象
         bitmap = BitmapFactory.decodeFile(path, options); //
         return bitmap;
+    }
+
+
+
+    public static Bitmap Bytes2Bimap(byte[] b) {
+        if (b.length != 0) {
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } else {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * 把一个文件转化为字节
+     * @param file
+     * @return byte[]
+     * @throws Exception
+     */
+    public static byte[] getByte(File file) throws Exception
+    {
+        byte[] bytes = null;
+        if(file!=null)
+        {
+            InputStream is = new FileInputStream(file);//
+            int length = (int) file.length();
+            if(length>Integer.MAX_VALUE) //当文件的长度超过了int的最大值
+            {
+                return null;
+            }
+            bytes = new byte[length];
+            int offset = 0;
+            int numRead = 0;
+            while(offset<bytes.length&&(numRead=is.read(bytes,offset,bytes.length-offset))>=0)
+            {
+                offset+=numRead;
+            }
+            //如果得到的字节长度和file实际的长度不一致就可能出错了
+            if(offset<bytes.length)
+            {
+                return null;
+            }
+            is.close();
+        }
+        return bytes;
+    }
+
+
+
+
+    /**
+     * 文件转化为字节数组
+     *
+     * @param file
+     * @return
+     */
+    public static byte[] getBytesFromFile(File file) {
+        byte[] ret = null;
+        try {
+            if (file == null) {
+                // log.error("helper:the file is null!");
+                return null;
+            }
+            FileInputStream in = new FileInputStream(file);
+            ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+            byte[] b = new byte[4096];
+            int n;
+            while ((n = in.read(b)) != -1) {
+                out.write(b, 0, n);
+            }
+            in.close();
+            out.close();
+            ret = out.toByteArray();
+        } catch (IOException e) {
+            // log.error("helper:get bytes from file process error!");
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+
+
+    /**
+     * 把字节数组保存为一个文件
+     *
+     * @param b
+     * @param outputFile
+     * @return
+     */
+    public static File getFileFromBytes(byte[] b, String outputFile) {
+        File ret = null;
+        BufferedOutputStream stream = null;
+        try {
+            ret = new File(outputFile);
+            FileOutputStream fstream = new FileOutputStream(ret);
+            stream = new BufferedOutputStream(fstream);
+            stream.write(b);
+        } catch (Exception e) {
+            // log.error("helper:get file from byte process error!");
+            e.printStackTrace();
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    // log.error("helper:get file from byte process error!");
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
     }
 
 }
