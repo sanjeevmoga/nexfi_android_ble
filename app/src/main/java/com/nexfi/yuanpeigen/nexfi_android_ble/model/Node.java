@@ -246,17 +246,7 @@ public class Node implements TransportListener {
             String rece_file_path = fileDir + "/" + file_name;
             byte[] bys_receive=Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
             File file=FileTransferUtils.getFileFromBytes(bys_receive,rece_file_path);
-//            File fileout = new File(rece_file_path);
-//            FileOutputStream fos=null;
-//            try {
-//                fos = new FileOutputStream(fileout);
-//                fos.write(fileMessage.fileSize);
-//                fos.close();
-//                Log.e("TAG","-----写数据------------------------------------------");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            fileMessage.filePath=file.getPath();
+            fileMessage.filePath=rece_file_path;
             if (Debug.DEBUG) {
                 Log.e("TAG", fileMessage.fileSize + "---fileMessage----接收到图片-------");
             }

@@ -206,11 +206,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 //        File fileToSend = new File(filePath);
 //        String tFileSize = ("" + fileToSend.length());//文件本身数据大小
         File fileToSend =FileTransferUtils.scal(filePath);
-        Log.e("TAG",fileToSend.getPath()+"---文件path--------------------------------------");
         byte[] bys=null;
         try {
             bys=FileTransferUtils.getBytesFromFile(fileToSend);
-            Log.e("TAG",new String(bys)+"---文件数据-----------");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -236,17 +234,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.userMessage = fileMessage;
             byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             link.sendFrame(send_file_data);
-            Log.e("TAG", "------发送数据大小-------------------------------" + fileMessage.fileSize);
-            mDataArrays.add(baseMessage);
-            chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
-            lv_chatPrivate.setAdapter(chatMessageAdapater);
-            if(null!=chatMessageAdapater){
-                chatMessageAdapater.notifyDataSetChanged();
-            }
-            if (mDataArrays.size() > 0) {
-                lv_chatPrivate.setSelection(lv_chatPrivate.getCount() - 1);
-            }
-
+            setAdapter(baseMessage);
+//            mDataArrays.add(baseMessage);
+//            chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
+//            lv_chatPrivate.setAdapter(chatMessageAdapater);
+//            if(null!=chatMessageAdapater){
+//                chatMessageAdapater.notifyDataSetChanged();
+//            }
+//            if (mDataArrays.size() > 0) {
+//                lv_chatPrivate.setSelection(lv_chatPrivate.getCount() - 1);
+//            }
         } else {
             initDialogConnectedStatus();
         }
@@ -262,7 +259,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
         TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
     }
 
 
@@ -332,8 +329,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if (mDataArrays.size() > 0) {
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-//        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
     }
 
 

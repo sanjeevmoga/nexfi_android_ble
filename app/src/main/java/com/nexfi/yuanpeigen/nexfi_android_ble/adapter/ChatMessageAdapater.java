@@ -281,7 +281,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         Intent intent = FileUtils.openFile(fileMessage.filePath);
-                        Log.e("TAG",fileMessage.filePath+"-------------------receive路径-----");
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                     }

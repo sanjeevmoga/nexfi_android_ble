@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.helper.BleDBHelper;
@@ -175,20 +177,35 @@ public class BleDBDao {
         values.put("messageType",baseMessage.messageType);
         values.put("sendTime",baseMessage.sendTime);
         values.put("chat_id",baseMessage.chat_id);
-        baseMessage.userMessage=textMessage;
-        values.put("nodeId",textMessage.nodeId);
-        values.put("userId", textMessage.userId);
-        values.put("textMessageContent",textMessage.textMessageContent);
-        values.put("userNick", textMessage.userNick);
-        values.put("userAge", textMessage.userAge);
-        values.put("userGender", textMessage.userGender);
-        values.put("userAvatar", textMessage.userAvatar);
-        //TODO
-        db.insert("textP2PMess", null, values);
-        db.close();
-        if(Debug.DEBUG){
-            Log.e("TAG", textMessage.userGender+"----dao---add=====------------"+textMessage.nodeId);
+        if(baseMessage.messageType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || baseMessage.messageType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+            baseMessage.userMessage=textMessage;
+            values.put("nodeId",textMessage.nodeId);
+            values.put("userId", textMessage.userId);
+            values.put("textMessageContent",textMessage.textMessageContent);
+            values.put("userNick", textMessage.userNick);
+            values.put("userAge", textMessage.userAge);
+            values.put("userGender", textMessage.userGender);
+            values.put("userAvatar", textMessage.userAvatar);
         }
+
+        //TODO
+        if(baseMessage.messageType== MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || baseMessage.messageType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
+            FileMessage fileMessage= (FileMessage) textMessage;
+            values.put("nodeId",fileMessage.nodeId);
+            values.put("userId", fileMessage.userId);
+            values.put("textMessageContent",fileMessage.textMessageContent);
+            values.put("userNick", fileMessage.userNick);
+            values.put("userAge", fileMessage.userAge);
+            values.put("userGender", fileMessage.userGender);
+            values.put("userAvatar", fileMessage.userAvatar);
+            values.put("fileName",fileMessage.fileName);
+            values.put("filePath", fileMessage.filePath);
+            values.put("fileIcon", fileMessage.fileIcon);
+            values.put("fileSize", fileMessage.fileSize);
+            values.put("isPb", fileMessage.isPb);
+        }
+        db.insert("textP2PMess1", null, values);
+        db.close();
     }
 
 
@@ -200,22 +217,27 @@ public class BleDBDao {
      */
     public List<BaseMessage> findMsgByChatId(String chat_id) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("textP2PMess", null, "chat_id=?", new String[]{chat_id}, null, null, null);
+        Cursor cursor = db.query("textP2PMess1", null, "chat_id=?", new String[]{chat_id}, null, null, null);
         List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
         while (cursor.moveToNext()) {
             BaseMessage baseMessage=new BaseMessage();
             baseMessage.messageType=cursor.getInt(cursor.getColumnIndex("messageType"));
             baseMessage.sendTime=cursor.getString(cursor.getColumnIndex("sendTime"));
             baseMessage.chat_id=cursor.getString(cursor.getColumnIndex("chat_id"));
-            TextMessage textMessage = new TextMessage();
-            textMessage.textMessageContent = cursor.getString(cursor.getColumnIndex("textMessageContent"));
-            textMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
-            textMessage.nodeId = cursor.getLong(cursor.getColumnIndex("nodeId"));
-            textMessage.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
-            textMessage.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
-            textMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
-            textMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
-            baseMessage.userMessage=textMessage;
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.textMessageContent = cursor.getString(cursor.getColumnIndex("textMessageContent"));
+            fileMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
+            fileMessage.nodeId = cursor.getLong(cursor.getColumnIndex("nodeId"));
+            fileMessage.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
+            fileMessage.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
+            fileMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
+            fileMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+            fileMessage.filePath=cursor.getString(cursor.getColumnIndex("filePath"));
+            fileMessage.fileName=cursor.getString(cursor.getColumnIndex("fileName"));
+            fileMessage.fileSize=cursor.getString(cursor.getColumnIndex("fileSize"));
+            fileMessage.fileIcon=cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.isPb=cursor.getInt(cursor.getColumnIndex("isPb"));
+            baseMessage.userMessage=fileMessage;
             mDatas.add(baseMessage);
         }
         cursor.close();
@@ -281,6 +303,10 @@ public class BleDBDao {
         db.close();
         return mDatas;
     }
+
+
+
+
 
 
 }
