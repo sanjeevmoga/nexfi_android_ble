@@ -215,15 +215,16 @@ public class Node implements TransportListener {
         } else if (MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType) {//文本消息
             TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
-            if (Debug.DEBUG) {
-                Log.e("TAG", textMessage.textMessageContent + "---baseMessage-------------textMessage------------------");
-            }
+            baseMessage.chat_id = textMessage.userId;//geng
+            bleDBDao.addP2PTextMsg(baseMessage, textMessage);//geng
             if(null!=mReceiveTextMsgListener){
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
         }else if(MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE==baseMessage.messageType){//群聊
             TextMessage textMessage = (TextMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
+            baseMessage.chat_id=textMessage.userId;
+            bleDBDao.addGroupTextMsg(baseMessage,textMessage);
             if (Debug.DEBUG) {
                 Log.e("TAG", textMessage.textMessageContent + "---group-------------textMessage------------------");
             }
@@ -233,6 +234,7 @@ public class Node implements TransportListener {
         }else if(MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE==baseMessage.messageType){//发送图片
             FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE;
+            baseMessage.chat_id = fileMessage.userId;
             String file_name = fileMessage.fileName;//文件名
             File fileDir=null;
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -241,7 +243,6 @@ public class Node implements TransportListener {
                 if(!fileDir.exists()){
                     fileDir.mkdirs();
                 }
-                Log.e("TAG",Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()+"/Pictures");
             }
             String rece_file_path = fileDir + "/" + file_name;
             byte[] bys_receive=Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
@@ -250,12 +251,14 @@ public class Node implements TransportListener {
             if (Debug.DEBUG) {
                 Log.e("TAG", file_name + "----接收到图片-------"+rece_file_path+"------file-------"+file.getPath());
             }
+            bleDBDao.addP2PTextMsg(baseMessage,fileMessage);
             if(null!=mReceiveTextMsgListener){
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
         }else if(baseMessage.messageType==MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE){//发送文件
             FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
             baseMessage.messageType=MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE;
+            baseMessage.chat_id = fileMessage.userId;
             String file_name = fileMessage.fileName;//文件名
             File fileDir=null;
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

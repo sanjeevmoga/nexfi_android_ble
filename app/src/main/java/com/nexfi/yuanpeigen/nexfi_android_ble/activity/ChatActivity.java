@@ -232,6 +232,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("TAG", "---ChatActivity-------------sendMsg------------link------");
                 }
                 link.sendFrame(send_text_data);
+                bleDBDao.addP2PTextMsg(baseMessage, textMessage);//geng
                 setAdapter(baseMessage);
             }
         }
@@ -276,6 +277,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.userMessage = fileMessage;
             byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             link.sendFrame(send_file_data);
+            bleDBDao.addP2PTextMsg(baseMessage, fileMessage);//geng
             setAdapter(baseMessage);
         } else {
             initDialogConnectedStatus();
@@ -342,7 +344,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     baseMessage.userMessage = fileMessage;
                     byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
                     link.sendFrame(send_file_data);
-                    Log.e("TAG","----发送文件-------"+readsize);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -356,18 +357,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onReceiveTextMsg(Object obj) {
-        Log.e("TAG", obj + "----===回调------------------------------9999");
         BaseMessage baseMesage = (BaseMessage) obj;
-        if (baseMesage.messageType == MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
-            TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-            baseMesage.chat_id = textMessage.userId;
-        } else if (baseMesage.messageType == MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE) {
-            FileMessage fileMessage = (FileMessage) baseMesage.userMessage;
-            baseMesage.chat_id = fileMessage.userId;
-        } else if (baseMesage.messageType == MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE) {
-            FileMessage fileMessage = (FileMessage) baseMesage.userMessage;
-            baseMesage.chat_id = fileMessage.userId;
-        }
+//        if (baseMesage.messageType == MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
+//            TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+//            baseMesage.chat_id = textMessage.userId;
+//        } else if (baseMesage.messageType == MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE) {
+//            FileMessage fileMessage = (FileMessage) baseMesage.userMessage;
+//            baseMesage.chat_id = fileMessage.userId;
+//        } else if (baseMesage.messageType == MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE) {
+//            FileMessage fileMessage = (FileMessage) baseMesage.userMessage;
+//            baseMesage.chat_id = fileMessage.userId;
+//        }
         setAdapter(baseMesage);//设置适配器
     }
 
@@ -381,8 +381,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if (mDataArrays.size() > 0) {
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库
+//        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
+//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库//现在把这一步放到Node中进行了
     }
 
 
@@ -423,5 +423,4 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 }

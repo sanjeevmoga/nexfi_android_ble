@@ -149,6 +149,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             baseMessage.userMessage = textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             node.broadcastFrame(send_text_data);
+            bleDBDao.addGroupTextMsg(baseMessage,textMessage);
             setAdapter(baseMessage);
             if(Debug.DEBUG){
                 Log.e("TAG",user.nodeId+"-----group----------------------send============"+contString);
@@ -162,12 +163,10 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onReceiveTextMsg(Object obj) {
-        Log.e("TAG", "-------------------------onReceiveTextMsg------------------------");
         BaseMessage baseMesage= (BaseMessage) obj;
-        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-        baseMesage.chat_id=textMessage.userId;
+//        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+//        baseMesage.chat_id=textMessage.userId;
         setAdapter(baseMesage);//设置适配器
-        Log.e("TAG", "-------------------------onReceiveTextMsg-----3333333-------------------");
     }
 
 
@@ -181,8 +180,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         if (mDataArrays.size() > 0) {
             lv_chatGroup.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-        bleDBDao.addGroupTextMsg(baseMesage, textMessage);//保存到数据库
+//        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+//        bleDBDao.addGroupTextMsg(baseMesage, textMessage);//保存到数据库
     }
 
 

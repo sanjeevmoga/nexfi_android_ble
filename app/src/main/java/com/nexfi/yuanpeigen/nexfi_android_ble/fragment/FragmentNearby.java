@@ -19,10 +19,12 @@ import android.widget.PopupWindow;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupChatActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
     private String userId;
 
     BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
+    Node node = MainActivity.getNode();//geng
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         initView(inflater, container);
