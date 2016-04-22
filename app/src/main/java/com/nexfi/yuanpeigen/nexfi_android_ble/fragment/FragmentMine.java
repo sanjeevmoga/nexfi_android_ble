@@ -128,17 +128,14 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
             case R.id.iv_userhead_icon:
                 Intent intent1 = new Intent(FragmentMine.this.getActivity(), SelectUserHeadIconActivity.class);
                 startActivityForResult(intent1, 1);
-                FragmentMine.this.getActivity().finish();
                 break;
             case R.id.layout_username:
                 Intent intent2 = new Intent(FragmentMine.this.getActivity(), InputUsernameActivity.class);
                 startActivityForResult(intent2, 2);
-                FragmentMine.this.getActivity().finish();
                 break;
             case R.id.layout_userAge:
                 Intent intent3 = new Intent(FragmentMine.this.getActivity(), InputUserAgeActivity.class);
                 startActivityForResult(intent3, 3);
-                FragmentMine.this.getActivity().finish();
                 break;
         }
     }
