@@ -249,7 +249,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
                 viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize);
                 viewHolder_receiveFile.iv_icon_receive.setImageResource(fileMessage.fileIcon);
-                //选择文件的打开方式
                 viewHolder_receiveFile.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -274,10 +273,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 }
                 break;
             case 11:
-                //setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(),100,100));
-//                viewHolder_sendImage.iv_icon_send.setImageBitmap(BitmapFactory.decodeFile(fileMessage.fileName));
-//                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
-                final byte[] bys_send = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                final byte[] bys_send = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
                 final Bitmap bitmap = FileTransferUtils.getPicFromBytes(bys_send);
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -291,22 +287,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        Intent intent = FileUtils.openFile(fileMessage.filePath);
-//                        Log.e("TAG",fileMessage.filePath+"-------------------send路径-----");///storage/emulated/0/20160218_d968438a2434b62ba59dH7q5KEzTS6OH.png.jpg-------------------send路径-----
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        mContext.startActivity(intent);
-//                        if (null != fileMessage.filePath) {
-//                            Intent intent = FileUtils.openFile(fileMessage.filePath);
-//                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----");
-//                            try {
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                            mContext.startActivity(intent);
-//                        } else {
-//                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
-//                        }
                         Intent intent = new  Intent(mContext, BigImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("bitmap", bys_send);
@@ -317,7 +297,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 break;
 
             case 12:
-                final byte[] bys_receive = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                final byte[] bys_receive = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
                 Bitmap bitmap_receive= FileTransferUtils.getPicFromBytes(bys_receive);
                 viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap_receive);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -331,18 +311,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        if (null != fileMessage.filePath) {
-//                            Intent intent = FileUtils.openFile(fileMessage.filePath);
-//                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----" + intent);
-//                            try {
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                mContext.startActivity(intent);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        } else {
-//                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
-//                        }
                         Intent intent = new  Intent(mContext, BigImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("bitmap", bys_receive);

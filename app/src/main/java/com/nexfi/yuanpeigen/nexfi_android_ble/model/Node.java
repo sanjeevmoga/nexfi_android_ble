@@ -245,7 +245,7 @@ public class Node implements TransportListener {
                 }
             }
             String rece_file_path = fileDir + "/" + file_name;
-            byte[] bys_receive=Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+            byte[] bys_receive=Base64.decode(fileMessage.fileData, Base64.DEFAULT);//文件数据
             File file=FileTransferUtils.getFileFromBytes(bys_receive,rece_file_path);
             fileMessage.filePath=rece_file_path;
             if (Debug.DEBUG) {

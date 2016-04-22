@@ -246,16 +246,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void sendImageMsg(String filePath) {
         File fileToSend = FileTransferUtils.scal(filePath);
-        byte[] bys = null;
+        byte[] send_file_size=(""+fileToSend.length()).getBytes();
+        String fileSize=Base64.encodeToString(send_file_size, Base64.DEFAULT);//文件长度
+        byte[] bys_send_data = null;
         try {
-            bys = FileTransferUtils.getBytesFromFile(fileToSend);
+            bys_send_data = FileTransferUtils.getBytesFromFile(fileToSend);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (null == bys) {
+        if (null == bys_send_data) {
             return;
         }
-        String tFileSize = Base64.encodeToString(bys, Base64.DEFAULT);
+        String tFileData = Base64.encodeToString(bys_send_data, Base64.DEFAULT);
         String fileName = fileToSend.getName();//文件名
         link = node.getLink(nodeId);
         if (link != null) {
@@ -265,7 +267,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.chat_id = userId;
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             FileMessage fileMessage = new FileMessage();
-            fileMessage.fileSize = tFileSize;
+            fileMessage.fileSize = fileSize;
+            fileMessage.fileData=tFileData;
             fileMessage.fileName = fileName;
             fileMessage.filePath = filePath;
             fileMessage.nodeId = user.nodeId;
@@ -293,7 +296,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void sendFileMsg(String selectFilePath) {
         File fileToSend = FileTransferUtils.scal(selectFilePath);
         byte[] bys_send_file = null;
-        byte[] tsize = ("" + fileToSend.length()).getBytes();
+        byte[] tsize = ("" + fileToSend.length()).getBytes();//文件长度
 
         for (int i = 0; i < tsize.length; i++) {
             bys_send_file[i] = tsize[i];
@@ -323,15 +326,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         BaseMessage baseMessage=null;
         if (link != null) {
             try {
-                while ((readsize = fis.read(bys_send, 0, bys_send.length)) > 0) {
-                    String tFileData_fen_duan = Base64.encodeToString(bys_send, 0, readsize, Base64.DEFAULT);//文件数据
+//                while ((readsize = fis.read(bys_send, 0, bys_send.length)) > 0) {
+//                    String tFileData_fen_duan = Base64.encodeToString(bys_send, 0, readsize, Base64.DEFAULT);//文件数据
                     baseMessage = new BaseMessage();
                     baseMessage.messageType = MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE;
                     baseMessage.sendTime = TimeUtils.getNowTime();
                     baseMessage.chat_id = userId;
                     UserMessage user = bleDBDao.findUserByUserId(userSelfId);
                     FileMessage fileMessage = new FileMessage();
-                    fileMessage.fileData = tFileData_fen_duan;
+                    fileMessage.fileData = tFileData;
                     fileMessage.fileSize = tFileSize;
                     fileMessage.fileName = fileName;
                     fileMessage.filePath = selectFilePath;
@@ -344,11 +347,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     baseMessage.userMessage = fileMessage;
                     byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
                     link.sendFrame(send_file_data);
-                }
+//                }
             }catch (Exception e){
                 e.printStackTrace();
             }
-//            setAdapter(baseMessage);
+            setAdapter(baseMessage);
         } else {
             initDialogConnectedStatus();
         }

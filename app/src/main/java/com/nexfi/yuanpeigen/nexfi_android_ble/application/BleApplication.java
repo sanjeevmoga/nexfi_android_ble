@@ -3,6 +3,8 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.application;
 import android.app.Application;
 import android.content.Context;
 
+import com.nexfi.yuanpeigen.nexfi_android_ble.uncaught.CrashHandler;
+
 import java.util.UUID;
 
 /**
@@ -15,7 +17,10 @@ public class BleApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+
         mContext=getApplicationContext();
+        CrashHandler handler=new CrashHandler(mContext);
+        handler.init(mContext);
     }
 
     public static Context getContext(){
