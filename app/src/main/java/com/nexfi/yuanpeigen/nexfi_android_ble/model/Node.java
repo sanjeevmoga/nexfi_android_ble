@@ -266,16 +266,23 @@ public class Node implements TransportListener {
                 }
             }
             String rece_file_path = fileDir + "/" + file_name;
-            byte[] bys_receive_data=Base64.decode(fileMessage.fileData, Base64.DEFAULT);
+            byte[] bys_receive_data=null;
             byte[] bys_receive_size=Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+
+            for (int i = 0; i < bys_receive_size.length; i++) {
+                bys_receive_data=Base64.decode(fileMessage.fileData, Base64.DEFAULT);
+                if (Debug.DEBUG) {
+                    Log.e("TAG", i + "----接收到文件长度-------");
+                }
+            }
             File file=FileTransferUtils.getFileFromBytes(bys_receive_data,rece_file_path);
             fileMessage.filePath=rece_file_path;
             if (Debug.DEBUG) {
                 Log.e("TAG", file_name + "----接收到文件-------"+rece_file_path+"------file-------"+file.getPath());
             }
-            if(null!=mReceiveTextMsgListener){
-                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
-            }
+//            if(null!=mReceiveTextMsgListener){
+//                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
+//            }
         }
     }
 

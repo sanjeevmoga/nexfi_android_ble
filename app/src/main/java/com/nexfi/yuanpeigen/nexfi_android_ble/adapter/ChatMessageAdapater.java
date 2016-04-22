@@ -1,5 +1,6 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.BigImageActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
@@ -272,33 +274,11 @@ public class ChatMessageAdapater extends BaseAdapter {
                 }
                 break;
             case 11:
-                viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        Intent intent = FileUtils.openFile(fileMessage.filePath);
-//                        Log.e("TAG",fileMessage.filePath+"-------------------send路径-----");///storage/emulated/0/20160218_d968438a2434b62ba59dH7q5KEzTS6OH.png.jpg-------------------send路径-----
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        mContext.startActivity(intent);
-                        if (null != fileMessage.filePath) {
-                            Intent intent = FileUtils.openFile(fileMessage.filePath);
-                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----");
-                            try {
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            mContext.startActivity(intent);
-                        } else {
-                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
                 //setImageBitmap(FileTransferUtils.decodeSampledBitmapFromResource(fileMessage.fileSize.getBytes(),100,100));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(BitmapFactory.decodeFile(fileMessage.fileName));
 //                viewHolder_sendImage.iv_icon_send.setImageBitmap(FileTransferUtils.compressImageFromFile(fileMessage.fileSize));
-                Bitmap bitmap = null;
-                byte[] bys_send = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
-                bitmap = FileTransferUtils.getPicFromBytes(bys_send);
+                final byte[] bys_send = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                final Bitmap bitmap = FileTransferUtils.getPicFromBytes(bys_send);
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
@@ -308,30 +288,38 @@ public class ChatMessageAdapater extends BaseAdapter {
                 } else {
                     viewHolder_sendImage.pb_send.setVisibility(View.VISIBLE);
                 }
+                viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+//                        Intent intent = FileUtils.openFile(fileMessage.filePath);
+//                        Log.e("TAG",fileMessage.filePath+"-------------------send路径-----");///storage/emulated/0/20160218_d968438a2434b62ba59dH7q5KEzTS6OH.png.jpg-------------------send路径-----
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        mContext.startActivity(intent);
+//                        if (null != fileMessage.filePath) {
+//                            Intent intent = FileUtils.openFile(fileMessage.filePath);
+//                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----");
+//                            try {
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            mContext.startActivity(intent);
+//                        } else {
+//                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
+//                        }
+                        Intent intent = new  Intent(mContext, BigImageActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("bitmap", bys_send);
+                        mContext.startActivity(intent);
+                        ((Activity)mContext).overridePendingTransition(R.anim.img_scale_in,R.anim.img_scale_out);
+                    }
+                });
                 break;
 
             case 12:
-                viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (null != fileMessage.filePath) {
-                            Intent intent = FileUtils.openFile(fileMessage.filePath);
-                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----" + intent);
-                            try {
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mContext.startActivity(intent);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                Bitmap bitmap1 = null;
-                byte[] bys_receive = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
-                bitmap1 = FileTransferUtils.getPicFromBytes(bys_receive);
-                viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap1);
+                final byte[] bys_receive = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
+                Bitmap bitmap_receive= FileTransferUtils.getPicFromBytes(bys_receive);
+                viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap_receive);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
@@ -340,6 +328,28 @@ public class ChatMessageAdapater extends BaseAdapter {
                 } else {
                     viewHolder_receiveImage.pb_receive.setVisibility(View.VISIBLE);
                 }
+                viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+//                        if (null != fileMessage.filePath) {
+//                            Intent intent = FileUtils.openFile(fileMessage.filePath);
+//                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----" + intent);
+//                            try {
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                mContext.startActivity(intent);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        } else {
+//                            Toast.makeText(BleApplication.getContext(), "无法访问", Toast.LENGTH_SHORT).show();
+//                        }
+                        Intent intent = new  Intent(mContext, BigImageActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("bitmap", bys_receive);
+                        mContext.startActivity(intent);
+                        ((Activity)mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
+                    }
+                });
                 break;
         }
         return convertView;

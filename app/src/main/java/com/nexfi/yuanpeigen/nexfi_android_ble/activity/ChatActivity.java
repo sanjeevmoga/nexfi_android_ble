@@ -41,6 +41,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,8 +82,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     public static final int REQUEST_CODE_LOCAL_IMAGE = 1;//图片
     public static final int REQUEST_CODE_SELECT_FILE = 2;//文件
-    public static final int SELECT_A_PICTURE=3;//4.4以下
-    public static final int SELECET_A_PICTURE_AFTER_KIKAT=4;//4.4以上
+    public static final int SELECT_A_PICTURE = 3;//4.4以下
+    public static final int SELECET_A_PICTURE_AFTER_KIKAT = 4;//4.4以上
 
     private ChatMessageAdapater chatMessageAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
@@ -198,9 +199,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
-
-
     private void showToast() {
         Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
     }
@@ -242,21 +240,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 根据图片路径发送图片
+     *
      * @param filePath
      */
     private void sendImageMsg(String filePath) {
-        File fileToSend =FileTransferUtils.scal(filePath);
-        byte[] bys=null;
+        File fileToSend = FileTransferUtils.scal(filePath);
+        byte[] bys = null;
         try {
-            bys=FileTransferUtils.getBytesFromFile(fileToSend);
+            bys = FileTransferUtils.getBytesFromFile(fileToSend);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(null==bys){
+        if (null == bys) {
             return;
         }
-        String tFileSize=Base64.encodeToString(bys, Base64.DEFAULT);
-        String fileName=fileToSend.getName();//文件名
+        String tFileSize = Base64.encodeToString(bys, Base64.DEFAULT);
+        String fileName = fileToSend.getName();//文件名
         link = node.getLink(nodeId);
         if (link != null) {
             BaseMessage baseMessage = new BaseMessage();
@@ -266,8 +265,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             FileMessage fileMessage = new FileMessage();
             fileMessage.fileSize = tFileSize;
-            fileMessage.fileName=fileName;
-            fileMessage.filePath=filePath;
+            fileMessage.fileName = fileName;
+            fileMessage.filePath = filePath;
             fileMessage.nodeId = user.nodeId;
             fileMessage.userId = user.userId;
             fileMessage.userNick = user.userNick;
@@ -286,71 +285,88 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 根据文件路径发送文件
+     *
      * @param selectFilePath
      */
     private void sendFileMsg(String selectFilePath) {
-        File fileToSend =FileTransferUtils.scal(selectFilePath);
-        byte[] bys_send_file =null;
+        File fileToSend = FileTransferUtils.scal(selectFilePath);
+        byte[] bys_send_file = null;
         byte[] tsize = ("" + fileToSend.length()).getBytes();
 
         for (int i = 0; i < tsize.length; i++) {
             bys_send_file[i] = tsize[i];
         }
         bys_send_file[tsize.length] = 0;
-        if(null==bys_send_file){
+        if (null == bys_send_file) {
             return;
         }
-        String tFileSize=Base64.encodeToString(bys_send_file, Base64.DEFAULT);//文件的大小
-        byte[] bys=null;
+        String tFileSize = Base64.encodeToString(bys_send_file, Base64.DEFAULT);//文件的大小
+        byte[] bys = null;
         try {
-            bys=FileTransferUtils.getBytesFromFile(fileToSend);
+            bys = FileTransferUtils.getBytesFromFile(fileToSend);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String tFileData=Base64.encodeToString(bys, Base64.DEFAULT);//文件数据
-        String fileName=fileToSend.getName();//文件名
+        String tFileData = Base64.encodeToString(bys, Base64.DEFAULT);//文件数据
+        String fileName = fileToSend.getName();//文件名
         link = node.getLink(nodeId);
+        byte[] bys_send = new byte[1024];
+        int readsize = 0;
+        FileInputStream fis=null;
+        try {
+            fis = new FileInputStream(fileToSend);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        BaseMessage baseMessage=null;
         if (link != null) {
-            BaseMessage baseMessage = new BaseMessage();
-            baseMessage.messageType = MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE;
-            baseMessage.sendTime = TimeUtils.getNowTime();
-            baseMessage.chat_id = userId;
-            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
-            FileMessage fileMessage = new FileMessage();
-            fileMessage.fileData= tFileData;
-            fileMessage.fileSize=tFileSize;
-            fileMessage.fileName=fileName;
-            fileMessage.filePath=selectFilePath;
-            fileMessage.nodeId = user.nodeId;
-            fileMessage.userId = user.userId;
-            fileMessage.userNick = user.userNick;
-            fileMessage.userGender = user.userGender;
-            fileMessage.userAvatar = user.userAvatar;
-            fileMessage.userAge = user.userAge;
-            baseMessage.userMessage = fileMessage;
-            byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-            link.sendFrame(send_file_data);
-            setAdapter(baseMessage);
+            try {
+                while ((readsize = fis.read(bys_send, 0, bys_send.length)) > 0) {
+                    String tFileData_fen_duan = Base64.encodeToString(bys_send, 0, readsize, Base64.DEFAULT);//文件数据
+                    baseMessage = new BaseMessage();
+                    baseMessage.messageType = MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE;
+                    baseMessage.sendTime = TimeUtils.getNowTime();
+                    baseMessage.chat_id = userId;
+                    UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+                    FileMessage fileMessage = new FileMessage();
+                    fileMessage.fileData = tFileData_fen_duan;
+                    fileMessage.fileSize = tFileSize;
+                    fileMessage.fileName = fileName;
+                    fileMessage.filePath = selectFilePath;
+                    fileMessage.nodeId = user.nodeId;
+                    fileMessage.userId = user.userId;
+                    fileMessage.userNick = user.userNick;
+                    fileMessage.userGender = user.userGender;
+                    fileMessage.userAvatar = user.userAvatar;
+                    fileMessage.userAge = user.userAge;
+                    baseMessage.userMessage = fileMessage;
+                    byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+                    link.sendFrame(send_file_data);
+                    Log.e("TAG","----发送文件-------"+readsize);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+//            setAdapter(baseMessage);
         } else {
             initDialogConnectedStatus();
         }
     }
 
 
-
     @Override
     public void onReceiveTextMsg(Object obj) {
         Log.e("TAG", obj + "----===回调------------------------------9999");
         BaseMessage baseMesage = (BaseMessage) obj;
-        if(baseMesage.messageType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+        if (baseMesage.messageType == MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
             TextMessage textMessage = (TextMessage) baseMesage.userMessage;
             baseMesage.chat_id = textMessage.userId;
-        }else if(baseMesage.messageType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
-            FileMessage fileMessage= (FileMessage) baseMesage.userMessage;
-            baseMesage.chat_id=fileMessage.userId;
-        }else if(baseMesage.messageType==MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE){
-            FileMessage fileMessage= (FileMessage) baseMesage.userMessage;
-            baseMesage.chat_id=fileMessage.userId;
+        } else if (baseMesage.messageType == MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE) {
+            FileMessage fileMessage = (FileMessage) baseMesage.userMessage;
+            baseMesage.chat_id = fileMessage.userId;
+        } else if (baseMesage.messageType == MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE) {
+            FileMessage fileMessage = (FileMessage) baseMesage.userMessage;
+            baseMesage.chat_id = fileMessage.userId;
         }
         setAdapter(baseMesage);//设置适配器
     }
@@ -379,7 +395,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String selectPath=null;
+        String selectPath = null;
         if (requestCode == SELECT_A_PICTURE) {
             if (resultCode == RESULT_OK && null != data) {
                 Log.i("zou", "4.4以下的");
@@ -391,16 +407,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             if (resultCode == RESULT_OK && null != data) {
                 Log.i("zou", "4.4以上上的");
                 selectPath = TUtils.getPath(ChatActivity.this, data.getData());
-                if(null!=selectPath){
+                if (null != selectPath) {
                     sendImageMsg(selectPath);
                 }
             }
-        }else if(requestCode==REQUEST_CODE_SELECT_FILE){
-            if(data !=null){
+        } else if (requestCode == REQUEST_CODE_SELECT_FILE) {
+            if (data != null) {
                 Uri uri = data.getData();
-                if(null!=uri){
+                if (null != uri) {
                     String select_file_path = FileUtils.getPath(ChatActivity.this, uri);
-                    if(select_file_path!=null){
+                    if (select_file_path != null) {
                         sendFileMsg(select_file_path);
                     }
                 }
