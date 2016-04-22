@@ -25,6 +25,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
+import com.nexfi.yuanpeigen.nexfi_android_ble.smoothprogressbar.SmoothProgressBar;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
@@ -40,24 +41,33 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
     private View View_pop, view_share, v_parent;
     private LinearLayout addChatRoom, share;
     private ListView lv_userlist;
+    private SmoothProgressBar myProgressbar;
     private List<UserMessage> userMessageList = new ArrayList<UserMessage>();
     private UserListViewAdapter userListViewAdapter;
 
     private String userId;
 
-    BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
+    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     Node node = MainActivity.getNode();//geng
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         initView(inflater, container);
         setClickListener();
         initData();
-
+        initMyprogressbar();
         getActivity().getContentResolver().registerContentObserver(
                 Uri.parse("content://www.nexfi_ble_user.com"), true,
                 new Myobserve(new Handler()));
 
         return v_parent;
+    }
+
+    private void initMyprogressbar() {
+        if (userMessageList.size() != 0) {
+            myProgressbar.progressiveStop();
+            myProgressbar.setVisibility(View.GONE);
+        }
     }
 
 
@@ -69,6 +79,8 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         @Override
         public void onChange(boolean selfChange) {
             initData();
+            myProgressbar.progressiveStop();
+            myProgressbar.setVisibility(View.GONE);
             super.onChange(selfChange);
         }
     }
@@ -76,15 +88,15 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
 
     private void initData() {
         userMessageList.clear();//每次取之前清空
-        userId=UserInfo.initUserId(userId, BleApplication.getContext());
+        userId = UserInfo.initUserId(userId, BleApplication.getContext());
         //从数据库中获取用户数据
-        userMessageList=bleDBDao.findAllUsers(userId);
+        userMessageList = bleDBDao.findAllUsers(userId);
         userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
         lv_userlist.setAdapter(userListViewAdapter);
-        if(userListViewAdapter!=null){
+        if (userListViewAdapter != null) {
             userListViewAdapter.notifyDataSetChanged();
         }
-        Log.e("TAG","--=initData======---------------------------------===FragmentNearby");
+        Log.e("TAG", "--=initData======---------------------------------===FragmentNearby");
 //        if(null!=userMessageList && userMessageList.size()>0){
 //            if(Debug.DEBUG){
 //                Log.e("TAG",userMessageList.size()+"------获取的用户人数");
@@ -112,6 +124,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         addChatRoom = (LinearLayout) View_pop.findViewById(R.id.add_chatRoom);
         share = (LinearLayout) View_pop.findViewById(R.id.share);
         iv_add = (ImageView) v_parent.findViewById(R.id.iv_add);
+        myProgressbar = (SmoothProgressBar) v_parent.findViewById(R.id.myProgressbar);
     }
 
 
