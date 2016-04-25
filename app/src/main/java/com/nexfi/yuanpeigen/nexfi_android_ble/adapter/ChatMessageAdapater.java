@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.BigImageActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
@@ -25,12 +26,13 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.List;
 
 
 /**
- * Created by Mark on 2016/4/17.
+ * Created by Mark on 2016/4/25.
  */
 public class ChatMessageAdapater extends BaseAdapter {
 
@@ -38,15 +40,12 @@ public class ChatMessageAdapater extends BaseAdapter {
     private List<BaseMessage> coll;
     private Context mContext;
 
-    private static final int MESSAGE_TYPE_SEND_CHAT_CONTEXT = 0;
-    private static final int MESSAGE_TYPE_RECV_CHAT_CONTEXT = 1;
-    private static final int MESSAGE_TYPE_SEND_FOLDER = 2;
-    private static final int MESSAGE_TYPE_RECV_FOLDER = 3;
-    private static final int MESSAGE_TYPE_SEND_IMAGE = 4;
-    private static final int MESSAGE_TYPE_RECV_IMAGE = 5;
+    private final String USER_NODE_ID = "nodeId";
+    private final String USER_ID = "userId";
 
-    TextMessage textMessage = null;
-    FileMessage fileMessage = null;
+
+    private TextMessage textMessage = null;
+    private FileMessage fileMessage = null;
 
 
     public ChatMessageAdapater(Context context, List<BaseMessage> coll) {
@@ -206,16 +205,59 @@ public class ChatMessageAdapater extends BaseAdapter {
         switch (msgType) {
             case 7:
                 viewHolder_chatSend.iv_userhead_send_chat.setImageResource(textMessage.userAvatar);
+
+                viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, UserInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(UserInfo.USER_AGE_CHATSEND, textMessage.userAge);
+                        intent.putExtra(UserInfo.USER_AVATAR_CHATSEND, textMessage.userAvatar);
+                        intent.putExtra(UserInfo.USER_GENDER_CHATSEND, textMessage.userGender);
+                        intent.putExtra(UserInfo.USER_NICK_CHATSEND, textMessage.userNick);
+                        intent.putExtra(UserInfo.IS_CHATSEND, UserInfo.is_chatsend);
+                        mContext.startActivity(intent);
+                    }
+                });
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.sendTime);
                 viewHolder_chatSend.tv_chatText_send.setText(textMessage.textMessageContent);
                 break;
             case 8:
                 viewHolder_chatReceive.iv_userhead_receive_chat.setImageResource(textMessage.userAvatar);
+
+                viewHolder_chatReceive.iv_userhead_receive_chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, UserInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(UserInfo.USER_AGE_CHATRECEIVE, textMessage.userAge);
+                        intent.putExtra(UserInfo.USER_AVATAR_CHATRECEIVE, textMessage.userAvatar);
+                        intent.putExtra(UserInfo.USER_GENDER_CHATRECEIVE, textMessage.userGender);
+                        intent.putExtra(UserInfo.USER_NICK_CHATRECEIVE, textMessage.userNick);
+                        intent.putExtra(UserInfo.IS_CHATRECEIVE, UserInfo.is_chatreceive);
+                        mContext.startActivity(intent);
+                    }
+                });
+
                 viewHolder_chatReceive.tv_sendTime_receive.setText(entity.sendTime);
                 viewHolder_chatReceive.tv_chatText_receive.setText(textMessage.textMessageContent);
                 break;
             case 9:
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
+
+                viewHolder_sendFile.iv_userhead_send_folder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, UserInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(UserInfo.USER_AGE_SENDFILE, textMessage.userAge);
+                        intent.putExtra(UserInfo.USER_AVATAR_SENDFILE, textMessage.userAvatar);
+                        intent.putExtra(UserInfo.USER_GENDER_SENDFILE, textMessage.userGender);
+                        intent.putExtra(UserInfo.USER_NICK_SENDFILE, textMessage.userNick);
+                        intent.putExtra(UserInfo.IS_SENDFILE, UserInfo.is_sendfile);
+                        mContext.startActivity(intent);
+                    }
+                });
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
                 viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize);
@@ -245,6 +287,21 @@ public class ChatMessageAdapater extends BaseAdapter {
                 break;
             case 10:
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
+
+                viewHolder_receiveFile.iv_userhead_receive_folder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, UserInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(UserInfo.USER_AGE_RECEIVEFILE, textMessage.userAge);
+                        intent.putExtra(UserInfo.USER_AVATAR_RECEIVEFILE, textMessage.userAvatar);
+                        intent.putExtra(UserInfo.USER_GENDER_RECEIVEFILE, textMessage.userGender);
+                        intent.putExtra(UserInfo.USER_NICK_RECEIVEFILE, textMessage.userNick);
+                        intent.putExtra(UserInfo.IS_RECEIVEFILE, UserInfo.is_receivefile);
+                        mContext.startActivity(intent);
+                    }
+                });
+
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
                 viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize);
@@ -278,6 +335,21 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
+
+                viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, UserInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(UserInfo.USER_AGE_SENDIMAGE, textMessage.userAge);
+                        intent.putExtra(UserInfo.USER_AVATAR_SENDIMAGE, textMessage.userAvatar);
+                        intent.putExtra(UserInfo.USER_GENDER_SENDIMAGE, textMessage.userGender);
+                        intent.putExtra(UserInfo.USER_NICK_SENDIMAGE, textMessage.userNick);
+                        intent.putExtra(UserInfo.IS_SENDIMAGE, UserInfo.is_sendimage);
+                        mContext.startActivity(intent);
+                    }
+                });
+
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
                     viewHolder_sendImage.pb_send.setVisibility(View.INVISIBLE);
@@ -287,21 +359,37 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new  Intent(mContext, BigImageActivity.class);
+                        Intent intent = new Intent(mContext, BigImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("bitmap", bys_send);
                         mContext.startActivity(intent);
-                        ((Activity)mContext).overridePendingTransition(R.anim.img_scale_in,R.anim.img_scale_out);
+                        ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
                     }
                 });
                 break;
 
             case 12:
                 final byte[] bys_receive = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
-                Bitmap bitmap_receive= FileTransferUtils.getPicFromBytes(bys_receive);
+                Bitmap bitmap_receive = FileTransferUtils.getPicFromBytes(bys_receive);
                 viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap_receive);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
+
+                viewHolder_receiveImage.iv_userhead_receive_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, UserInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(UserInfo.USER_AGE_RECEIVEIMAGE, textMessage.userAge);
+                        intent.putExtra(UserInfo.USER_AVATAR_RECEIVEIMAGE, textMessage.userAvatar);
+                        intent.putExtra(UserInfo.USER_GENDER_RECEIVEIMAGE, textMessage.userGender);
+                        intent.putExtra(UserInfo.USER_NICK_RECEIVEIMAGE, textMessage.userNick);
+                        intent.putExtra(UserInfo.IS_RECEIVEIMAGE, UserInfo.is_receiveimage);
+                        mContext.startActivity(intent);
+                    }
+                });
+
+
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
                     viewHolder_receiveImage.pb_receive.setVisibility(View.INVISIBLE);
@@ -311,11 +399,11 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new  Intent(mContext, BigImageActivity.class);
+                        Intent intent = new Intent(mContext, BigImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("bitmap", bys_receive);
                         mContext.startActivity(intent);
-                        ((Activity)mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
+                        ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
                     }
                 });
                 break;

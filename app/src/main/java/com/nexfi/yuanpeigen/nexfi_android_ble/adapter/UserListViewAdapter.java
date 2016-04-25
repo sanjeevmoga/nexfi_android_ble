@@ -27,11 +27,13 @@ import java.util.List;
  */
 public class UserListViewAdapter extends BaseAdapter {
 
+
     private final String USER_AGE = "userAge";
     private final String USER_AVATAR = "userAvatar";
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
     private final String USER_NODE_ID = "nodeId";
+    private final String IS_USERLIST = "is_userlist";
     private final String USER_ID = "userId";
 
     private Context mContext;
@@ -39,11 +41,15 @@ public class UserListViewAdapter extends BaseAdapter {
     private List<UserMessage> userMessageList;
     private final String USER_SEX = "男";
 
-    public UserListViewAdapter(Context context, List<UserMessage> userMessageList) {
+    private boolean isNewUser = false;
+
+    public UserListViewAdapter(Context context, List<UserMessage> userMessageList,boolean isNewUser) {
         mInflater = LayoutInflater.from(context);
         this.mContext = context;
         this.userMessageList = userMessageList;
+        this.isNewUser=isNewUser;
     }
+
 
     @Override
     public int getCount() {
@@ -61,6 +67,7 @@ public class UserListViewAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
+
 
 
     @Override
@@ -81,10 +88,12 @@ public class UserListViewAdapter extends BaseAdapter {
         }
         holder.iv_userhead_icon.setImageResource(entity.userAvatar);
         holder.tv_username.setText(entity.userNick);
-        if (position == userMessageList.size() - 1) {
+
+        if (isNewUser&&position==userMessageList.size()-1) {
             Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.hyperspace_out);
             holder.tv_username.setAnimation(animation);
         }
+
         if (entity.userGender.equals(USER_SEX)) {
             holder.iv_sex.setImageResource(R.mipmap.img_male);
         } else {
@@ -115,6 +124,7 @@ public class UserListViewAdapter extends BaseAdapter {
                 intent.putExtra(USER_AVATAR, entity.userAvatar);
                 intent.putExtra(USER_GENDER, entity.userGender);
                 intent.putExtra(USER_NICK, entity.userNick);
+                intent.putExtra(IS_USERLIST, true);
                 mContext.startActivity(intent);
             }
         });

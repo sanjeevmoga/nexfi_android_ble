@@ -6,11 +6,55 @@ import android.content.SharedPreferences;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 
 /**
- * Created by Mark on 2016/4/14.
+ * Created by Mark on 2016/4/25.
  */
 public class UserInfo {
 
-    public static int[] userHeadIcon = {R.mipmap.img_head_1, R.mipmap.img_head_2, R.mipmap.img_head_3,R.mipmap.img_head_4, R.mipmap.img_head_5, R.mipmap.img_head_6, R.mipmap.img_head_7, R.mipmap.img_head_8, R.mipmap.img_head_9, R.mipmap.img_head_10, R.mipmap.img_head_11, R.mipmap.img_head_12, R.mipmap.img_head_13};
+    public static final String USER_AGE_CHATSEND = "userAgeChatSend";
+    public static final String USER_AVATAR_CHATSEND = "userAvatarChatSend";
+    public static final String USER_GENDER_CHATSEND = "userGenderChatSend";
+    public static final String USER_NICK_CHATSEND = "userNickChatSend";
+
+    public static final String USER_AGE_CHATRECEIVE = "userAgeChatReceive";
+    public static final String USER_AVATAR_CHATRECEIVE = "userAvatarChatReceive";
+    public static final String USER_GENDER_CHATRECEIVE = "userGenderChatReceive";
+    public static final String USER_NICK_CHATRECEIVE = "userNickChatReceive";
+
+    public static final String USER_AGE_SENDFILE = "userAgeSendFile";
+    public static final String USER_AVATAR_SENDFILE = "userAvatarSendFile";
+    public static final String USER_GENDER_SENDFILE = "userGenderSendFile";
+    public static final String USER_NICK_SENDFILE = "userNickChatSendFile";
+
+    public static final String USER_AGE_RECEIVEFILE = "userAgeReceiveFile";
+    public static final String USER_AVATAR_RECEIVEFILE = "userAvatarReceiveFile";
+    public static final String USER_GENDER_RECEIVEFILE = "userGenderReceiveFile";
+    public static final String USER_NICK_RECEIVEFILE = "userNickChatReceiveFile";
+
+    public static final String USER_AGE_SENDIMAGE = "userAgeSendImage";
+    public static final String USER_AVATAR_SENDIMAGE = "userAvatarSendImage";
+    public static final String USER_GENDER_SENDIMAGE = "userGenderSendImage";
+    public static final String USER_NICK_SENDIMAGE = "userNickChatSendImage";
+
+    public static final String USER_AGE_RECEIVEIMAGE = "userAgeReceiveImage";
+    public static final String USER_AVATAR_RECEIVEIMAGE = "userAvatarReceiveImage";
+    public static final String USER_GENDER_RECEIVEIMAGE = "userGenderReceiveImage";
+    public static final String USER_NICK_RECEIVEIMAGE = "userNickChatReceiveImage";
+
+    public static boolean is_chatsend = true;
+    public static boolean is_chatreceive = true;
+    public static boolean is_sendfile = true;
+    public static boolean is_receivefile = true;
+    public static boolean is_sendimage = true;
+    public static boolean is_receiveimage = true;
+
+    public static final String IS_CHATSEND = "is_chatsend";
+    public static final String IS_CHATRECEIVE = "is_chatreceive";
+    public static final String IS_SENDFILE = "is_sendfile";
+    public static final String IS_RECEIVEFILE = "is_receivefile";
+    public static final String IS_SENDIMAGE = "is_sendimage";
+    public static final String IS_RECEIVEIMAGE = "is_receiveimage";
+
+    public static int[] userHeadIcon = {R.mipmap.img_head_1, R.mipmap.img_head_2, R.mipmap.img_head_3, R.mipmap.img_head_4, R.mipmap.img_head_5, R.mipmap.img_head_6, R.mipmap.img_head_7, R.mipmap.img_head_8, R.mipmap.img_head_9, R.mipmap.img_head_10, R.mipmap.img_head_11, R.mipmap.img_head_12, R.mipmap.img_head_13};
 
     public static void saveUsername(Context context, String username) {
         SharedPreferences sp = context.getSharedPreferences("username", context.MODE_PRIVATE);
@@ -99,7 +143,7 @@ public class UserInfo {
         return isFirstIn;
     }
 
-    public static String  initUserId(String  UserId, Context context) {
+    public static String initUserId(String UserId, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("UserId", Context.MODE_PRIVATE);
         UserId = preferences.getString("userId", null);
         return UserId;
