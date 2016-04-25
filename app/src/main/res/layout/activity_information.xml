@@ -207,7 +207,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:background="@null"
-                android:text="去看看"
+                android:text="返回"
                 android:textColor="#000"
                 android:textSize="15sp" />
 

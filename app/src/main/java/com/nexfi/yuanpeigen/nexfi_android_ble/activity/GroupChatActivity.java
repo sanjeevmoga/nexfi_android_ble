@@ -1,6 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -97,8 +96,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_backGroup:
-                Intent intent = new Intent(GroupChatActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(GroupChatActivity.this, MainActivity.class);
+//                startActivity(intent);
                 finish();
                 break;
             case R.id.iv_addGroup:
