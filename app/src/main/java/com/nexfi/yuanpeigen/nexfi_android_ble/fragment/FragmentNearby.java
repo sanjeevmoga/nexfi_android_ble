@@ -45,6 +45,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
     private List<UserMessage> userMessageList = new ArrayList<UserMessage>();
     private UserListViewAdapter userListViewAdapter;
 
+    private boolean isNewUser = false;
     private String userId;
 
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
@@ -78,6 +79,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
 
         @Override
         public void onChange(boolean selfChange) {
+            isNewUser = true;
             initData();
             myProgressbar.progressiveStop();
             myProgressbar.setVisibility(View.GONE);
@@ -91,22 +93,12 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         userId = UserInfo.initUserId(userId, BleApplication.getContext());
         //从数据库中获取用户数据
         userMessageList = bleDBDao.findAllUsers(userId);
-        userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
+        userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList, isNewUser);
         lv_userlist.setAdapter(userListViewAdapter);
         if (userListViewAdapter != null) {
             userListViewAdapter.notifyDataSetChanged();
         }
         Log.e("TAG", "--=initData======---------------------------------===FragmentNearby");
-//        if(null!=userMessageList && userMessageList.size()>0){
-//            if(Debug.DEBUG){
-//                Log.e("TAG",userMessageList.size()+"------获取的用户人数");
-//                for (UserMessage user:userMessageList) {
-//                    Log.e("TAG",user.toString()+"--===========User");
-//                }
-//            }
-//            userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList);
-//            lv_userlist.setAdapter(userListViewAdapter);
-//        }
     }
 
 
