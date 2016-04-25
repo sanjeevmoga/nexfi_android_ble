@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.underdark.transport.Link;
 
@@ -213,6 +214,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.messageType = MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE;
             baseMessage.sendTime = TimeUtils.getNowTime();
             baseMessage.chat_id = userId;
+            baseMessage.uuid= UUID.randomUUID().toString();
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             TextMessage textMessage = new TextMessage();
             textMessage.textMessageContent = contString;
@@ -265,6 +267,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.messageType = MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE;
             baseMessage.sendTime = TimeUtils.getNowTime();
             baseMessage.chat_id = userId;
+            baseMessage.uuid=UUID.randomUUID().toString();
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
             FileMessage fileMessage = new FileMessage();
             fileMessage.fileSize = fileSize;

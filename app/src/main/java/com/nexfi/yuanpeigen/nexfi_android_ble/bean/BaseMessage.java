@@ -11,4 +11,6 @@ public class BaseMessage implements Serializable{
     public String sendTime;
     public String chat_id;//会话id
     public UserMessage userMessage;//消息实体
+    //标记
+    public String uuid;
 }
