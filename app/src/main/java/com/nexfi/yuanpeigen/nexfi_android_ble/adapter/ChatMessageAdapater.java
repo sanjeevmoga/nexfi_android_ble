@@ -235,7 +235,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_chatReceive.tv_sendTime_receive.setText(entity.sendTime);
                 viewHolder_chatReceive.tv_chatText_receive.setText(textMessage.textMessageContent);
                 break;
-            case 9:
+            case 9://发送文件
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
 
                 viewHolder_sendFile.iv_userhead_send_folder.setOnClickListener(new View.OnClickListener() {
@@ -249,14 +249,16 @@ public class ChatMessageAdapater extends BaseAdapter {
                 });
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
-                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize);
+                long send_file_size=Long.parseLong(fileMessage.fileSize);
+                String send_formatSize = android.text.format.Formatter.formatFileSize(mContext, send_file_size);//
+                viewHolder_sendFile.tv_size_send.setText(send_formatSize);
                 viewHolder_sendFile.iv_icon_send.setImageResource(fileMessage.fileIcon);
                 viewHolder_sendFile.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (null != fileMessage.filePath) {
                             Intent intent = FileUtils.openFile(fileMessage.filePath);
-                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----");
+                            Log.e("TAG", fileMessage.filePath + "-------------------send路径-----");
                             try {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
@@ -274,7 +276,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_sendFile.pb_send.setVisibility(View.VISIBLE);
                 }
                 break;
-            case 10:
+            case 10://接收文件
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
 
                 viewHolder_receiveFile.iv_userhead_receive_folder.setOnClickListener(new View.OnClickListener() {
@@ -290,7 +292,9 @@ public class ChatMessageAdapater extends BaseAdapter {
 
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
-                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize);
+                long rece_file_size=Long.parseLong(fileMessage.fileSize);
+                String formatSize_rece = android.text.format.Formatter.formatFileSize(BleApplication.getContext(), rece_file_size);//
+                viewHolder_receiveFile.tv_size_receive.setText(formatSize_rece);
                 viewHolder_receiveFile.iv_icon_receive.setImageResource(fileMessage.fileIcon);
                 viewHolder_receiveFile.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
                     @Override

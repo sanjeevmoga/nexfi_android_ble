@@ -273,6 +273,7 @@ public class Node implements TransportListener {
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
         } else if (baseMessage.messageType == MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE) {//发送文件
+            Log.e("TAG","----接收文件--------------------------------------------------");
             FileMessage fileMessage = (FileMessage) baseMessage.userMessage;
             baseMessage.messageType = MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE;
             baseMessage.chat_id = fileMessage.userId;
@@ -286,19 +287,18 @@ public class Node implements TransportListener {
                 }
             }
             String rece_file_path = fileDir + "/" + file_name;
-            byte[] bys_receive_data = null;
-            byte[] bys_receive_size = Base64.decode(fileMessage.fileSize, Base64.DEFAULT);
-
-            for (int i = 0; i < bys_receive_size.length; i++) {
-                bys_receive_data = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
-                if (Debug.DEBUG) {
-                    Log.e("TAG", i + "----接收到文件长度-------");
-                }
-            }
+            Log.e("TAG",file_name+"----接收文件-----------------path---------------------------------"+rece_file_path);
+            byte[] bys_receive_data = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
+            long file_size=Long.parseLong(fileMessage.fileSize);
+            String formatSize = android.text.format.Formatter.formatFileSize(BleApplication.getContext(), file_size);//
+            Log.e("TAG",formatSize+"----接收文件-----------size---------------------------------------");
             File file = FileTransferUtils.getFileFromBytes(bys_receive_data, rece_file_path);
             fileMessage.filePath = rece_file_path;
             if (Debug.DEBUG) {
                 Log.e("TAG", file_name + "----接收到文件-------" + rece_file_path + "------file-------" + file.getPath());
+            }
+            if (null != mReceiveTextMsgListener) {
+                mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
         }
     }
