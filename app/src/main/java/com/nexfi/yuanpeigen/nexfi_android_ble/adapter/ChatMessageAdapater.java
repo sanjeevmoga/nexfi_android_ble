@@ -42,7 +42,7 @@ public class ChatMessageAdapater extends BaseAdapter {
     private final String USER_NODE_ID = "nodeId";
     private final String USER_ID = "userId";
     private final String IS_SEND = "is_send";
-
+    private final String IS_RECEIVE = "is_receive";
 
     private TextMessage textMessage = null;
     private FileMessage fileMessage = null;
@@ -226,6 +226,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(IS_RECEIVE, true);
                         intent.putExtra(USER_ID, textMessage.userId);
                         mContext.startActivity(intent);
                     }
@@ -242,7 +243,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(IS_SEND,true);
+                        intent.putExtra(IS_SEND, true);
                         mContext.startActivity(intent);
                     }
                 });
@@ -282,6 +283,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(USER_ID, textMessage.userId);
+                        intent.putExtra(IS_RECEIVE, true);
                         mContext.startActivity(intent);
                     }
                 });
@@ -325,7 +327,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(IS_SEND,true);
+                        intent.putExtra(IS_SEND, true);
                         mContext.startActivity(intent);
                     }
                 });
@@ -361,6 +363,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(USER_ID, textMessage.userId);
+                        intent.putExtra(IS_RECEIVE, true);
                         mContext.startActivity(intent);
                     }
                 });

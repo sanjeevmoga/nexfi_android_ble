@@ -29,16 +29,20 @@ public class UserInformationActivity extends AppCompatActivity {
     private final String IS_USERLIST = "is_userlist";
     private final String IS_SEND = "is_send";
     private final String USER_ID = "userId";
+    private final String IS_RECEIVE = "is_receive";
 
     private boolean is_send = false;
     private boolean is_userlist = false;
+    private boolean is_receive = false;
 
     private String userNick_send, userGender_send, userSelfId;
     private int userAge_send, userAvatar_send;
 
-    private String userNick, userGender, userId;
+    private String userNick, userGender;
     private int userAge, userAvatar;
 
+    private String userNick_receive, userGender_receive, userId_receive;
+    private int userAge_receive, userAvatar_receive;
 
     private TextView textView, tv_username, tv_userAge;
     private ImageView iv_userhead_icon;
@@ -51,10 +55,8 @@ public class UserInformationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
         setContentView(R.layout.activity_information);
-
-        initIntentData();
         initView();
-
+        initIntentData();
     }
 
     @Override
@@ -78,28 +80,6 @@ public class UserInformationActivity extends AppCompatActivity {
                 finish();
             }
         });
-        if (is_send) {
-            textView.setText(userNick_send);
-            tv_username.setText(userNick_send);
-            tv_userAge.setText(userAge_send + "");
-            iv_userhead_icon.setImageResource(userAvatar_send);
-            if (userGender_send.equals(USER_SEX)) {
-                rb_male.setChecked(true);
-            } else {
-                rb_female.setChecked(true);
-            }
-            is_send = false;
-        } else {
-            textView.setText(userNick);
-            tv_username.setText(userNick);
-            tv_userAge.setText(userAge + "");
-            iv_userhead_icon.setImageResource(userAvatar);
-            if (userGender.equals(USER_SEX)) {
-                rb_male.setChecked(true);
-            } else {
-                rb_female.setChecked(true);
-            }
-        }
         rb_female.setEnabled(false);
         rb_male.setEnabled(false);
     }
@@ -110,27 +90,55 @@ public class UserInformationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         is_userlist = intent.getBooleanExtra(IS_USERLIST, false);
         is_send = intent.getBooleanExtra(IS_SEND, false);
-        userId = intent.getStringExtra(USER_ID);
+        is_receive = intent.getBooleanExtra(IS_RECEIVE, false);
+        userId_receive = intent.getStringExtra(USER_ID);
         if (is_userlist) {
             userNick = intent.getStringExtra(USER_NICK);
             userGender = intent.getStringExtra(USER_GENDER);
             userAge = intent.getIntExtra(USER_AGE, 18);
             userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
+            textView.setText(userNick);
+            tv_username.setText(userNick);
+            tv_userAge.setText(userAge + "");
+            iv_userhead_icon.setImageResource(userAvatar);
+            if (userGender.equals(USER_SEX)) {
+                rb_male.setChecked(true);
+            } else {
+                rb_female.setChecked(true);
+            }
         } else if (is_send) {
-            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
-            userNick_send = user.userNick;
-            userGender_send = user.userGender;
-            userAge_send = user.userAge;
-            userAvatar_send = user.userAvatar;
-        } else {
-            UserMessage user = bleDBDao.findUserByUserId(userId);
-            userNick = user.userNick;
-            userGender = user.userGender;
-            userAge = user.userAge;
-            userAvatar = user.userAvatar;
+            UserMessage user1 = bleDBDao.findUserByUserId(userSelfId);
+            userNick_send = user1.userNick;
+            userGender_send = user1.userGender;
+            userAge_send = user1.userAge;
+            userAvatar_send = user1.userAvatar;
+            textView.setText(userNick_send);
+            tv_username.setText(userNick_send);
+            tv_userAge.setText(userAge_send + "");
+            iv_userhead_icon.setImageResource(userAvatar_send);
+            if (userGender_send.equals(USER_SEX)) {
+                rb_male.setChecked(true);
+            } else {
+                rb_female.setChecked(true);
+            }
+        } else if (is_receive) {
+            UserMessage user2 = bleDBDao.findUserByUserId(userId_receive);
+            userNick_receive = user2.userNick;
+            userGender_receive = user2.userGender;
+            userAge_receive = user2.userAge;
+            userAvatar_receive = user2.userAvatar;
+            textView.setText(userNick_receive);
+            tv_username.setText(userNick_receive);
+            tv_userAge.setText(userAge_receive + "");
+            iv_userhead_icon.setImageResource(userAvatar_receive);
+            if (userGender_receive.equals(USER_SEX)) {
+                rb_male.setChecked(true);
+            } else {
+                rb_female.setChecked(true);
+            }
         }
-
     }
 
-
 }
+
+
