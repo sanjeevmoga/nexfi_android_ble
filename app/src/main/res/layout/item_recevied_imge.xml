@@ -41,7 +41,7 @@
             android:id="@+id/chatcontent_receive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/iv_userhead_receive_image"
             android:background="@drawable/chat_from_bg_normal"
             android:focusable="true"

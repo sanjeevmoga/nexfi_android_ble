@@ -38,11 +38,12 @@
 
         <TextView
             android:id="@+id/tv_userNick_send_folder"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/iv_userhead_send_folder"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:textColor="@color/textNormol"
             android:textSize="14sp" />
@@ -52,7 +53,7 @@
             android:id="@+id/chatcontent_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/iv_userhead_send_folder"
             android:background="@drawable/chat_to_img_bg_normal"
             android:focusable="true"
