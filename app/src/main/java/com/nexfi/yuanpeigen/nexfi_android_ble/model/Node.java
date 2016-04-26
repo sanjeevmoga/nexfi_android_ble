@@ -236,49 +236,17 @@ public class Node implements TransportListener {
                 baseMessage.chat_id = textMessage.userId;
                 textMessage.nodeId = link.getNodeId();
                 bleDBDao.addGroupTextMsg(baseMessage, textMessage);
-                if (Debug.DEBUG) {
-                    Log.e("TAG", textMessage.textMessageContent + "---group-------------textMessage------------------");
-                }
-                if (null != mReceiveTextMsgListener) {
-                    mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
-                }
-
-
-                //转发
-                if (Debug.DEBUG) {
-                    Log.e("TAG", textMessage.nodeId + "-----group--转发--send============" + textMessage.textMessageContent);
-                }
-                baseMessage.messageType = MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
-                baseMessage.sendTime = TimeUtils.getNowTime();
                 UserMessage user = bleDBDao.findUserByUserId(userSelfId);
-                TextMessage textMessageZF = new TextMessage();
-                textMessageZF.textMessageContent = textMessage.textMessageContent;
-                textMessageZF.nodeId = user.nodeId;
-                textMessageZF.userId = user.userId;
-                textMessageZF.userNick = user.userNick;
-                textMessageZF.userGender = user.userGender;
-                textMessageZF.userAvatar = user.userAvatar;
-                textMessageZF.userAge = user.userAge;
-                baseMessage.userMessage = textMessageZF;
-                final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-//                final Link link2 = getLink(textMessage.nodeId);
-                if (links.size() > 0) {
-                    if (Debug.DEBUG) {
-                        Log.e("TAG", "-----转发-------------------=======" + links.size());
-                    }
-                    for (Link link1 : links) {
-                        if (link1 != link) {
-                            link1.sendFrame(send_file_data);
-                            Log.e("TAG", "-----转发------------------link1-=======");
+                Log.e("TAG",textMessage.userNick+"===接收到用户昵称===="+user.userNick+"--type---"+baseMessage.messageType);
+//                if(!(textMessage.userNick.equals(user.userNick) && textMessage.userId.equals(user.userId))) {
+                    if (null != mReceiveTextMsgListener) {
+                        mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
+                        if (Debug.DEBUG) {
+                            Log.e("TAG", textMessage.textMessageContent + "---mReceiveTextMsgListener-----------------");
                         }
                     }
-                    if (Debug.DEBUG) {
-                        Log.e("TAG", "-----group----send=====broadcastFrame=======" + links.size());
-                    }
-                }
-
+//                }
             }
-
 
         } else if (MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE == baseMessage.messageType) {//发送图片
             FileMessage fileMessage = (FileMessage) baseMessage.userMessage;

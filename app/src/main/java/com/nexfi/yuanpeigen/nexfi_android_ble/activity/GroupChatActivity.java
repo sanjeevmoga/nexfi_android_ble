@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.underdark.transport.Link;
+
 /**
  * Created by Mark on 2016/4/13.
  */
@@ -168,43 +170,35 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     public void onReceiveTextMsg(Object obj) {
         BaseMessage baseMesage= (BaseMessage) obj;
         TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-//        baseMesage.chat_id=textMessage.userId;
         setAdapter(baseMesage);//设置适配器
-//        //转发
-//        UserMessage userSelf = bleDBDao.findUserByUserId(userSelfId);
-//        baseMesage.messageType=MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
-//        baseMesage.sendTime=TimeUtils.getNowTime();
-//        baseMesage.userMessage=userSelf;
-//        if(Debug.DEBUG){
-//            Log.e("TAG",textMessage.nodeId+"-----group--转发--send============"+textMessage.textMessageContent);
-//        }
-//        byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMesage);
-//        Link link=node.getLink(textMessage.nodeId);
-//        ArrayList<Link> links=node.getLinks();
-//        if(links.size()>0){
-//            if(Debug.DEBUG){
-//                Log.e("TAG","-----转发-------------------======="+links.size());
-//            }
-//            for (Link link1:links) {
-//                if(link1!=link){
-//                    link1.sendFrame(send_file_data);
-//                    Log.e("TAG", "-----转发------------------link1-=======");
-//                }
-//            }
-//            if(Debug.DEBUG){
-//                Log.e("TAG","-----group----send=====broadcastFrame======="+links.size());
-//            }
-//            if(!bleDBDao.findSameGroupByUuid(baseMesage.uuid)){
-//                bleDBDao.addGroupTextMsg(baseMesage,textMessage);
-//                setAdapter(baseMesage);
-//            }
-//        }
+        if(Debug.DEBUG){
+                Log.e("TAG",baseMesage.messageType+"-----显示接收到的数据-------------------======="+textMessage.userNick);
+        }
+        //转发消息
+        if(node.getLinks().size()>1) {
+            BaseMessage newMessage=new BaseMessage();
+            newMessage.messageType=MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
+            newMessage.sendTime = TimeUtils.getNowTime();
+            newMessage.uuid=baseMesage.uuid;
+            newMessage.userMessage=textMessage;
+            final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(newMessage);
+            final Link link2 = node.getLink(textMessage.nodeId);
+            if (node.getLinks().size() > 0) {
+                for (Link link1 : node.getLinks()) {
+                    if (link2 != link1) {
+                        link1.sendFrame(send_file_data);
+                        Log.e("TAG", newMessage.messageType+"-----转发--###########---link1-======="+textMessage.userNick);
+                    }
+                }
+            }
+        }
 
     }
 
 
     private void setAdapter(BaseMessage baseMesage) {
         mDataArrays.add(baseMesage);
+        Log.e("TAG",baseMesage.messageType+"------适配器------");
         if(null==groupChatAdapater){
             groupChatAdapater=new GroupChatAdapater(GroupChatActivity.this, mDataArrays);
             lv_chatGroup.setAdapter(groupChatAdapater);
