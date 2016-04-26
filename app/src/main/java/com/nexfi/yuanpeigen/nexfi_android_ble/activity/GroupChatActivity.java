@@ -99,8 +99,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_backGroup:
-//                Intent intent = new Intent(GroupChatActivity.this, MainActivity.class);
-//                startActivity(intent);
                 finish();
                 break;
             case R.id.iv_addGroup:

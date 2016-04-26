@@ -11,6 +11,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 /**
@@ -24,18 +27,15 @@ public class UserInformationActivity extends AppCompatActivity {
     private final String USER_GENDER = "userGender";
     private final String USER_NICK = "userNick";
     private final String IS_USERLIST = "is_userlist";
+    private final String IS_SEND = "is_send";
+    private final String USER_ID = "userId";
 
+    private String userSelfId;
 
-    private boolean is_chatsend = false;
-    private boolean is_chatreceive = false;
-    private boolean is_sendfile = false;
-    private boolean is_receivefile = false;
-    private boolean is_sendimage = false;
-    private boolean is_receiveimage = false;
-
+    private boolean is_send = false;
     private boolean is_userlist = false;
 
-    private String userNick, userGender;
+    private String userNick, userGender, userId;
     private int userAge, userAvatar;
 
     private TextView textView, tv_username, tv_userAge;
@@ -47,7 +47,7 @@ public class UserInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
         setContentView(R.layout.activity_information);
 
         initIntentData();
@@ -93,49 +93,28 @@ public class UserInformationActivity extends AppCompatActivity {
 
 
     private void initIntentData() {
+        BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
         Intent intent = getIntent();
         is_userlist = intent.getBooleanExtra(IS_USERLIST, false);
-        is_chatsend = intent.getBooleanExtra(UserInfo.IS_CHATSEND, false);
-        is_chatreceive = intent.getBooleanExtra(UserInfo.IS_CHATRECEIVE, false);
-        is_sendfile = intent.getBooleanExtra(UserInfo.IS_SENDFILE, false);
-        is_receivefile = intent.getBooleanExtra(UserInfo.IS_RECEIVEFILE, false);
-        is_sendimage = intent.getBooleanExtra(UserInfo.IS_SENDIMAGE, false);
-        is_receiveimage = intent.getBooleanExtra(UserInfo.IS_RECEIVEIMAGE, false);
+        is_send = intent.getBooleanExtra(IS_SEND, false);
+        userId = intent.getStringExtra(USER_ID);
         if (is_userlist) {
             userNick = intent.getStringExtra(USER_NICK);
             userGender = intent.getStringExtra(USER_GENDER);
             userAge = intent.getIntExtra(USER_AGE, 18);
             userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
-        } else if (is_chatsend) {
-            userNick = intent.getStringExtra(UserInfo.USER_NICK_CHATSEND);
-            userGender = intent.getStringExtra(UserInfo.USER_GENDER_CHATSEND);
-            userAge = intent.getIntExtra(UserInfo.USER_AGE_CHATSEND, 18);
-            userAvatar = intent.getIntExtra(UserInfo.USER_AVATAR_CHATSEND, R.mipmap.img_head_6);
-        } else if (is_chatreceive) {
-            userNick = intent.getStringExtra(UserInfo.USER_NICK_CHATRECEIVE);
-            userGender = intent.getStringExtra(UserInfo.USER_GENDER_CHATRECEIVE);
-            userAge = intent.getIntExtra(UserInfo.USER_AGE_CHATRECEIVE, 18);
-            userAvatar = intent.getIntExtra(UserInfo.USER_AVATAR_CHATRECEIVE, R.mipmap.img_head_6);
-        } else if (is_sendfile) {
-            userNick = intent.getStringExtra(UserInfo.USER_NICK_SENDFILE);
-            userGender = intent.getStringExtra(UserInfo.USER_GENDER_SENDFILE);
-            userAge = intent.getIntExtra(UserInfo.USER_AGE_SENDFILE, 18);
-            userAvatar = intent.getIntExtra(UserInfo.USER_AVATAR_SENDFILE, R.mipmap.img_head_6);
-        } else if (is_receivefile) {
-            userNick = intent.getStringExtra(UserInfo.USER_NICK_RECEIVEFILE);
-            userGender = intent.getStringExtra(UserInfo.USER_GENDER_RECEIVEFILE);
-            userAge = intent.getIntExtra(UserInfo.USER_AGE_RECEIVEFILE, 18);
-            userAvatar = intent.getIntExtra(UserInfo.USER_AVATAR_RECEIVEFILE, R.mipmap.img_head_6);
-        } else if (is_sendimage) {
-            userNick = intent.getStringExtra(UserInfo.USER_NICK_SENDIMAGE);
-            userGender = intent.getStringExtra(UserInfo.USER_GENDER_SENDIMAGE);
-            userAge = intent.getIntExtra(UserInfo.USER_AGE_SENDIMAGE, 18);
-            userAvatar = intent.getIntExtra(UserInfo.USER_AVATAR_SENDIMAGE, R.mipmap.img_head_6);
-        } else if (is_receiveimage) {
-            userNick = intent.getStringExtra(UserInfo.USER_NICK_RECEIVEIMAGE);
-            userGender = intent.getStringExtra(UserInfo.USER_GENDER_RECEIVEIMAGE);
-            userAge = intent.getIntExtra(UserInfo.USER_AGE_RECEIVEIMAGE, 18);
-            userAvatar = intent.getIntExtra(UserInfo.USER_AVATAR_RECEIVEIMAGE, R.mipmap.img_head_6);
+        } else if (is_send) {
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            userNick = user.userNick;
+            userGender = user.userGender;
+            userAge = user.userAge;
+            userAvatar = user.userAvatar;
+        } else {
+            UserMessage user = bleDBDao.findUserByUserId(userId);
+            userNick = user.userNick;
+            userGender = user.userGender;
+            userAge = user.userAge;
+            userAvatar = user.userAvatar;
         }
     }
 

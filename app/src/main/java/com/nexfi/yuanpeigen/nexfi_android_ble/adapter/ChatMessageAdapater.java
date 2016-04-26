@@ -26,7 +26,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.List;
 
@@ -42,6 +41,7 @@ public class ChatMessageAdapater extends BaseAdapter {
 
     private final String USER_NODE_ID = "nodeId";
     private final String USER_ID = "userId";
+    private final String IS_SEND = "is_send";
 
 
     private TextMessage textMessage = null;
@@ -211,11 +211,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(UserInfo.USER_AGE_CHATSEND, textMessage.userAge);
-                        intent.putExtra(UserInfo.USER_AVATAR_CHATSEND, textMessage.userAvatar);
-                        intent.putExtra(UserInfo.USER_GENDER_CHATSEND, textMessage.userGender);
-                        intent.putExtra(UserInfo.USER_NICK_CHATSEND, textMessage.userNick);
-                        intent.putExtra(UserInfo.IS_CHATSEND, UserInfo.is_chatsend);
+                        intent.putExtra(IS_SEND, true);
                         mContext.startActivity(intent);
                     }
                 });
@@ -230,11 +226,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(UserInfo.USER_AGE_CHATRECEIVE, textMessage.userAge);
-                        intent.putExtra(UserInfo.USER_AVATAR_CHATRECEIVE, textMessage.userAvatar);
-                        intent.putExtra(UserInfo.USER_GENDER_CHATRECEIVE, textMessage.userGender);
-                        intent.putExtra(UserInfo.USER_NICK_CHATRECEIVE, textMessage.userNick);
-                        intent.putExtra(UserInfo.IS_CHATRECEIVE, UserInfo.is_chatreceive);
+                        intent.putExtra(USER_ID, textMessage.userId);
                         mContext.startActivity(intent);
                     }
                 });
@@ -250,11 +242,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(UserInfo.USER_AGE_SENDFILE, textMessage.userAge);
-                        intent.putExtra(UserInfo.USER_AVATAR_SENDFILE, textMessage.userAvatar);
-                        intent.putExtra(UserInfo.USER_GENDER_SENDFILE, textMessage.userGender);
-                        intent.putExtra(UserInfo.USER_NICK_SENDFILE, textMessage.userNick);
-                        intent.putExtra(UserInfo.IS_SENDFILE, UserInfo.is_sendfile);
+                        intent.putExtra(IS_SEND,true);
                         mContext.startActivity(intent);
                     }
                 });
@@ -293,11 +281,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(UserInfo.USER_AGE_RECEIVEFILE, textMessage.userAge);
-                        intent.putExtra(UserInfo.USER_AVATAR_RECEIVEFILE, textMessage.userAvatar);
-                        intent.putExtra(UserInfo.USER_GENDER_RECEIVEFILE, textMessage.userGender);
-                        intent.putExtra(UserInfo.USER_NICK_RECEIVEFILE, textMessage.userNick);
-                        intent.putExtra(UserInfo.IS_RECEIVEFILE, UserInfo.is_receivefile);
+                        intent.putExtra(USER_ID, textMessage.userId);
                         mContext.startActivity(intent);
                     }
                 });
@@ -341,11 +325,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(UserInfo.USER_AGE_SENDIMAGE, textMessage.userAge);
-                        intent.putExtra(UserInfo.USER_AVATAR_SENDIMAGE, textMessage.userAvatar);
-                        intent.putExtra(UserInfo.USER_GENDER_SENDIMAGE, textMessage.userGender);
-                        intent.putExtra(UserInfo.USER_NICK_SENDIMAGE, textMessage.userNick);
-                        intent.putExtra(UserInfo.IS_SENDIMAGE, UserInfo.is_sendimage);
+                        intent.putExtra(IS_SEND,true);
                         mContext.startActivity(intent);
                     }
                 });
@@ -380,11 +360,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, UserInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(UserInfo.USER_AGE_RECEIVEIMAGE, textMessage.userAge);
-                        intent.putExtra(UserInfo.USER_AVATAR_RECEIVEIMAGE, textMessage.userAvatar);
-                        intent.putExtra(UserInfo.USER_GENDER_RECEIVEIMAGE, textMessage.userGender);
-                        intent.putExtra(UserInfo.USER_NICK_RECEIVEIMAGE, textMessage.userNick);
-                        intent.putExtra(UserInfo.IS_RECEIVEIMAGE, UserInfo.is_receiveimage);
+                        intent.putExtra(USER_ID, textMessage.userId);
                         mContext.startActivity(intent);
                     }
                 });
