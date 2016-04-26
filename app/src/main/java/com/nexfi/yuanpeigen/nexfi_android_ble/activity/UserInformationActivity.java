@@ -30,13 +30,15 @@ public class UserInformationActivity extends AppCompatActivity {
     private final String IS_SEND = "is_send";
     private final String USER_ID = "userId";
 
-    private String userSelfId;
-
     private boolean is_send = false;
     private boolean is_userlist = false;
 
+    private String userNick_send, userGender_send, userSelfId;
+    private int userAge_send, userAvatar_send;
+
     private String userNick, userGender, userId;
     private int userAge, userAvatar;
+
 
     private TextView textView, tv_username, tv_userAge;
     private ImageView iv_userhead_icon;
@@ -76,16 +78,27 @@ public class UserInformationActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        textView.setText(userNick);
-        tv_username.setText(userNick);
-        tv_userAge.setText(userAge + "");
-        iv_userhead_icon.setImageResource(userAvatar);
-
-        if (userGender.equals(USER_SEX)) {
-            rb_male.setChecked(true);
+        if (is_send) {
+            textView.setText(userNick_send);
+            tv_username.setText(userNick_send);
+            tv_userAge.setText(userAge_send + "");
+            iv_userhead_icon.setImageResource(userAvatar_send);
+            if (userGender_send.equals(USER_SEX)) {
+                rb_male.setChecked(true);
+            } else {
+                rb_female.setChecked(true);
+            }
+            is_send = false;
         } else {
-            rb_female.setChecked(true);
+            textView.setText(userNick);
+            tv_username.setText(userNick);
+            tv_userAge.setText(userAge + "");
+            iv_userhead_icon.setImageResource(userAvatar);
+            if (userGender.equals(USER_SEX)) {
+                rb_male.setChecked(true);
+            } else {
+                rb_female.setChecked(true);
+            }
         }
         rb_female.setEnabled(false);
         rb_male.setEnabled(false);
@@ -105,10 +118,10 @@ public class UserInformationActivity extends AppCompatActivity {
             userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
         } else if (is_send) {
             UserMessage user = bleDBDao.findUserByUserId(userSelfId);
-            userNick = user.userNick;
-            userGender = user.userGender;
-            userAge = user.userAge;
-            userAvatar = user.userAvatar;
+            userNick_send = user.userNick;
+            userGender_send = user.userGender;
+            userAge_send = user.userAge;
+            userAvatar_send = user.userAvatar;
         } else {
             UserMessage user = bleDBDao.findUserByUserId(userId);
             userNick = user.userNick;
@@ -116,6 +129,7 @@ public class UserInformationActivity extends AppCompatActivity {
             userAge = user.userAge;
             userAvatar = user.userAvatar;
         }
+
     }
 
 
