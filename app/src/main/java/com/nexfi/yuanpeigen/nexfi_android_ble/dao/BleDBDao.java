@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
@@ -13,7 +12,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.helper.BleDBHelper;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +34,15 @@ public class BleDBDao {
      *
      * @param
      */
-    public void add(BaseMessage baseMessage,UserMessage userMessage) {
+    public void add(BaseMessage baseMessage, UserMessage userMessage) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("messageType",baseMessage.messageType);
-        values.put("sendTime",baseMessage.sendTime);
-        values.put("chat_id",baseMessage.chat_id);
-        values.put("uuid",baseMessage.uuid);
-        baseMessage.userMessage=userMessage;
-        values.put("nodeId",userMessage.nodeId);
+        values.put("messageType", baseMessage.messageType);
+        values.put("sendTime", baseMessage.sendTime);
+        values.put("chat_id", baseMessage.chat_id);
+        values.put("uuid", baseMessage.uuid);
+        baseMessage.userMessage = userMessage;
+        values.put("nodeId", userMessage.nodeId);
         values.put("userId", userMessage.userId);
         values.put("userNick", userMessage.userNick);
         values.put("userAge", userMessage.userAge);
@@ -52,9 +50,6 @@ public class BleDBDao {
         values.put("userAvatar", userMessage.userAvatar);
         db.insert("userInfomat", null, values);
         db.close();
-        if(Debug.DEBUG){
-            Log.e("TAG", userMessage.userGender+"----dao---add=====------------"+userMessage.nodeId);
-        }
         //有新用户上线
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
@@ -62,7 +57,28 @@ public class BleDBDao {
 
 
     /**
+     * 根据userId修改数据库中原有用户信息
+     *
+     * @param userMessage
+     * @param userId
+     */
+    public void updateUserInfoByUserId(UserMessage userMessage, String userId) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nodeId", userMessage.nodeId);
+        values.put("userId", userMessage.userId);
+        values.put("userNick", userMessage.userNick);
+        values.put("userAge", userMessage.userAge);
+        values.put("userGender", userMessage.userGender);
+        values.put("userAvatar", userMessage.userAvatar);
+        db.update("userInfomat", values, "userId=?", new String[]{userId});
+        db.close();
+    }
+
+
+    /**
      * 查找所有用户(把用户自身排除)
+     *
      * @param userId
      * @return
      */
@@ -73,13 +89,13 @@ public class BleDBDao {
         List<UserMessage> mList = new ArrayList<UserMessage>();
         while (cursor.moveToNext()) {
             UserMessage user = new UserMessage();
-            user.nodeId=cursor.getLong(cursor.getColumnIndex("nodeId"));
+            user.nodeId = cursor.getLong(cursor.getColumnIndex("nodeId"));
             user.userId = cursor.getString(cursor.getColumnIndex("userId"));
             user.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
             user.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
             user.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             user.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
-            if(!userId.equals(user.userId)){
+            if (!userId.equals(user.userId)) {
                 mDatas.add(user);
             }
         }
@@ -90,15 +106,16 @@ public class BleDBDao {
 
     /**
      * 根据用户id查找用户
+     *
      * @param userId
      * @return
      */
-    public UserMessage findUserByUserId(String userId){
+    public UserMessage findUserByUserId(String userId) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query("userInfomat", null, "userId=?", new String[]{userId}, null, null, null);
-        if(cursor.moveToNext()){
+        if (cursor.moveToNext()) {
             UserMessage user = new UserMessage();
-            user.nodeId=cursor.getLong(cursor.getColumnIndex("nodeId"));
+            user.nodeId = cursor.getLong(cursor.getColumnIndex("nodeId"));
             user.userId = cursor.getString(cursor.getColumnIndex("userId"));
             user.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
             user.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
@@ -112,15 +129,16 @@ public class BleDBDao {
 
     /**
      * 根据nodeId查找用户
+     *
      * @param nodeId
      * @return
      */
-    public UserMessage findUserByNodeId(long nodeId){
+    public UserMessage findUserByNodeId(long nodeId) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("userInfomat", null, "nodeId=?", new String[]{nodeId+""}, null, null, null);
-        if(cursor.moveToNext()){
+        Cursor cursor = db.query("userInfomat", null, "nodeId=?", new String[]{nodeId + ""}, null, null, null);
+        if (cursor.moveToNext()) {
             UserMessage user = new UserMessage();
-            user.nodeId=cursor.getLong(cursor.getColumnIndex("nodeId"));
+            user.nodeId = cursor.getLong(cursor.getColumnIndex("nodeId"));
             user.userId = cursor.getString(cursor.getColumnIndex("userId"));
             user.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
             user.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
@@ -134,13 +152,14 @@ public class BleDBDao {
 
     /**
      * 根据用户id查找是否有相同数据
+     *
      * @param userId
      * @return
      */
-    public boolean findSameUserByUserId(String userId){
+    public boolean findSameUserByUserId(String userId) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query("userInfomat", null, "userId=?", new String[]{userId}, null, null, null);
-        if(cursor.moveToNext()){
+        if (cursor.moveToNext()) {
             return true;
         }
         return false;
@@ -161,26 +180,23 @@ public class BleDBDao {
     }
 
 
-
-
-
     /**
      * 保存单聊数据
      *
      * @param
      */
-    public void addP2PTextMsg(BaseMessage baseMessage,TextMessage textMessage) {
+    public void addP2PTextMsg(BaseMessage baseMessage, TextMessage textMessage) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("messageType",baseMessage.messageType);
-        values.put("sendTime",baseMessage.sendTime);
-        values.put("chat_id",baseMessage.chat_id);
-        values.put("uuid",baseMessage.uuid);
-        if(baseMessage.messageType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || baseMessage.messageType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
-            baseMessage.userMessage=textMessage;
-            values.put("nodeId",textMessage.nodeId);
+        values.put("messageType", baseMessage.messageType);
+        values.put("sendTime", baseMessage.sendTime);
+        values.put("chat_id", baseMessage.chat_id);
+        values.put("uuid", baseMessage.uuid);
+        if (baseMessage.messageType == MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || baseMessage.messageType == MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
+            baseMessage.userMessage = textMessage;
+            values.put("nodeId", textMessage.nodeId);
             values.put("userId", textMessage.userId);
-            values.put("textMessageContent",textMessage.textMessageContent);
+            values.put("textMessageContent", textMessage.textMessageContent);
             values.put("userNick", textMessage.userNick);
             values.put("userAge", textMessage.userAge);
             values.put("userGender", textMessage.userGender);
@@ -188,20 +204,20 @@ public class BleDBDao {
         }
 
         //TODO
-        if(baseMessage.messageType== MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || baseMessage.messageType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE){
-            FileMessage fileMessage= (FileMessage) textMessage;
-            values.put("nodeId",fileMessage.nodeId);
+        if (baseMessage.messageType == MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || baseMessage.messageType == MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE) {
+            FileMessage fileMessage = (FileMessage) textMessage;
+            values.put("nodeId", fileMessage.nodeId);
             values.put("userId", fileMessage.userId);
-            values.put("textMessageContent",fileMessage.textMessageContent);
+            values.put("textMessageContent", fileMessage.textMessageContent);
             values.put("userNick", fileMessage.userNick);
             values.put("userAge", fileMessage.userAge);
             values.put("userGender", fileMessage.userGender);
             values.put("userAvatar", fileMessage.userAvatar);
-            values.put("fileName",fileMessage.fileName);
+            values.put("fileName", fileMessage.fileName);
             values.put("filePath", fileMessage.filePath);
             values.put("fileIcon", fileMessage.fileIcon);
             values.put("fileSize", fileMessage.fileSize);
-            values.put("fileData",fileMessage.fileData);
+            values.put("fileData", fileMessage.fileData);
             values.put("isPb", fileMessage.isPb);
         }
         db.insert("textP2PMessg", null, values);
@@ -220,11 +236,11 @@ public class BleDBDao {
         Cursor cursor = db.query("textP2PMessg", null, "chat_id=?", new String[]{chat_id}, null, null, null);
         List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
         while (cursor.moveToNext()) {
-            BaseMessage baseMessage=new BaseMessage();
-            baseMessage.messageType=cursor.getInt(cursor.getColumnIndex("messageType"));
-            baseMessage.sendTime=cursor.getString(cursor.getColumnIndex("sendTime"));
-            baseMessage.chat_id=cursor.getString(cursor.getColumnIndex("chat_id"));
-            baseMessage.uuid=cursor.getString(cursor.getColumnIndex("uuid"));
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = cursor.getInt(cursor.getColumnIndex("messageType"));
+            baseMessage.sendTime = cursor.getString(cursor.getColumnIndex("sendTime"));
+            baseMessage.chat_id = cursor.getString(cursor.getColumnIndex("chat_id"));
+            baseMessage.uuid = cursor.getString(cursor.getColumnIndex("uuid"));
             FileMessage fileMessage = new FileMessage();
             fileMessage.textMessageContent = cursor.getString(cursor.getColumnIndex("textMessageContent"));
             fileMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
@@ -233,13 +249,13 @@ public class BleDBDao {
             fileMessage.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
             fileMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             fileMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
-            fileMessage.filePath=cursor.getString(cursor.getColumnIndex("filePath"));
-            fileMessage.fileName=cursor.getString(cursor.getColumnIndex("fileName"));
-            fileMessage.fileSize=cursor.getString(cursor.getColumnIndex("fileSize"));
-            fileMessage.fileIcon=cursor.getInt(cursor.getColumnIndex("fileIcon"));
-            fileMessage.fileData=cursor.getString(cursor.getColumnIndex("fileData"));
-            fileMessage.isPb=cursor.getInt(cursor.getColumnIndex("isPb"));
-            baseMessage.userMessage=fileMessage;
+            fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
+            fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
+            fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
+            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+            fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
+            baseMessage.userMessage = fileMessage;
             mDatas.add(baseMessage);
         }
         cursor.close();
@@ -248,38 +264,33 @@ public class BleDBDao {
     }
 
 
-
-
-
     /**
      * 保存群聊文本数据
      *
      * @param
      */
-    public void addGroupTextMsg(BaseMessage baseMessage,TextMessage textMessage) {
+    public void addGroupTextMsg(BaseMessage baseMessage, TextMessage textMessage) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("messageType",baseMessage.messageType);
-        values.put("sendTime",baseMessage.sendTime);
-        values.put("chat_id",baseMessage.chat_id);
-        values.put("uuid",baseMessage.uuid);
-        baseMessage.userMessage=textMessage;
-        values.put("nodeId",textMessage.nodeId);
+        values.put("messageType", baseMessage.messageType);
+        values.put("sendTime", baseMessage.sendTime);
+        values.put("chat_id", baseMessage.chat_id);
+        values.put("uuid", baseMessage.uuid);
+        baseMessage.userMessage = textMessage;
+        values.put("nodeId", textMessage.nodeId);
         values.put("userId", textMessage.userId);
-        values.put("textMessageContent",textMessage.textMessageContent);
+        values.put("textMessageContent", textMessage.textMessageContent);
         values.put("userNick", textMessage.userNick);
         values.put("userAge", textMessage.userAge);
         values.put("userGender", textMessage.userGender);
         values.put("userAvatar", textMessage.userAvatar);
         db.insert("textGroupMsg", null, values);
         db.close();
-        if(Debug.DEBUG){
-            Log.e("TAG", textMessage.userGender+"----dao---add=====------------"+textMessage.nodeId);
-        }
     }
 
     /**
      * 查找群聊聊天记录
+     *
      * @return
      */
     public List<BaseMessage> findGroupMsg() {
@@ -287,11 +298,11 @@ public class BleDBDao {
         Cursor cursor = db.query("textGroupMsg", null, null, null, null, null, null);
         List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
         while (cursor.moveToNext()) {
-            BaseMessage baseMessage=new BaseMessage();
-            baseMessage.messageType=cursor.getInt(cursor.getColumnIndex("messageType"));
-            baseMessage.sendTime=cursor.getString(cursor.getColumnIndex("sendTime"));
-            baseMessage.chat_id=cursor.getString(cursor.getColumnIndex("chat_id"));
-            baseMessage.uuid=cursor.getString(cursor.getColumnIndex("uuid"));
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = cursor.getInt(cursor.getColumnIndex("messageType"));
+            baseMessage.sendTime = cursor.getString(cursor.getColumnIndex("sendTime"));
+            baseMessage.chat_id = cursor.getString(cursor.getColumnIndex("chat_id"));
+            baseMessage.uuid = cursor.getString(cursor.getColumnIndex("uuid"));
             TextMessage textMessage = new TextMessage();
             textMessage.textMessageContent = cursor.getString(cursor.getColumnIndex("textMessageContent"));
             textMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
@@ -300,7 +311,7 @@ public class BleDBDao {
             textMessage.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
             textMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             textMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
-            baseMessage.userMessage=textMessage;
+            baseMessage.userMessage = textMessage;
             mDatas.add(baseMessage);
         }
         cursor.close();
@@ -309,16 +320,16 @@ public class BleDBDao {
     }
 
 
-
     /**
      * 根据用户uuid查找是否有相同聊天数据
+     *
      * @param uuid
      * @return
      */
-    public boolean findSameGroupByUuid(String uuid){
+    public boolean findSameGroupByUuid(String uuid) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query("textGroupMsg", null, "uuid=?", new String[]{uuid}, null, null, null);
-        if(cursor.moveToNext()){
+        if (cursor.moveToNext()) {
             return true;
         }
         return false;
