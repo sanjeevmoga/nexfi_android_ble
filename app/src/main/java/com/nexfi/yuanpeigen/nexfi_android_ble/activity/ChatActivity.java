@@ -190,7 +190,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 FileTransferUtils.selectPicFromLocal(ChatActivity.this);
                 break;
             case R.id.iv_camera://改成发文件了
-                FileTransferUtils.selectFileFromLocal(ChatActivity.this);//选择本地文件
+//                FileTransferUtils.selectFileFromLocal(ChatActivity.this);//选择本地文件
+                showToast();
                 break;
             case R.id.iv_position:
                 showToast();
