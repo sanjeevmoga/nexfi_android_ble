@@ -373,7 +373,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onReceiveTextMsg(Object obj) {
         BaseMessage baseMesage = (BaseMessage) obj;
-        setAdapter(baseMesage);//设置适配器
+        if(baseMesage.messageType==MessageType.SEND_TEXT_ONLY_MESSAGE_TYPE || baseMesage.messageType==MessageType.RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+            TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+            if(textMessage.userId.equals(userId)){//只有两个人都在聊天界面的时候才显示出来：拿到聊天界面的用户的userId，跟接收到的消息的userId比较，看是否一致，一致了才显示消息
+                setAdapter(baseMesage);//设置适配器
+            }
+        }else if(baseMesage.messageType==MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE || baseMesage.messageType==MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE || baseMesage.messageType==MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE || baseMesage.messageType==MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE){
+            FileMessage fileMessage= (FileMessage) baseMesage.userMessage;
+            if(fileMessage.userId.equals(userId)){
+                setAdapter(baseMesage);//设置适配器
+            }
+        }
     }
 
     private void setAdapter(BaseMessage baseMesage) {
