@@ -296,47 +296,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
      * @param selectFilePath
      */
     private void sendFileMsg(String selectFilePath) {
-        Log.e("TAG","---文件sendFileMsg-----========================================");
         File fileToSend = FileTransferUtils.scal(selectFilePath);
-        byte[] bys_send_file = null;
         byte[] tsize = ("" + fileToSend.length()).getBytes();//文件长度
         long file_size=fileToSend.length();
-        Log.e("TAG",tsize+"---文件sendFileMsg-----============tsize============================"+tsize.length);
-//        for (int i = 0; i < tsize.length; i++) {
-//            bys_send_file[i] = tsize[i];
-//        }
-//        bys_send_file[tsize.length] = 0;
-//        Log.e("TAG",bys_send_file+"---文件sendFileMsg-----=====bys_send_file===================");
-//        if (null == bys_send_file) {
-//            return;
-//        }
         String tFileSize = Base64.encodeToString(tsize, Base64.DEFAULT);//文件的大小
-        Log.e("TAG",tFileSize.length()+"---文件长度-----========================================");
         byte[] bys = null;
         try {
             bys = FileTransferUtils.getBytesFromFile(fileToSend);
-            Log.e("TAG","---计算文件数据----========================================");
         } catch (Exception e) {
             e.printStackTrace();
         }
         String tFileData = Base64.encodeToString(bys, Base64.DEFAULT);//文件数据
-        Log.e("TAG",tFileData+"---文件数据----========================================");
         String fileName = fileToSend.getName();//文件名
         link = node.getLink(nodeId);
-        byte[] bys_send = new byte[1024];
-        int readsize = 0;
-//        FileInputStream fis=null;
-//        try {
-//            fis = new FileInputStream(fileToSend);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
         BaseMessage baseMessage=null;
-        Log.e("TAG","----========数据已封装好，可以发送================================");
         if (link != null) {
             try {
-//                while ((readsize = fis.read(bys_send, 0, bys_send.length)) > 0) {
-//                    String tFileData_fen_duan = Base64.encodeToString(bys_send, 0, readsize, Base64.DEFAULT);//文件数据
                     baseMessage = new BaseMessage();
                     baseMessage.messageType = MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE;
                     baseMessage.sendTime = TimeUtils.getNowTime();
@@ -355,15 +330,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     fileMessage.userAge = user.userAge;
                     baseMessage.userMessage = fileMessage;
                     byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-                    Log.e("TAG","----=======可以发送了================================");
                     link.sendFrame(send_file_data);
-                    Log.e("TAG", "----=======可以发送了----------@@@###================================");
-//                }
             }catch (Exception e){
                 e.printStackTrace();
             }
             setAdapter(baseMessage);
-            Log.e("TAG", "----=======可以发送了-----setAdapter----------@@@###================================");
         } else {
             initDialogConnectedStatus();
         }
@@ -396,8 +367,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if (mDataArrays.size() > 0) {
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-//        TextMessage textMessage = (TextMessage) baseMesage.userMessage;
-//        bleDBDao.addP2PTextMsg(baseMesage, textMessage);//保存到数据库//现在把这一步放到Node中进行了
     }
 
 
@@ -411,16 +380,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String selectPath = null;
-        if (requestCode == SELECT_A_PICTURE) {
+        if (requestCode == SELECT_A_PICTURE) {//4.4以下
             if (resultCode == RESULT_OK && null != data) {
-                Log.i("zou", "4.4以下的");
                 Uri selectedImage = data.getData();
                 selectPath = FileUtils.getPath(this, selectedImage);
                 sendImageMsg(selectPath);
             }
-        } else if (requestCode == SELECET_A_PICTURE_AFTER_KIKAT) {
+        } else if (requestCode == SELECET_A_PICTURE_AFTER_KIKAT) {//4.4以上
             if (resultCode == RESULT_OK && null != data) {
-                Log.i("zou", "4.4以上上的");
                 selectPath = TUtils.getPath(ChatActivity.this, data.getData());
                 if (null != selectPath) {
                     sendImageMsg(selectPath);
@@ -432,7 +399,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if (null != uri) {
                     String select_file_path = FileUtils.getPath(ChatActivity.this, uri);
                     if (select_file_path != null) {
-                        Log.e("TAG","---选择文件-----=========================="+select_file_path);
                         sendFileMsg(select_file_path);
                     }
                 }
