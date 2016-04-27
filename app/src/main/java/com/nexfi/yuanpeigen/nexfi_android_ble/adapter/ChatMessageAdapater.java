@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,11 +39,6 @@ public class ChatMessageAdapater extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<BaseMessage> coll;
     private Context mContext;
-
-    private final String USER_NODE_ID = "nodeId";
-    private final String USER_ID = "userId";
-    private final String IS_SEND = "is_send";
-    private final String IS_RECEIVE = "is_receive";
 
     private TextMessage textMessage = null;
     private FileMessage fileMessage = null;
@@ -206,31 +202,15 @@ public class ChatMessageAdapater extends BaseAdapter {
             case 7:
                 viewHolder_chatSend.iv_userhead_send_chat.setImageResource(textMessage.userAvatar);
 
-                viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, UserInformationActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(IS_SEND, true);
-                        mContext.startActivity(intent);
-                    }
-                });
+                viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new AvatarClick(position));
+
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.sendTime);
                 viewHolder_chatSend.tv_chatText_send.setText(textMessage.textMessageContent);
                 break;
             case 8:
                 viewHolder_chatReceive.iv_userhead_receive_chat.setImageResource(textMessage.userAvatar);
 
-                viewHolder_chatReceive.iv_userhead_receive_chat.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, UserInformationActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(IS_RECEIVE, true);
-                        intent.putExtra(USER_ID, textMessage.userId);
-                        mContext.startActivity(intent);
-                    }
-                });
+                viewHolder_chatReceive.iv_userhead_receive_chat.setOnClickListener(new AvatarClick(position));
 
                 viewHolder_chatReceive.tv_sendTime_receive.setText(entity.sendTime);
                 viewHolder_chatReceive.tv_chatText_receive.setText(textMessage.textMessageContent);
@@ -238,18 +218,12 @@ public class ChatMessageAdapater extends BaseAdapter {
             case 9://发送文件
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
 
-                viewHolder_sendFile.iv_userhead_send_folder.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, UserInformationActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(IS_SEND, true);
-                        mContext.startActivity(intent);
-                    }
-                });
+                viewHolder_sendFile.iv_userhead_send_folder.setOnClickListener(new AvatarClick(position));
+
+
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
-                long send_file_size=Long.parseLong(fileMessage.fileSize);
+                long send_file_size = Long.parseLong(fileMessage.fileSize);
                 String send_formatSize = android.text.format.Formatter.formatFileSize(mContext, send_file_size);//
                 viewHolder_sendFile.tv_size_send.setText(send_formatSize);
                 viewHolder_sendFile.iv_icon_send.setImageResource(fileMessage.fileIcon);
@@ -279,20 +253,11 @@ public class ChatMessageAdapater extends BaseAdapter {
             case 10://接收文件
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
 
-                viewHolder_receiveFile.iv_userhead_receive_folder.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, UserInformationActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(USER_ID, textMessage.userId);
-                        intent.putExtra(IS_RECEIVE, true);
-                        mContext.startActivity(intent);
-                    }
-                });
+                viewHolder_receiveFile.iv_userhead_receive_folder.setOnClickListener(new AvatarClick(position));
 
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
-                long rece_file_size=Long.parseLong(fileMessage.fileSize);
+                long rece_file_size = Long.parseLong(fileMessage.fileSize);
                 String formatSize_rece = android.text.format.Formatter.formatFileSize(BleApplication.getContext(), rece_file_size);//
                 viewHolder_receiveFile.tv_size_receive.setText(formatSize_rece);
                 viewHolder_receiveFile.iv_icon_receive.setImageResource(fileMessage.fileIcon);
@@ -326,15 +291,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
 
-                viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, UserInformationActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(IS_SEND, true);
-                        mContext.startActivity(intent);
-                    }
-                });
+                viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new AvatarClick(position));
 
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
@@ -361,17 +318,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
 
-                viewHolder_receiveImage.iv_userhead_receive_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, UserInformationActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(USER_ID, textMessage.userId);
-                        intent.putExtra(IS_RECEIVE, true);
-                        mContext.startActivity(intent);
-                    }
-                });
-
+                viewHolder_receiveImage.iv_userhead_receive_image.setOnClickListener(new AvatarClick(position));
 
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
@@ -392,6 +339,26 @@ public class ChatMessageAdapater extends BaseAdapter {
                 break;
         }
         return convertView;
+    }
+
+
+    //单击事件实现
+    class AvatarClick implements View.OnClickListener {
+        public int position;
+
+        public AvatarClick(int p) {
+            position = p;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent();
+            intent.setClass(mContext, UserInformationActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("data_obj", coll.get(position));
+            intent.putExtras(bundle);
+            mContext.startActivity(intent);
+        }
     }
 
 

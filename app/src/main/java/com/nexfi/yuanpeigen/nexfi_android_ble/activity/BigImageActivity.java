@@ -22,8 +22,7 @@ public class BigImageActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_activity);
         Intent intent = getIntent();
-        if (intent != null)
-        {
+        if (intent != null) {
             byte[] bis = intent.getByteArrayExtra("bitmap");
             bitmap = BitmapFactory.decodeByteArray(bis, 0, bis.length);
         }
@@ -33,7 +32,7 @@ public class BigImageActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initView() {
-        big_image_view= (ImageView) findViewById(R.id.big_image_view);
+        big_image_view = (ImageView) findViewById(R.id.big_image_view);
         big_image_view.setOnClickListener(this);
     }
 
