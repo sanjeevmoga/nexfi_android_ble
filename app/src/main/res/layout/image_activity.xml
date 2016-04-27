@@ -6,7 +6,6 @@
     <ImageView
         android:id="@+id/big_image_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@mipmap/img_head_3"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
