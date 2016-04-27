@@ -28,7 +28,6 @@ public class BigImageActivity extends AppCompatActivity implements View.OnClickL
         }
         initView();
         big_image_view.setImageBitmap(bitmap);
-        big_image_view.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
     private void initView() {
