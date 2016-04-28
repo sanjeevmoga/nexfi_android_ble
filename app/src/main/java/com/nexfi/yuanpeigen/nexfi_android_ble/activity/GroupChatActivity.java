@@ -209,16 +209,10 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             fileMessage.userAge = user.userAge;
             baseMessage.userMessage = fileMessage;
             final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
-//            new Thread(){
-//                @Override
-//                public void run() {
-//                    super.run();
-//                    node.broadcastFrame(send_file_data);
-//                }
-//            }.start();
             node.broadcastFrame(send_file_data);
             bleDBDao.addGroupTextMsg2(baseMessage, fileMessage);//geng
             setAdapter(baseMessage);
+            Log.e("TAG",  "------发送结束-----------------------------------------------");
         }
     }
 
@@ -280,7 +274,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     private void setAdapter(BaseMessage baseMesage) {
         mDataArrays.add(baseMesage);
-        Log.e("TAG",baseMesage.messageType+"------适配器------");
         if(null==groupChatAdapater){
             groupChatAdapater=new GroupChatAdapater(GroupChatActivity.this, mDataArrays);
             lv_chatGroup.setAdapter(groupChatAdapater);
