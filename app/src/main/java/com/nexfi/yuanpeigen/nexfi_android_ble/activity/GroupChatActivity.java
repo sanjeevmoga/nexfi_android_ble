@@ -1,7 +1,10 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,17 +19,21 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.GroupChatAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.TUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -50,13 +57,16 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     private GroupChatAdapater groupChatAdapater;
     private List<BaseMessage> mDataArrays = new ArrayList<BaseMessage>();
+    public static final int REQUEST_CODE_LOCAL_IMAGE = 1;//图片
+    public static final int REQUEST_CODE_SELECT_FILE = 2;//文件
+    public static final int SELECT_A_PICTURE = 3;//4.4以下
+    public static final int SELECET_A_PICTURE_AFTER_KIKAT = 4;//4.4以上
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groupchat);
         node = MainActivity.getNode();
-        Log.e("TAG", node+"-------onCreate---------------------------------------------------");
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
         initView();
         initAdapter();
@@ -65,9 +75,11 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
 
     private void initAdapter() {
+        Log.e("TAG","initAdapter--------------------------------------------");
         mDataArrays=bleDBDao.findGroupMsg();
         groupChatAdapater=new GroupChatAdapater(GroupChatActivity.this,mDataArrays);
         lv_chatGroup.setAdapter(groupChatAdapater);
+        Log.e("TAG", "initAdapter---------------------------结束-----------------");
     }
 
     private void setClicklistener() {
@@ -114,8 +126,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 sendGroupMsg();
                 et_chatGroup.setText(null);
                 break;
-            case R.id.iv_pic:
-                showToast();
+            case R.id.iv_pic://发图片
+                FileTransferUtils.selectPicFromLocal(GroupChatActivity.this);
                 break;
             case R.id.iv_camera:
                 showToast();
@@ -130,9 +142,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void sendGroupMsg() {
-        if(Debug.DEBUG){
-            Log.e("TAG","-----group---发送群聊-------------------send============");
-        }
         String contString = et_chatGroup.getText().toString();
         if (contString.length() > 0) {
             BaseMessage baseMessage = new BaseMessage();
@@ -152,13 +161,68 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             baseMessage.userMessage = textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             node.broadcastFrame(send_text_data);
-            bleDBDao.addGroupTextMsg(baseMessage,textMessage);
+            bleDBDao.addGroupTextMsg2(baseMessage, textMessage);
             setAdapter(baseMessage);
-            if(Debug.DEBUG){
-                Log.e("TAG",user.nodeId+"-----group----------------------send============"+contString);
-            }
         }
     }
+
+
+
+    /**
+     * 根据图片路径发送图片
+     *
+     * @param filePath
+     */
+    private void sendImageMsg(String filePath) {
+        File fileToSend = FileTransferUtils.scal(filePath);
+        byte[] send_file_size=(""+fileToSend.length()).getBytes();
+        String fileSize= Base64.encodeToString(send_file_size, Base64.DEFAULT);//文件长度
+        byte[] bys_send_data = null;
+        try {
+            bys_send_data = FileTransferUtils.getBytesFromFile(fileToSend);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (null == bys_send_data) {
+            return;
+        }
+        String tFileData = Base64.encodeToString(bys_send_data, Base64.DEFAULT);
+        String fileName = fileToSend.getName();//文件名
+        ArrayList<Link> links=node.getLinks();
+        if (links != null && links.size()>0) {
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = MessageType.GROUP_SEND_IMAGE_MESSAGE_TYPE;
+            baseMessage.sendTime = TimeUtils.getNowTime();
+//            baseMessage.chat_id = userId;
+            baseMessage.uuid=UUID.randomUUID().toString();
+            UserMessage user = bleDBDao.findUserByUserId(userSelfId);
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.fileSize = fileSize;
+            fileMessage.fileData=tFileData;
+            fileMessage.fileName = fileName;
+            fileMessage.filePath = filePath;
+            fileMessage.nodeId = user.nodeId;
+            fileMessage.userId = user.userId;
+            fileMessage.userNick = user.userNick;
+            fileMessage.userGender = user.userGender;
+            fileMessage.userAvatar = user.userAvatar;
+            fileMessage.userAge = user.userAge;
+            baseMessage.userMessage = fileMessage;
+            final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
+//            new Thread(){
+//                @Override
+//                public void run() {
+//                    super.run();
+//                    node.broadcastFrame(send_file_data);
+//                }
+//            }.start();
+            node.broadcastFrame(send_file_data);
+            bleDBDao.addGroupTextMsg2(baseMessage, fileMessage);//geng
+            setAdapter(baseMessage);
+        }
+    }
+
+
 
     private void showToast() {
         Toast.makeText(this, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
@@ -167,29 +231,49 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onReceiveTextMsg(Object obj) {
         BaseMessage baseMesage= (BaseMessage) obj;
-        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-        setAdapter(baseMesage);//设置适配器
-        if(Debug.DEBUG){
-                Log.e("TAG",baseMesage.messageType+"-----显示接收到的数据-------------------======="+textMessage.userNick);
-        }
-        //转发消息
-        if(node.getLinks().size()>1) {
-            BaseMessage newMessage=new BaseMessage();
-            newMessage.messageType=MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
-            newMessage.sendTime = TimeUtils.getNowTime();
-            newMessage.uuid=baseMesage.uuid;
-            newMessage.userMessage=textMessage;
-            final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(newMessage);
-            final Link link2 = node.getLink(textMessage.nodeId);
-            if (node.getLinks().size() > 0) {
-                for (Link link1 : node.getLinks()) {
-                    if (link2 != link1) {
-                        link1.sendFrame(send_file_data);
-                        Log.e("TAG", newMessage.messageType+"-----转发--###########---link1-======="+textMessage.userNick);
+        if(baseMesage.messageType==MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+            TextMessage textMessage= (TextMessage) baseMesage.userMessage;
+            setAdapter(baseMesage);//设置适配器
+            //转发消息
+            if(node.getLinks().size()>1) {
+                BaseMessage newMessage=new BaseMessage();
+                newMessage.messageType=MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
+                newMessage.sendTime = TimeUtils.getNowTime();
+                newMessage.uuid=baseMesage.uuid;
+                newMessage.userMessage=textMessage;
+                final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(newMessage);
+                final Link link2 = node.getLink(textMessage.nodeId);
+                if (node.getLinks().size() > 0) {
+                    for (Link link1 : node.getLinks()) {
+                        if (link2 != link1) {
+                            link1.sendFrame(send_file_data);
+                        }
                     }
                 }
             }
+        }else if(baseMesage.messageType==MessageType.GROUP_RECEIVE_IMAGE_MESSAGE_TYPE){
+            FileMessage fileMessage=(FileMessage)baseMesage.userMessage;
+            setAdapter(baseMesage);//设置适配器
+            //转发消息
+//            if(node.getLinks().size()>1) {
+//                BaseMessage newMessage=new BaseMessage();
+//                newMessage.messageType=MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE;
+//                newMessage.sendTime = TimeUtils.getNowTime();
+//                newMessage.uuid=baseMesage.uuid;
+//                newMessage.userMessage=fileMessage;
+//                final byte[] send_file_data = ObjectBytesUtils.ObjectToByte(newMessage);
+//                final Link link2 = node.getLink(fileMessage.nodeId);
+//                if (node.getLinks().size() > 0) {
+//                    for (Link link1 : node.getLinks()) {
+//                        if (link2 != link1) {
+//                            link1.sendFrame(send_file_data);
+//                        }
+//                    }
+//                }
+//            }
         }
+
+
 
     }
 
@@ -205,14 +289,43 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         if (mDataArrays.size() > 0) {
             lv_chatGroup.setSelection(mDataArrays.size() - 1);// 最后一行
         }
-//        TextMessage textMessage= (TextMessage) baseMesage.userMessage;
-//        bleDBDao.addGroupTextMsg(baseMesage, textMessage);//保存到数据库
     }
 
 
     @Override
     protected void onDestroy() {
-        Log.e("TAG",node+"-------group-----onDestroy-----------------------------");
+        Log.e("TAG", node + "-------group-----onDestroy-----------------------------");
         super.onDestroy();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String selectPath = null;
+        if (requestCode == SELECT_A_PICTURE) {//4.4以下
+            if (resultCode == RESULT_OK && null != data) {
+                Uri selectedImage = data.getData();
+                selectPath = FileUtils.getPath(this, selectedImage);
+                sendImageMsg(selectPath);
+            }
+        } else if (requestCode == SELECET_A_PICTURE_AFTER_KIKAT) {//4.4以上
+            if (resultCode == RESULT_OK && null != data) {
+                selectPath = TUtils.getPath(this, data.getData());
+                if (null != selectPath) {
+                    sendImageMsg(selectPath);
+                }
+            }
+        } else if (requestCode == REQUEST_CODE_SELECT_FILE) {
+            if (data != null) {
+                Uri uri = data.getData();
+                if (null != uri) {
+                    String select_file_path = FileUtils.getPath(this, uri);
+                    if (select_file_path != null) {
+//                        sendFileMsg(select_file_path);
+                    }
+                }
+            }
+        }
     }
 }

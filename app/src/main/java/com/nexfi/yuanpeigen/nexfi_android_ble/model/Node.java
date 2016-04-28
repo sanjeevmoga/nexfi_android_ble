@@ -120,13 +120,9 @@ public class Node implements TransportListener {
             }
             return;
         }
-
-        if (Debug.DEBUG) {
-            Log.e("TAG", "---node-------------return------------------");
-        }
         for (Link link : links) {
-            Log.e("TAG", links.size() + "----------------for------links.size()------------------");
             link.sendFrame(frameData);
+
         }
     }
 
@@ -147,7 +143,6 @@ public class Node implements TransportListener {
             baseMessage.messageType = MessageType.REQUEST_USER_INFO;
             baseMessage.sendTime = TimeUtils.getNowTime();
             UserMessage userMessage = bleDBDao.findUserByUserId(userSelfId);
-            Log.e("TAG", userMessage.nodeId + "-------------connect---------------");
             baseMessage.userMessage = userMessage;
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
             broadcastFrame(data);
@@ -157,14 +152,6 @@ public class Node implements TransportListener {
     //断开连接
     @Override
     public void transportLinkDisconnected(Transport transport, Link link) {
-        //断开连接时发送下线通知
-//        BaseMessage baseMessage = new BaseMessage();
-//        baseMessage.messageType = MessageType.OFFINE_USER_INFO;
-//        UserMessage userMessage=bleDBDao.findUserByNodeId(link.getNodeId());
-//        baseMessage.userMessage = userMessage;
-//        byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
-//        broadcastFrame(data);
-        Log.e("TAG", "----发送离线消息-----------------------------------------" + links.size());
         bleDBDao.deleteUserByNodeId(link.getNodeId());
         links.remove(link);//移除link
         if (Debug.DEBUG) {
@@ -177,16 +164,11 @@ public class Node implements TransportListener {
     public void transportLinkDidReceiveFrame(Transport transport, Link link, byte[] frameData) {
         //接收到数据后将用户数据发送给对方
         BaseMessage baseMessage = (BaseMessage) ObjectBytesUtils.ByteToObject(frameData);
-        if (Debug.DEBUG) {
-            Log.e("TAG", baseMessage + "---baseMessage-------------Receive------------------");
-        }
         if (MessageType.REQUEST_USER_INFO == baseMessage.messageType) {
             //对方发过来的请求消息中包含有对方的信息,此时可以将对方的数据保存到本地数据库
             UserMessage userMsg = baseMessage.userMessage;
             userMsg.nodeId = link.getNodeId();
-            Log.e("TAG", link.getNodeId() + "-----========##########################=========request-----------");
             if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
-                Log.e("TAG", bleDBDao.findSameUserByUserId(userMsg.userId) + "-----------收到请求---------------------");
                 bleDBDao.add(baseMessage, userMsg);
             }
             //收到请求之后，将自己的信息封装发给对方
@@ -201,16 +183,12 @@ public class Node implements TransportListener {
             //接收对方反馈的用户信息
             UserMessage userMsg = baseMessage.userMessage;
             userMsg.nodeId = link.getNodeId();//这是很重要的一步，将所连接的link跟连接的用户绑定，这样通过nodeId就可以找到对应的link,这样就可以给指定的人发消息了
-            Log.e("TAG", link.getNodeId() + "-----========#########################################===========link.getNodeId()-----------");
             //然后将接收到的用户信息保存到数据库
             if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
                 bleDBDao.add(baseMessage, userMsg);
             }
         } else if (MessageType.OFFINE_USER_INFO == baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
-            if (Debug.DEBUG) {
-                Log.e("TAG", "----收到断开连接消息-----------------------------------------");
-            }
             if (Debug.DEBUG) {
                 Log.e("TAG", "----移除断开连接的用户-----------------------------------------");
             }
@@ -224,31 +202,59 @@ public class Node implements TransportListener {
             }
         } else if (MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE == baseMessage.messageType) {//群聊
             //接收到消息之后需要根据uuid判断
-
-//            if(bleDBDao.findSameGroupByUuid(baseMessage.uuid)){
-//                //如果数据库有此uuid，则什么都不做
+             //如果数据库有此uuid，则什么都不做
             Log.e("TAG", baseMessage.uuid + "------什么都不做-------" + bleDBDao.findSameGroupByUuid(baseMessage.uuid));
-//            }else{
             if (!(bleDBDao.findSameGroupByUuid(baseMessage.uuid))) {
                 //如果数据库没有此uuid，则将此条消息转发,并显示
                 TextMessage textMessage = (TextMessage) baseMessage.userMessage;
                 baseMessage.messageType = MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE;
                 baseMessage.chat_id = textMessage.userId;
                 textMessage.nodeId = link.getNodeId();
-                bleDBDao.addGroupTextMsg(baseMessage, textMessage);
+                bleDBDao.addGroupTextMsg2(baseMessage, textMessage);
                 UserMessage user = bleDBDao.findUserByUserId(userSelfId);
                 Log.e("TAG",textMessage.userNick+"===接收到用户昵称===="+user.userNick+"--type---"+baseMessage.messageType);
-//                if(!(textMessage.userNick.equals(user.userNick) && textMessage.userId.equals(user.userId))) {
                     if (null != mReceiveTextMsgListener) {
                         mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
                         if (Debug.DEBUG) {
                             Log.e("TAG", textMessage.textMessageContent + "---mReceiveTextMsgListener-----------------");
                         }
                     }
-//                }
             }
 
-        } else if (MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE == baseMessage.messageType) {//发送图片
+        }else if (MessageType.GROUP_SEND_IMAGE_MESSAGE_TYPE == baseMessage.messageType) {//群聊----发送图片
+            //接收到消息之后需要根据uuid判断
+            Log.e("TAG", baseMessage.uuid + "------什么都不做-------" + bleDBDao.findSameGroupByUuid(baseMessage.uuid));
+            if (!(bleDBDao.findSameGroupByUuid(baseMessage.uuid))) {
+                //如果数据库没有此uuid，则将此条消息转发,并显示
+                FileMessage fileMessage = (FileMessage) baseMessage.userMessage;
+                baseMessage.messageType = MessageType.GROUP_RECEIVE_IMAGE_MESSAGE_TYPE;
+                baseMessage.chat_id = fileMessage.userId;
+                fileMessage.nodeId = link.getNodeId();
+                bleDBDao.addGroupTextMsg2(baseMessage, fileMessage);
+                String file_name = fileMessage.fileName;//文件名
+                File fileDir = null;
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    //存在sd卡
+                    fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi_ble/image");
+                    if (!fileDir.exists()) {
+                        fileDir.mkdirs();
+                    }
+                }
+                String rece_file_path = fileDir + "/" + file_name;
+                byte[] bys_receive = Base64.decode(fileMessage.fileData, Base64.DEFAULT);//文件数据
+                File file = FileTransferUtils.getFileFromBytes(bys_receive, rece_file_path);
+                fileMessage.filePath = rece_file_path;
+
+                if (null != mReceiveTextMsgListener) {
+                    mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
+                    if (Debug.DEBUG) {
+                        Log.e("TAG", fileMessage.textMessageContent + "---fileMessage----group-------------");
+                    }
+                }
+            }
+
+        }
+        else if (MessageType.SINGLE_SEND_IMAGE_MESSAGE_TYPE == baseMessage.messageType) {//发送图片
             FileMessage fileMessage = (FileMessage) baseMessage.userMessage;
             baseMessage.messageType = MessageType.SINGLE_RECV_IMAGE_MESSAGE_TYPE;
             baseMessage.chat_id = fileMessage.userId;
@@ -265,15 +271,11 @@ public class Node implements TransportListener {
             byte[] bys_receive = Base64.decode(fileMessage.fileData, Base64.DEFAULT);//文件数据
             File file = FileTransferUtils.getFileFromBytes(bys_receive, rece_file_path);
             fileMessage.filePath = rece_file_path;
-            if (Debug.DEBUG) {
-                Log.e("TAG", file_name + "----接收到图片-------" + rece_file_path + "------file-------" + file.getPath());
-            }
             bleDBDao.addP2PTextMsg(baseMessage, fileMessage);
             if (null != mReceiveTextMsgListener) {
                 mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
             }
         } else if (baseMessage.messageType == MessageType.SINGLE_SEND_FOLDER_MESSAGE_TYPE) {//发送文件
-            Log.e("TAG","----接收文件--------------------------------------------------");
             FileMessage fileMessage = (FileMessage) baseMessage.userMessage;
             baseMessage.messageType = MessageType.SINGLE_RECV_FOLDER_MESSAGE_TYPE;
             baseMessage.chat_id = fileMessage.userId;
@@ -287,11 +289,9 @@ public class Node implements TransportListener {
                 }
             }
             String rece_file_path = fileDir + "/" + file_name;
-            Log.e("TAG",file_name+"----接收文件-----------------path---------------------------------"+rece_file_path);
             byte[] bys_receive_data = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
             long file_size=Long.parseLong(fileMessage.fileSize);
             String formatSize = android.text.format.Formatter.formatFileSize(BleApplication.getContext(), file_size);//
-            Log.e("TAG",formatSize+"----接收文件-----------size---------------------------------------");
             File file = FileTransferUtils.getFileFromBytes(bys_receive_data, rece_file_path);
             fileMessage.filePath = rece_file_path;
             if (Debug.DEBUG) {

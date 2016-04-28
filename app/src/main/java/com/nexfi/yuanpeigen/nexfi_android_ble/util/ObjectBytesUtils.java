@@ -44,7 +44,6 @@ public class ObjectBytesUtils {
             // bytearray to object
             ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
             ObjectInputStream oi = new ObjectInputStream(bi);
-
             obj = oi.readObject();
             bi.close();
             oi.close();

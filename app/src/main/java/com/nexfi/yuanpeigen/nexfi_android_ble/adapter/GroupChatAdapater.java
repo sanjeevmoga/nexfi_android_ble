@@ -1,6 +1,10 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.BigImageActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 
 import java.util.List;
 
@@ -253,13 +259,10 @@ public class GroupChatAdapater extends BaseAdapter {
                 break;
 
             case 17:
-                viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                viewHolder_sendImage.iv_icon_send.setImageResource(fileMessage.fileIcon);
+                final byte[] bys_send = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
+                final Bitmap bitmap = FileTransferUtils.getPicFromBytes(bys_send);
+                viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
+                viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 viewHolder_sendImage.tv_userNick_send_image.setText(fileMessage.userNick);
@@ -268,16 +271,23 @@ public class GroupChatAdapater extends BaseAdapter {
                 } else {
                     viewHolder_sendImage.pb_send.setVisibility(View.VISIBLE);
                 }
+                viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, BigImageActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("bitmap", bys_send);
+                        mContext.startActivity(intent);
+                        ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
+                    }
+                });
                 break;
 
             case 18:
-                viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(mContext, "即将上线，敬请期待", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                viewHolder_receiveImage.iv_icon_receive.setImageResource(fileMessage.fileIcon);
+                final byte[] bys_receive = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
+                Bitmap bitmap_receive = FileTransferUtils.getPicFromBytes(bys_receive);
+                viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap_receive);
+                viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
                 viewHolder_receiveImage.tv_userNick_receive_image.setText(fileMessage.userNick);
@@ -286,6 +296,16 @@ public class GroupChatAdapater extends BaseAdapter {
                 } else {
                     viewHolder_receiveImage.pb_receive.setVisibility(View.VISIBLE);
                 }
+                viewHolder_receiveImage.chatcontent_receive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, BigImageActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("bitmap", bys_receive);
+                        mContext.startActivity(intent);
+                        ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
+                    }
+                });
                 break;
         }
 

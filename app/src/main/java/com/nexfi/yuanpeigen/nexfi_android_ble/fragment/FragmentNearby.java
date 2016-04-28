@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,7 +88,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
 
 
     private void initData() {
-        userMessageList.clear();//每次取之前清空
+//        userMessageList.clear();//每次取之前清空
         userId = UserInfo.initUserId(userId, BleApplication.getContext());
         //从数据库中获取用户数据
         userMessageList = bleDBDao.findAllUsers(userId);
@@ -98,7 +97,6 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         if (userListViewAdapter != null) {
             userListViewAdapter.notifyDataSetChanged();
         }
-        Log.e("TAG", "--=initData======---------------------------------===FragmentNearby");
     }
 
 
@@ -147,9 +145,9 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.add_chatRoom:
-                mPopupWindow.dismiss();
-                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+                Intent intent = new Intent(BleApplication.getContext(), GroupChatActivity.class);
                 startActivity(intent);
+                mPopupWindow.dismiss();
                 break;
 
             case R.id.iv_add:
