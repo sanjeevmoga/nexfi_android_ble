@@ -1,12 +1,10 @@
-package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
+package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -15,32 +13,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
-import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUserAgeActivity;
-import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUsernameActivity;
-import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 /**
- * Created by Mark on 2016/4/14.
+ * Created by Mark on 2016/4/29.
  */
-public class FragmentMine extends Fragment implements View.OnClickListener {
+public class ModifyInformationActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private View view;
     private TextView tv_username, tv_userAge;
     private ImageView iv_userhead_icon;
     private RadioButton rb_female, rb_male;
+    private Button btn_finish;
     private RadioGroup radioGrop;
     private RelativeLayout layout_username, layout_userAge;
 
-    private final String USER_AGE = "userAge";
-    private final String USER_AVATAR = "userAvatar";
-    private final String USER_GENDER = "userGender";
-    private final String USER_NICK = "userNick";
     private final String USER_SEX_MALE = "男";
     private final String USER_SEX_FEMALE = "女";
+    private final String USER_AGE = "userAge";
+    private final String USER_AVATAR = "userAvatar";
+    private final String USER_NICK = "userNick";
+
 
     private String userSelfId;
     private String userNick, newUserNick, userGender, newUserGender;
@@ -48,31 +43,31 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        initView(inflater, container);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_modify_information);
         initData();
+        initView();
         setClickListener();
         setViewData();
-        return view;
     }
 
-    private void initView(LayoutInflater inflater, ViewGroup container) {
-        view = inflater.inflate(R.layout.fragment_mine, container, false);
-        tv_username = (TextView) view.findViewById(R.id.tv_username);
-        tv_userAge = (TextView) view.findViewById(R.id.tv_userAge);
-        iv_userhead_icon = (ImageView) view.findViewById(R.id.iv_userhead_icon);
-        layout_userAge = (RelativeLayout) view.findViewById(R.id.layout_userAge);
-        layout_username = (RelativeLayout) view.findViewById(R.id.layout_username);
-        radioGrop = (RadioGroup) view.findViewById(R.id.radioGrop);
-        rb_female = (RadioButton) view.findViewById(R.id.rb_female);
-        rb_male = (RadioButton) view.findViewById(R.id.rb_male);
-        radioSetOnCheckedListener();
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
-    private void setClickListener() {
-        iv_userhead_icon.setOnClickListener(this);
-        layout_username.setOnClickListener(this);
-        layout_userAge.setOnClickListener(this);
+    private void initView() {
+        tv_username = (TextView) findViewById(R.id.tv_username);
+        tv_userAge = (TextView) findViewById(R.id.tv_userAge);
+        iv_userhead_icon = (ImageView) findViewById(R.id.iv_userhead_icon);
+        btn_finish = (Button) findViewById(R.id.btn_finish);
+        layout_userAge = (RelativeLayout) findViewById(R.id.layout_userAge);
+        layout_username = (RelativeLayout) findViewById(R.id.layout_username);
+        radioGrop = (RadioGroup) findViewById(R.id.radioGrop);
+        rb_female = (RadioButton) findViewById(R.id.rb_female);
+        rb_male = (RadioButton) findViewById(R.id.rb_male);
     }
 
     private void setViewData() {
@@ -101,6 +96,15 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         userNick = UserInfo.initUserNick(userNick, BleApplication.getContext());
     }
 
+
+    private void setClickListener() {
+        iv_userhead_icon.setOnClickListener(this);
+        layout_username.setOnClickListener(this);
+        layout_userAge.setOnClickListener(this);
+        btn_finish.setOnClickListener(this);
+        radioSetOnCheckedListener();
+    }
+
     private void radioSetOnCheckedListener() {
         radioGrop.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -120,34 +124,37 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     private void modify_userGender(String sex) {
         if (userGender != null) {
             if (!userGender.equals(sex)) {
-                Toast.makeText(FragmentMine.this.getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "发布成功", Toast.LENGTH_SHORT).show();
             }
         }
         newUserGender = sex;
-        UserInfo.saveUsersex(FragmentMine.this.getActivity(), userGender);
+        UserInfo.saveUsersex(this, userGender);
     }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_finish:
+                finish();
+                break;
             case R.id.iv_userhead_icon:
-                Intent intent1 = new Intent(FragmentMine.this.getActivity(), SelectUserHeadIconActivity.class);
+                Intent intent1 = new Intent(this, SelectUserHeadIconActivity.class);
                 startActivityForResult(intent1, 1);
                 break;
             case R.id.layout_username:
-                Intent intent2 = new Intent(FragmentMine.this.getActivity(), InputUsernameActivity.class);
+                Intent intent2 = new Intent(this, InputUsernameActivity.class);
                 startActivityForResult(intent2, 2);
                 break;
             case R.id.layout_userAge:
-                Intent intent3 = new Intent(FragmentMine.this.getActivity(), InputUserAgeActivity.class);
+                Intent intent3 = new Intent(this, InputUserAgeActivity.class);
                 startActivityForResult(intent3, 3);
                 break;
         }
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 1) {
             newUserAvater = data.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
@@ -159,18 +166,15 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
             newUserAge = data.getIntExtra(USER_AGE, 18);
             tv_userAge.setText(newUserAge + "");
         }
-
         UserMessage user=bleDBDao.findUserByUserId(userSelfId);
-
         if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
-
+            btn_finish.setText("完成");
             user.userAvatar=newUserAvater;
             user.userNick=newUserNick;
             user.userGender=newUserGender;
             user.userAge=newUserAge;
             bleDBDao.updateUserInfoByUserId(user, userSelfId);
         }
+
     }
-
-
 }

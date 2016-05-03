@@ -48,7 +48,7 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
         tv_save = (TextView) findViewById(R.id.tv_save);
         et_inputUsername = (EditText) findViewById(R.id.et_inputUsername);
         userNick = UserInfo.initUserNick(userNick, this);
-        if (!userNick.equals("未填写")){
+        if (!userNick.equals("未填写")) {
             et_inputUsername.setText(userNick);
         }
     }

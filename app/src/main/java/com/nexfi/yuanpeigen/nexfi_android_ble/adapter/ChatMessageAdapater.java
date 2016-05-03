@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.BigImageActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ModifyInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
@@ -201,7 +202,14 @@ public class ChatMessageAdapater extends BaseAdapter {
             case 7:
                 viewHolder_chatSend.iv_userhead_send_chat.setImageResource(textMessage.userAvatar);
 
-                viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new AvatarClick(position));
+                viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    }
+                });
 
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.sendTime);
                 viewHolder_chatSend.tv_chatText_send.setText(textMessage.textMessageContent);
@@ -217,7 +225,14 @@ public class ChatMessageAdapater extends BaseAdapter {
             case 9://发送文件
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
 
-                viewHolder_sendFile.iv_userhead_send_folder.setOnClickListener(new AvatarClick(position));
+                viewHolder_sendFile.iv_userhead_send_folder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    }
+                });
 
 
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
@@ -292,7 +307,14 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
 
-                viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new AvatarClick(position));
+                viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    }
+                });
 
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 if (fileMessage.isPb == 0) {
