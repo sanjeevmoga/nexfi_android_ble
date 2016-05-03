@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,9 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUserAgeActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUsernameActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 /**
@@ -38,9 +42,10 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     private final String USER_SEX_MALE = "男";
     private final String USER_SEX_FEMALE = "女";
 
-    private String userNick, userGender;
-    private int userAge, userAvatar;
-
+    private String userSelfId;
+    private String userNick, newUserNick, userGender, newUserGender;
+    private int userAge, newUserAge, newUserAvater, userAvatar;
+    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,10 +94,11 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
-        userAge = UserInfo.initUserAge(userAge, FragmentMine.this.getActivity());
-        userAvatar = UserInfo.initUserAvatar(userAvatar, FragmentMine.this.getActivity());
-        userGender = UserInfo.initUserGender(userGender, FragmentMine.this.getActivity());
-        userNick = UserInfo.initUserNick(userNick, FragmentMine.this.getActivity());
+        userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
+        userAge = UserInfo.initUserAge(userAge, BleApplication.getContext());
+        userAvatar = UserInfo.initUserAvatar(userAvatar, BleApplication.getContext());
+        userGender = UserInfo.initUserGender(userGender, BleApplication.getContext());
+        userNick = UserInfo.initUserNick(userNick, BleApplication.getContext());
     }
 
     private void radioSetOnCheckedListener() {
@@ -112,12 +118,12 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     }
 
     private void modify_userGender(String sex) {
-        if (userGender!=null) {
+        if (userGender != null) {
             if (!userGender.equals(sex)) {
                 Toast.makeText(FragmentMine.this.getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
             }
         }
-        userGender = sex;
+        newUserGender = sex;
         UserInfo.saveUsersex(FragmentMine.this.getActivity(), userGender);
     }
 
@@ -144,14 +150,25 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 1) {
-            userAvatar = data.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
-            iv_userhead_icon.setImageResource(userAvatar);
+            newUserAvater = data.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
+            iv_userhead_icon.setImageResource(newUserAvater);
         } else if (resultCode == 2) {
-            userNick = data.getStringExtra(USER_NICK);
-            tv_username.setText(userNick);
+            newUserNick = data.getStringExtra(USER_NICK);
+            tv_username.setText(newUserNick);
         } else if (resultCode == 3) {
-            userAge = data.getIntExtra(USER_AGE, 18);
-            tv_userAge.setText(userAge + "");
+            newUserAge = data.getIntExtra(USER_AGE, 18);
+            tv_userAge.setText(newUserAge + "");
+        }
+
+        UserMessage user=bleDBDao.findUserByUserId(userSelfId);
+
+        if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
+
+            user.userAvatar=newUserAvater;
+            user.userNick=newUserNick;
+            user.userGender=newUserGender;
+            user.userAge=newUserAge;
+            bleDBDao.updateUserInfoByUserId(user, userSelfId);
         }
     }
 

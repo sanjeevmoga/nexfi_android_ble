@@ -74,6 +74,9 @@ public class BleDBDao {
         values.put("userAvatar", userMessage.userAvatar);
         db.update("userInfomat", values, "userId=?", new String[]{userId});
         db.close();
+        context.getContentResolver().notifyChange(
+                Uri.parse("content://www.nexfi_ble_user.com"), null);
+        Log.e("TAG",userMessage.userNick+"---------------------用户数据改变了------------------"+userMessage.userAvatar);
     }
 
 
