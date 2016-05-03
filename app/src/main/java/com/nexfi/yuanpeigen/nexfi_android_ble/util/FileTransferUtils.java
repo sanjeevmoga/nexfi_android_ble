@@ -72,6 +72,8 @@ public class FileTransferUtils {
     }
 
 
+
+
     /**
      * @param
      * @param bytes
@@ -89,6 +91,44 @@ public class FileTransferUtils {
             int h = newOpts.outHeight;
             float hh = 100f;//
             float ww = 100f;//
+            int be = 1;
+            if (w > h && w > ww) {
+                be = (int) (newOpts.outWidth / ww);
+            } else if (w < h && h > hh) {
+                be = (int) (newOpts.outHeight / hh);
+            }
+            if (be <= 0)
+                be = 1;
+            newOpts.inSampleSize = be;//设置采样率
+
+            newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;//该模式是默认的,可不设
+            newOpts.inPurgeable = true;// 同时设置才会有效
+            newOpts.inInputShareable = true;//。当系统内存不够时候图片自动被回收
+            bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length,
+                    newOpts);
+            return bitmap;
+        }
+        return null;
+    }
+
+
+    /**
+     * @param
+     * @param bytes
+     * @param
+     * @return Bitmap
+     */
+    public static Bitmap getPicFromBytesByScreenSize(byte[] bytes,float ww,float hh) {
+        if (bytes != null) {
+            BitmapFactory.Options newOpts = new BitmapFactory.Options();
+            newOpts.inJustDecodeBounds = true;//只读边,不读内容
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,newOpts);
+
+            newOpts.inJustDecodeBounds = false;
+            int w = newOpts.outWidth;
+            int h = newOpts.outHeight;
+//            float hh = 100f;//
+//            float ww = 100f;//
             int be = 1;
             if (w > h && w > ww) {
                 be = (int) (newOpts.outWidth / ww);

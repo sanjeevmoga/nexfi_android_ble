@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -232,7 +231,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         if (null != fileMessage.filePath) {
                             Intent intent = FileUtils.openFile(fileMessage.filePath);
-                            Log.e("TAG", fileMessage.filePath + "-------------------send路径-----");
                             try {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
@@ -268,7 +266,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         if (null != fileMessage.filePath) {
                             Intent intent = FileUtils.openFile(fileMessage.filePath);
-                            Log.e("TAG", fileMessage.filePath + "-------------------receive路径-----" + intent);
                             try {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
