@@ -23,7 +23,7 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
     private TextView tv_save;
     private EditText et_inputUsername;
 
-    private String userNick;
+    private String userNick, newUserNick;
 
     private final String USER_NICK = "userNick";
 
@@ -57,16 +57,25 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
+                Intent intent1 = new Intent(this, MainActivity.class);
+                intent1.putExtra(USER_NICK, userNick);
+                setResult(2, intent1);
                 finish();
                 break;
             case R.id.tv_save:
                 if (!TextUtils.isEmpty(et_inputUsername.getText())) {
-                    userNick = et_inputUsername.getText().toString();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.putExtra(USER_NICK, userNick);
-                    setResult(2, intent);
-                    finish();
-                    UserInfo.saveUsername(this, userNick);
+                    String name = et_inputUsername.getText().toString();
+                    if (!name.equals(userNick)) {
+                        newUserNick = name;
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra(USER_NICK, newUserNick);
+                        setResult(2, intent);
+                        finish();
+                        UserInfo.saveUsername(this, newUserNick);
+                        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "您还未输入新昵称哦", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(this, "您还未输入昵称哦", Toast.LENGTH_SHORT).show();
                 }

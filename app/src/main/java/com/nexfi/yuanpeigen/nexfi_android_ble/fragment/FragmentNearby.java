@@ -1,12 +1,12 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,7 +134,6 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         }
         mPopupWindow_share.showAtLocation(v_parent, Gravity.CENTER, 0, 0);
     }
-
 
     @Override
     public void onClick(View v) {

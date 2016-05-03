@@ -1,8 +1,8 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +18,11 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUserAgeActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUsernameActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
+
+
 
 /**
  * Created by Mark on 2016/4/14.
@@ -133,15 +134,15 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_userhead_icon:
-                Intent intent1 = new Intent(FragmentMine.this.getActivity(), SelectUserHeadIconActivity.class);
+                Intent intent1 = new Intent(this.getActivity(), SelectUserHeadIconActivity.class);
                 startActivityForResult(intent1, 1);
                 break;
             case R.id.layout_username:
-                Intent intent2 = new Intent(FragmentMine.this.getActivity(), InputUsernameActivity.class);
+                Intent intent2 = new Intent(this.getActivity(), InputUsernameActivity.class);
                 startActivityForResult(intent2, 2);
                 break;
             case R.id.layout_userAge:
-                Intent intent3 = new Intent(FragmentMine.this.getActivity(), InputUserAgeActivity.class);
+                Intent intent3 = new Intent(this.getActivity(), InputUserAgeActivity.class);
                 startActivityForResult(intent3, 3);
                 break;
         }
@@ -160,20 +161,5 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
             newUserAge = data.getIntExtra(USER_AGE, 18);
             tv_userAge.setText(newUserAge + "");
         }
-
-        UserMessage user=bleDBDao.findUserByUserId(userSelfId);
-
-//        if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
-//
-//            user.userAvatar=newUserAvater;
-//            user.userNick=newUserNick;
-//            user.userGender=newUserGender;
-//            user.userAge=newUserAge;
-//            BaseMessage baseMessage=new BaseMessage();
-//            baseMessage.messageType= MessageType.MODIFY_USER_INFO;
-//            baseMessage.userMessage=user;
-//            ((MainActivity) getActivity()).notifyMineMsgHasChanged(baseMessage);
-//            bleDBDao.updateUserInfoByUserId(user, userSelfId);
-//        }
     }
 }
