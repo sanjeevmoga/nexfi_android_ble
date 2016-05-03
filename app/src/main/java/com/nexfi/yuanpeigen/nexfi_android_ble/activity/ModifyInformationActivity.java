@@ -168,41 +168,28 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
 
 
 
-                if(userNick!=null && userAge!=0 && userAvatar!=0){
-                    if(user.userNick.equals(userNick) && user.userAvatar==userAvatar && user.userAge==userAge && user.userGender.equals(userGender)){
+                if(userNick!=null && userAge!=0 && userAvatar!=0) {
+                    if (user.userNick.equals(userNick) && user.userAvatar == userAvatar && user.userAge == userAge && user.userGender.equals(userGender)) {
                         //不发消息
-                        Log.e("TAG", userAvatar+"------不发修改消息----------" +userNick+"----"+userGender+"----"+userAge);
-                    }else{
+                        Log.e("TAG", userAvatar + "------不发修改消息----------" + userNick + "----" + userGender + "----" + userAge);
+                    } else {
                         //发消息
-                        Log.e("TAG", userAvatar+"------发修改消息----------" +userNick+"----"+userGender+"----"+userAge);
-                        user.userNick=userNick;
-                        user.userAge=userAge;
-                        user.userGender=userGender;
-                        user.userAvatar=userAvatar;
+                        Log.e("TAG", userAvatar + "------发修改消息----------" + userNick + "----" + userGender + "----" + userAge);
+                        user.userNick = userNick;
+                        user.userAge = userAge;
+                        user.userGender = userGender;
+                        user.userAvatar = userAvatar;
                         //将修改后的数据更新到数据库中
-                        bleDBDao.updateUserInfoByUserId(user,userSelfId);
+                        bleDBDao.updateUserInfoByUserId(user, userSelfId);
                         //发送改变通知
                         BaseMessage baseMessage = new BaseMessage();
                         baseMessage.messageType = MessageType.MODIFY_USER_INFO;
                         baseMessage.userMessage = user;
                         byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
                         node.broadcastFrame(notify_msg_bys);
+
                     }
-
                 }
-
-//                if((newUserAvater==0 && newUserNick==null && newUserAge==0 && user.userGender.equals(newUserGender))){
-//                    //不发消息
-//                }else{
-//                    if((user.userAvatar==newUserAvater && user.userNick.equals(newUserNick) && user.userAge==newUserAge && user.userGender.equals(newUserGender))){
-//                        //不发消息
-//                    }else{
-//
-//                    }
-//                }
-
-
-
 //                if((newUserAvater==0 && newUserNick==null && newUserAge==0 && user.userGender.equals(newUserGender)) ||
 //                        (user.userAvatar==newUserAvater && user.userNick.equals(newUserNick) && user.userAge==newUserAge && user.userGender.equals(newUserGender))) {
 ////                    newUserAvater=userAvatar;
