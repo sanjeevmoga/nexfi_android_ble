@@ -184,8 +184,10 @@ public class Node implements TransportListener {
             UserMessage userMsg = baseMessage.userMessage;
             userMsg.nodeId = link.getNodeId();//这是很重要的一步，将所连接的link跟连接的用户绑定，这样通过nodeId就可以找到对应的link,这样就可以给指定的人发消息了
             //然后将接收到的用户信息保存到数据库
-            if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
-                bleDBDao.add(baseMessage, userMsg);
+            if(userMsg.userNick!=null){
+                if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
+                    bleDBDao.add(baseMessage, userMsg);//华为-保存到数据库---2130903076====d14143dd-22dd-4c86-a9f8-a3698330ce6d
+                }
             }
         } else if(MessageType.MODIFY_USER_INFO==baseMessage.messageType){//用户信息修改请求
             //接收到用户信息修改消息后，根据userId将对应的用户信息修改

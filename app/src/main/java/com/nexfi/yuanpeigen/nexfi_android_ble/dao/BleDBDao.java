@@ -77,7 +77,7 @@ public class BleDBDao {
         db.close();
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
-        Log.e("TAG",userMessage.userNick+"---------------------用户数据改变了------------------"+userMessage.userAvatar);
+        Log.e("TAG", userMessage.userNick + "---------------------用户数据改变了------------------" + userMessage.userAvatar);
     }
 
 
@@ -254,6 +254,62 @@ public class BleDBDao {
             fileMessage.userAvatar = cursor.getInt(cursor.getColumnIndex("userAvatar"));
             fileMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             fileMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+            fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
+            fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
+            fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
+            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+            fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
+            baseMessage.userMessage = fileMessage;
+            mDatas.add(baseMessage);
+        }
+        cursor.close();
+        db.close();
+        return mDatas;
+    }
+
+
+    /**
+     * 根据userId更新数据库中的单聊数据
+     * @param userMessage
+     * @param userId
+     */
+    public void updateP2PMsgByUserId(UserMessage userMessage, String userId) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nodeId", userMessage.nodeId);
+        values.put("userId", userMessage.userId);
+        values.put("userNick", userMessage.userNick);
+        values.put("userAge", userMessage.userAge);
+        values.put("userGender", userMessage.userGender);
+        values.put("userAvatar", userMessage.userAvatar);
+        db.update("textP2PMessg", values, "userId=?", new String[]{userId});
+        db.close();
+        context.getContentResolver().notifyChange(
+                Uri.parse("content://www.nexfi_ble_user_single.com"), null);
+        Log.e("TAG", userMessage.userNick + "---------------------用户数据改变了------------------" + userMessage.userAvatar);
+    }
+
+
+    public List<BaseMessage> findMsgByChatIdAndUserId(String chat_id,String userId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query("textP2PMessg", null, "chat_id=?", new String[]{chat_id}, null, null, null);
+        List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
+        while (cursor.moveToNext()) {
+            BaseMessage baseMessage = new BaseMessage();
+            baseMessage.messageType = cursor.getInt(cursor.getColumnIndex("messageType"));
+            baseMessage.sendTime = cursor.getString(cursor.getColumnIndex("sendTime"));
+            baseMessage.chat_id = cursor.getString(cursor.getColumnIndex("chat_id"));
+            baseMessage.uuid = cursor.getString(cursor.getColumnIndex("uuid"));
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.textMessageContent = cursor.getString(cursor.getColumnIndex("textMessageContent"));
+            UserMessage userMessage=findUserByUserId(userId);
+            fileMessage.userId = userMessage.userId;
+            fileMessage.nodeId = userMessage.nodeId;
+            fileMessage.userNick = userMessage.userNick;
+            fileMessage.userAvatar = userMessage.userAvatar;
+            fileMessage.userGender =userMessage.userGender;
+            fileMessage.userAge = userMessage.userAge;
             fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
             fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
             fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));

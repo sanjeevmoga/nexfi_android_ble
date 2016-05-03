@@ -1,6 +1,7 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -105,7 +106,27 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         initAdapter();
         setClicklistener();
+        //注册监听，则数据库数据更新时会通知聊天界面
+        getContentResolver().registerContentObserver(
+                Uri.parse("content://www.nexfi_ble_user_single.com"), true,
+                new Myobserve(new Handler()));
 
+    }
+
+
+
+    private class Myobserve extends ContentObserver {
+        public Myobserve(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+
+            initAdapter();
+
+            super.onChange(selfChange);
+        }
     }
 
     private void initDialogConnectedStatus() {
@@ -123,8 +144,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initAdapter() {
         mDataArrays = bleDBDao.findMsgByChatId(userId);
+//        for (int i = 0; i <mDataArrays.size() ; i++) {
+//            BaseMessage baseMessage=mDataArrays.get(i);
+//            FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
+//            if(fileMessage.userId.equals(userSelfId)){
+//
+//            }
+//        }
+        Log.e("TAG",mDataArrays.size()+"------------------------initAdapter------------------------");
         chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
         lv_chatPrivate.setAdapter(chatMessageAdapater);
+        if (chatMessageAdapater != null) {
+            chatMessageAdapater.notifyDataSetChanged();
+        }
     }
 
     private void setClicklistener() {
