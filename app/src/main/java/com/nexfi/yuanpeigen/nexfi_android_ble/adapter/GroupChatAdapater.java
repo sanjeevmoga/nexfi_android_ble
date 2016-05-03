@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.BigImageActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ModifyInformationActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
@@ -93,15 +96,15 @@ public class GroupChatAdapater extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        convertView=null;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        convertView = null;
         final BaseMessage entity = coll.get(position);
         int msgType = entity.messageType;
-        TextMessage textMessage=null;
-        FileMessage fileMessage=null;
-        if(msgType== MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE || msgType==MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE){
+        TextMessage textMessage = null;
+        FileMessage fileMessage = null;
+        if (msgType == MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE || msgType == MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
             textMessage = (TextMessage) entity.userMessage;
-        }else if(msgType==MessageType.GROUP_SEND_FOLDER_MESSAGE_TYPE || msgType==MessageType.GROUP_RECEIVE_FOLDER_MESSAGE_TYPE || msgType==MessageType.GROUP_SEND_IMAGE_MESSAGE_TYPE || msgType==MessageType.GROUP_RECEIVE_IMAGE_MESSAGE_TYPE){
+        } else if (msgType == MessageType.GROUP_SEND_FOLDER_MESSAGE_TYPE || msgType == MessageType.GROUP_RECEIVE_FOLDER_MESSAGE_TYPE || msgType == MessageType.GROUP_SEND_IMAGE_MESSAGE_TYPE || msgType == MessageType.GROUP_RECEIVE_IMAGE_MESSAGE_TYPE) {
             fileMessage = (FileMessage) entity.userMessage;
         }
 
@@ -208,22 +211,39 @@ public class GroupChatAdapater extends BaseAdapter {
         switch (msgType) {
             case 13:
                 viewHolder_chatSend.iv_userhead_send_chat.setImageResource(textMessage.userAvatar);
+                viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    }
+                });
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.sendTime);
                 viewHolder_chatSend.tv_chatText_send.setText(textMessage.textMessageContent);
                 viewHolder_chatSend.tv_userNick_send.setText(textMessage.userNick);
                 break;
             case 14:
                 viewHolder_chatReceive.iv_userhead_receive_chat.setImageResource(textMessage.userAvatar);
+                viewHolder_chatReceive.iv_userhead_receive_chat.setOnClickListener(new AvatarClick(position));
                 viewHolder_chatReceive.tv_sendTime_receive.setText(entity.sendTime);
                 viewHolder_chatReceive.tv_chatText_receive.setText(textMessage.textMessageContent);
                 viewHolder_chatReceive.tv_userNick_receive.setText(textMessage.userNick);
                 break;
             case 15:
                 viewHolder_sendFile.tv_userNick_send_folder.setText(fileMessage.userNick);
+                viewHolder_sendFile.tv_userNick_send_folder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    }
+                });
                 viewHolder_sendFile.iv_userhead_send_folder.setImageResource(fileMessage.userAvatar);
                 viewHolder_sendFile.tv_sendTime_send_folder.setText(entity.sendTime);
                 viewHolder_sendFile.tv_file_name_send.setText(fileMessage.fileName);
-                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize+"");
+                viewHolder_sendFile.tv_size_send.setText(fileMessage.fileSize + "");
                 viewHolder_sendFile.iv_icon_send.setImageResource(fileMessage.fileIcon);
                 viewHolder_sendFile.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -239,9 +259,10 @@ public class GroupChatAdapater extends BaseAdapter {
                 break;
             case 16:
                 viewHolder_receiveFile.iv_userhead_receive_folder.setImageResource(fileMessage.userAvatar);
+                viewHolder_receiveFile.iv_userhead_receive_folder.setOnClickListener(new AvatarClick(position));
                 viewHolder_receiveFile.tv_sendTime_receive_folder.setText(entity.sendTime);
                 viewHolder_receiveFile.tv_file_name_receive.setText(fileMessage.fileName);
-                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize+"");
+                viewHolder_receiveFile.tv_size_receive.setText(fileMessage.fileSize + "");
                 viewHolder_receiveFile.tv_userNick_receive_folder.setText(fileMessage.userNick);
                 viewHolder_receiveFile.iv_icon_receive.setImageResource(fileMessage.fileIcon);
                 //选择文件的打开方式
@@ -264,6 +285,14 @@ public class GroupChatAdapater extends BaseAdapter {
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(fileMessage.userAvatar);
+                viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    }
+                });
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.sendTime);
                 viewHolder_sendImage.tv_userNick_send_image.setText(fileMessage.userNick);
                 if (fileMessage.isPb == 0) {
@@ -289,6 +318,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 viewHolder_receiveImage.iv_icon_receive.setImageBitmap(bitmap_receive);
                 viewHolder_receiveImage.iv_icon_receive.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_receiveImage.iv_userhead_receive_image.setImageResource(fileMessage.userAvatar);
+                viewHolder_receiveImage.iv_userhead_receive_image.setOnClickListener(new AvatarClick(position));
                 viewHolder_receiveImage.tv_sendTime_receive_image.setText(entity.sendTime);
                 viewHolder_receiveImage.tv_userNick_receive_image.setText(fileMessage.userNick);
                 if (fileMessage.isPb == 0) {
@@ -351,5 +381,23 @@ public class GroupChatAdapater extends BaseAdapter {
         public ProgressBar pb_send;
     }
 
+    //单击事件实现
+    class AvatarClick implements View.OnClickListener {
+        public int position;
+
+        public AvatarClick(int p) {
+            position = p;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent();
+            intent.setClass(mContext, UserInformationActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("data_obj", coll.get(position));
+            intent.putExtras(bundle);
+            mContext.startActivity(intent);
+        }
+    }
 
 }

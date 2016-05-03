@@ -133,7 +133,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 showToast();
                 break;
             case R.id.iv_showUserInfo:
-                showToast();
+                startActivity(new Intent(this,GroupChatUserActivity.class));
                 break;
         }
     }

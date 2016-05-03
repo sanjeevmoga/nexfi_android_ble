@@ -161,7 +161,7 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
                 Log.e("TAG", user.userNick+"------bleDBDao----------" + user.userAvatar);
                 Log.e("TAG", newUserAvater+"------newUserAvater----------" +newUserNick+"----"+newUserGender+"----"+newUserAge);
                 if(newUserAvater==0 && newUserNick==null && newUserAge==0) {
-//                    newUserAvater=userAvatar;
+ //                    newUserAvater=userAvatar;
 //                    newUserNick=userNick;
 //                    newUserAge=userAge;
 //                    newUserGender=userGender;

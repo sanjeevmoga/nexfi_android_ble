@@ -207,9 +207,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, ModifyInformationActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("data_obj", coll.get(position));
-                        intent.putExtras(bundle);
                         mContext.startActivity(intent);
                     }
                 });
