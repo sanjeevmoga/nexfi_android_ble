@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.uncaught.CrashHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,14 +15,17 @@ import java.util.UUID;
 public class BleApplication extends Application{
     private static Context mContext;
     private static String uuid= UUID.randomUUID().toString();
+    private static CrashHandler crashHandler;
+    private static List<Throwable> exceptionLists=new ArrayList<Throwable>();
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         mContext=getApplicationContext();
-        CrashHandler handler=new CrashHandler(mContext);
-        handler.init(mContext);
+        crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
+
     }
 
     public static Context getContext(){
@@ -29,6 +34,15 @@ public class BleApplication extends Application{
 
     public static String getUUID(){
         return uuid;
+    }
+
+
+    public static CrashHandler getCrashHandler(){
+        return crashHandler;
+    }
+
+    public static List<Throwable> getExceptionLists(){
+        return exceptionLists;
     }
 
 }

@@ -36,7 +36,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //进入附近的人界面时开始搜索
-        Log.e("TAG","----MainActivity---------------onCreate");
         startScan();
         initView();
         mHandler = new Handler() {

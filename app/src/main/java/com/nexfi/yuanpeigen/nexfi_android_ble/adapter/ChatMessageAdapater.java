@@ -252,6 +252,8 @@ public class ChatMessageAdapater extends BaseAdapter {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
                             } catch (Exception e) {
+                                BleApplication.getExceptionLists().add(e);
+                                BleApplication.getCrashHandler().saveCrashInfo2File(e);
                                 e.printStackTrace();
                             }
                         } else {
@@ -286,6 +288,8 @@ public class ChatMessageAdapater extends BaseAdapter {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
                             } catch (Exception e) {
+                                BleApplication.getExceptionLists().add(e);
+                                BleApplication.getCrashHandler().saveCrashInfo2File(e);
                                 e.printStackTrace();
                             }
                         } else {

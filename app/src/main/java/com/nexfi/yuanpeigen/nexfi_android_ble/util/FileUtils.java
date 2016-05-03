@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +28,8 @@ public class FileUtils {
                     return cursor.getString(column_index);
                 }
             } catch (Exception e) {
+                BleApplication.getExceptionLists().add(e);
+                BleApplication.getCrashHandler().saveCrashInfo2File(e);
                 e.printStackTrace();
             }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -272,14 +276,6 @@ public class FileUtils {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//TODO
         Date date=new Date();
         String dateTime=format.format(date);
-//        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");//TODO
-//        SimpleDateFormat hour = new SimpleDateFormat("HH");
-//        String date = hour.format(new Date());
-//        int num = Integer.parseInt(date);
-//        if (num >= 12) {
-//            return "下午" + " " + format.format(new Date());
-//        }
-//        return "上午" + " " + format.format(new Date());
         return dateTime;
     }
 
