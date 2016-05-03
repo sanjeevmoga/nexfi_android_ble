@@ -51,6 +51,7 @@ public class BleDBDao {
         values.put("userAvatar", userMessage.userAvatar);
         db.insert("userInfomat", null, values);
         db.close();
+        Log.e("TAG", userMessage.userNick+"-保存到数据库---"+userMessage.userAvatar+"===="+userMessage.userId);
         //有新用户上线
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);

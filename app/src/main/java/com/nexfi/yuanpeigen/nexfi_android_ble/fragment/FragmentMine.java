@@ -3,7 +3,6 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivit
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 /**
@@ -46,6 +46,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     private String userNick, newUserNick, userGender, newUserGender;
     private int userAge, newUserAge, newUserAvater, userAvatar;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
+    private Node node;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -162,15 +163,17 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
 
         UserMessage user=bleDBDao.findUserByUserId(userSelfId);
 
-        if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
-
-            user.userAvatar=newUserAvater;
-            user.userNick=newUserNick;
-            user.userGender=newUserGender;
-            user.userAge=newUserAge;
-            bleDBDao.updateUserInfoByUserId(user, userSelfId);
-        }
+//        if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
+//
+//            user.userAvatar=newUserAvater;
+//            user.userNick=newUserNick;
+//            user.userGender=newUserGender;
+//            user.userAge=newUserAge;
+//            BaseMessage baseMessage=new BaseMessage();
+//            baseMessage.messageType= MessageType.MODIFY_USER_INFO;
+//            baseMessage.userMessage=user;
+//            ((MainActivity) getActivity()).notifyMineMsgHasChanged(baseMessage);
+//            bleDBDao.updateUserInfoByUserId(user, userSelfId);
+//        }
     }
-
-
 }

@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 /**
@@ -41,11 +43,14 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
     private String userNick, newUserNick, userGender, newUserGender;
     private int userAge, newUserAge, newUserAvater, userAvatar;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
+    private Node node;
+    private UserMessage user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_information);
+        node = MainActivity.getNode();
         initData();
         initView();
         setClickListener();
@@ -94,7 +99,23 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         userAvatar = UserInfo.initUserAvatar(userAvatar, BleApplication.getContext());
         userGender = UserInfo.initUserGender(userGender, BleApplication.getContext());
         userNick = UserInfo.initUserNick(userNick, BleApplication.getContext());
+        Log.e("TAG","userAvatar: "+userAvatar+"userNick: "+userNick+"----------------------------------------"+userSelfId);
+        user = bleDBDao.findUserByUserId(userSelfId);
+        Log.e("TAG", user.userNick+"-----------------------"+ user.userId);
     }
+
+    //2130903069--------userMessage.userAvatar-------add------
+    //华为-保存到数据库---2130903069====0f4c60cc-0d0a-40c8-85a9-2bfddc44ee25
+    //Nexus-保存到数据库---2130903066====dca467f4-9289-4945-a377-d1ff20b0406a
+    //userAvatar: 2130903069userNick: 华为----------------------------------------0f4c60cc-0d0a-40c8-85a9-2bfddc44ee25
+    //华为-----------------------0f4c60cc-0d0a-40c8-85a9-2bfddc44ee25
+    //null-保存到数据库---0====5b317787-f69f-4842-b9ed-780414aa74ad
+    //------bleDBDao----------0
+
+
+
+    //2130903066--------userMessage.userAvatar-------add------
+    //Nexus-保存到数据库---2130903066====dca467f4-9289-4945-a377-d1ff20b0406a
 
 
     private void setClickListener() {
@@ -136,6 +157,59 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_finish:
+//                UserMessage user=bleDBDao.findUserByUserId(userSelfId);
+                Log.e("TAG", user.userNick+"------bleDBDao----------" + user.userAvatar);
+                Log.e("TAG", newUserAvater+"------newUserAvater----------" +newUserNick+"----"+newUserGender+"----"+newUserAge);
+                if(newUserAvater==0 && newUserNick==null && newUserAge==0) {
+//                    newUserAvater=userAvatar;
+//                    newUserNick=userNick;
+//                    newUserAge=userAge;
+//                    newUserGender=userGender;
+                    Log.e("TAG", newUserAvater+"------不发修改消息----------" +newUserNick+"----"+newUserGender+"----"+newUserAge);
+                }else{
+                    if(newUserAvater!=0){
+                        user.userAvatar=newUserAvater;
+                    }
+                    if(newUserNick!=null){
+                        user.userNick=newUserNick;
+                    }
+                    if(newUserAge!=0){
+                        user.userAge=newUserAge;
+                    }
+                    user.userGender=newUserGender;
+                    Log.e("TAG", user.userNick + "------发送修改消息----------" + newUserNick);
+                }
+//                else if(newUserAvater!=0 && newUserNick!=null && newUserGender!=null && newUserAge!=0) {
+//                    if (userAvatar != newUserAvater || !userNick.equals(newUserNick) || !userGender.equals(newUserGender) || userAge != newUserAge) {
+//                    btn_finish.setText("完成");
+//                        if (userAvatar != newUserAvater) {
+//                            user.userAvatar = newUserAvater;
+//                        }
+//                        if(!userNick.equals(newUserNick)){
+//                            user.userNick=newUserNick;
+//                        }
+//                        if(!userGender.equals(newUserGender)){
+//                            user.userGender=newUserGender;
+//                        }
+//                        if(userAge != newUserAge){
+//                            user.userAge = newUserAge;
+//                        }
+//                        Log.e("TAG", user.userAvatar + "------modify----------" + newUserAvater);
+//                        user.userNick=newUserNick;
+//                        user.userAvatar = newUserAvater;
+//                        user.userNick = newUserNick;
+//                        user.userGender = newUserGender;
+//
+//
+//                        BaseMessage baseMessage = new BaseMessage();
+//                        baseMessage.messageType = MessageType.MODIFY_USER_INFO;
+//                        baseMessage.userMessage = user;
+//                        byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
+//                        node.broadcastFrame(notify_msg_bys);
+//                        Log.e("TAG", user.userNick + "------发送修改消息----------" + newUserNick);
+//                        bleDBDao.updateUserInfoByUserId(user, userSelfId);
+//                    }
+//                }
                 finish();
                 break;
             case R.id.iv_userhead_icon:
@@ -162,19 +236,25 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         } else if (resultCode == 2) {
             newUserNick = data.getStringExtra(USER_NICK);
             tv_username.setText(newUserNick);
+            Log.e("TAG","------newUserNick----------" + newUserNick);
         } else if (resultCode == 3) {
             newUserAge = data.getIntExtra(USER_AGE, 18);
             tv_userAge.setText(newUserAge + "");
         }
-        UserMessage user=bleDBDao.findUserByUserId(userSelfId);
-        if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
-            btn_finish.setText("完成");
-            user.userAvatar=newUserAvater;
-            user.userNick=newUserNick;
-            user.userGender=newUserGender;
-            user.userAge=newUserAge;
-            bleDBDao.updateUserInfoByUserId(user, userSelfId);
-        }
+//        UserMessage user=bleDBDao.findUserByUserId(userSelfId);
+//        if (user.userAvatar != newUserAvater || !user.userNick.equals(newUserNick) || !user.userGender.equals(newUserGender) || user.userAge != newUserAge) {
+//            btn_finish.setText("完成");
+//            user.userAvatar=newUserAvater;
+//            user.userNick=newUserNick;
+//            user.userGender=newUserGender;
+//            user.userAge=newUserAge;
+//            BaseMessage baseMessage=new BaseMessage();
+//            baseMessage.messageType= MessageType.MODIFY_USER_INFO;
+//            baseMessage.userMessage=user;
+//            byte[] notify_msg_bys= ObjectBytesUtils.ObjectToByte(baseMessage);
+//            node.broadcastFrame(notify_msg_bys);
+//            bleDBDao.updateUserInfoByUserId(user, userSelfId);
+//        }
 
     }
 }

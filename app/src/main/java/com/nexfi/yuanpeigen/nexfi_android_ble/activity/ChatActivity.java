@@ -93,6 +93,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +101,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         node = MainActivity.getNode();
         textMsgOperation = new TextMsgOperation();
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
-
         initIntentData();
         initView();
         initAdapter();
@@ -134,7 +134,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         iv_pic.setOnClickListener(this);
         iv_position.setOnClickListener(this);
         iv_camera.setOnClickListener(this);
-        node.setReceiveTextMsgListener(this);
+        if(node!=null){
+            node.setReceiveTextMsgListener(this);
+        }
     }
 
     private void initView() {

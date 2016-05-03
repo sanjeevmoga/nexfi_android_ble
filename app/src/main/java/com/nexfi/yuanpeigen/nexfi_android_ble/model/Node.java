@@ -187,7 +187,11 @@ public class Node implements TransportListener {
             if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
                 bleDBDao.add(baseMessage, userMsg);
             }
-        } else if (MessageType.OFFINE_USER_INFO == baseMessage.messageType) {//用户下线通知
+        } else if(MessageType.MODIFY_USER_INFO==baseMessage.messageType){//用户信息修改请求
+            //接收到用户信息修改消息后，根据userId将对应的用户信息修改
+            UserMessage userMessage=baseMessage.userMessage;
+            bleDBDao.updateUserInfoByUserId(userMessage,userMessage.userId);//根据userId更新数据库中对应的用户信息
+        }else if (MessageType.OFFINE_USER_INFO == baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
             if (Debug.DEBUG) {
                 Log.e("TAG", "----移除断开连接的用户-----------------------------------------");
@@ -212,7 +216,6 @@ public class Node implements TransportListener {
                 textMessage.nodeId = link.getNodeId();
                 bleDBDao.addGroupTextMsg2(baseMessage, textMessage);
                 UserMessage user = bleDBDao.findUserByUserId(userSelfId);
-                Log.e("TAG",textMessage.userNick+"===接收到用户昵称===="+user.userNick+"--type---"+baseMessage.messageType);
                     if (null != mReceiveTextMsgListener) {
                         mReceiveTextMsgListener.onReceiveTextMsg(baseMessage);
                         if (Debug.DEBUG) {

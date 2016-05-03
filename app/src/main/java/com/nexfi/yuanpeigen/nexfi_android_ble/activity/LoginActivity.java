@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -52,21 +53,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean isFirstIn = false;
     private boolean isExit;
 
+
     BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
     public String userIdOfFirstLogin=UUID.randomUUID().toString();//第一次进入登录时会生成一个用户id
-    public String s;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try{
-            System.out.println(5/0);
-        }catch (Exception e){
-            BleApplication.getExceptionLists().add(e);
-            BleApplication.getCrashHandler().saveCrashInfo2File(e);
-            e.printStackTrace();
-
-        }
-
         setContentView(R.layout.activity_login);
         initView();
         initData();
@@ -80,7 +72,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         };
     }
-
 
     private void initView() {
         tv_username = (TextView) findViewById(R.id.tv_username);
@@ -186,6 +177,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userMessage.userGender = userGender;
         userMessage.userId = userIdOfFirstLogin;//每个用户第一次登录的时候生成一个用户id
         baseMessage.userMessage = userMessage;
+        Log.e("TAG",userMessage.userAvatar+"--------userMessage.userAvatar-------add------");//2130903068--------userMessage.userAvatar-------add------
         bleDBDao.add(baseMessage,userMessage);
     }
 
