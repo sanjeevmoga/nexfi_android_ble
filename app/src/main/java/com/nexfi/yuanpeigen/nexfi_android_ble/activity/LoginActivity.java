@@ -54,10 +54,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
     public String userIdOfFirstLogin=UUID.randomUUID().toString();//第一次进入登录时会生成一个用户id
-
+    public String s;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try{
+            System.out.println(5/0);
+        }catch (Exception e){
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
+            e.printStackTrace();
+
+        }
+
         setContentView(R.layout.activity_login);
         initView();
         initData();

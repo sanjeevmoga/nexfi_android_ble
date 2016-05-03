@@ -1,5 +1,7 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.util;
 
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -27,6 +29,8 @@ public class ObjectBytesUtils {
             bo.close();
             oo.close();
         } catch (Exception e) {
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         return bytes;
@@ -48,6 +52,8 @@ public class ObjectBytesUtils {
             bi.close();
             oi.close();
         } catch (Exception e) {
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         return obj;

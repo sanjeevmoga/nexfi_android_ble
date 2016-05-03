@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import com.nexfi.yuanpeigen.nexfi_android_ble.wheelview.NumericWheelAdapter;
 import com.nexfi.yuanpeigen.nexfi_android_ble.wheelview.OnWheelScrollListener;
@@ -217,6 +218,8 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
                 return "0";
             return String.valueOf(new Double(year).intValue());
         } catch (ParseException e) {
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         return "0";

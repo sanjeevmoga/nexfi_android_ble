@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,11 +74,9 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
 
     private void initAdapter() {
-        Log.e("TAG","initAdapter--------------------------------------------");
         mDataArrays=bleDBDao.findGroupMsg();
         groupChatAdapater=new GroupChatAdapater(GroupChatActivity.this,mDataArrays);
         lv_chatGroup.setAdapter(groupChatAdapater);
-        Log.e("TAG", "initAdapter---------------------------结束-----------------");
     }
 
     private void setClicklistener() {
@@ -181,6 +178,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         try {
             bys_send_data = FileTransferUtils.getBytesFromFile(fileToSend);
         } catch (Exception e) {
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         if (null == bys_send_data) {
@@ -212,7 +211,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             node.broadcastFrame(send_file_data);
             bleDBDao.addGroupTextMsg2(baseMessage, fileMessage);//geng
             setAdapter(baseMessage);
-            Log.e("TAG",  "------发送结束-----------------------------------------------");
         }
     }
 
@@ -287,7 +285,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onDestroy() {
-        Log.e("TAG", node + "-------group-----onDestroy-----------------------------");
         super.onDestroy();
     }
 

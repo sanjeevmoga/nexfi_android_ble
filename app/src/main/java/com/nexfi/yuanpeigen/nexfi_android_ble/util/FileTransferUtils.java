@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -304,6 +306,8 @@ public class FileTransferUtils {
                     stream.close();
                 } catch (IOException e) {
                     // log.error("helper:get file from byte process error!");
+                    BleApplication.getExceptionLists().add(e);
+                    BleApplication.getCrashHandler().saveCrashInfo2File(e);
                     e.printStackTrace();
                 }
             }
@@ -358,6 +362,8 @@ public class FileTransferUtils {
                     fos.close();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
+                    BleApplication.getExceptionLists().add(e);
+                    BleApplication.getCrashHandler().saveCrashInfo2File(e);
                     e.printStackTrace();
                 }
                 if (!bitmap.isRecycled()) {
@@ -389,6 +395,8 @@ public class FileTransferUtils {
             uri=Uri.fromFile(image);
         } catch (IOException e) {
             // TODO Auto-generated catch block
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         // Save a file: path for use with ACTION_VIEW intents
@@ -404,6 +412,8 @@ public class FileTransferUtils {
                 outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                BleApplication.getExceptionLists().add(e);
+                BleApplication.getCrashHandler().saveCrashInfo2File(e);
                 e.printStackTrace();
             }
         } finally {
@@ -412,6 +422,8 @@ public class FileTransferUtils {
                 outputChannel.close();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                BleApplication.getExceptionLists().add(e);
+                BleApplication.getCrashHandler().saveCrashInfo2File(e);
                 e.printStackTrace();
             }
         }

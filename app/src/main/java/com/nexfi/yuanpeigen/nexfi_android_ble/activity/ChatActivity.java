@@ -254,6 +254,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         try {
             bys_send_data = FileTransferUtils.getBytesFromFile(fileToSend);
         } catch (Exception e) {
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         if (null == bys_send_data) {
@@ -305,6 +307,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         try {
             bys = FileTransferUtils.getBytesFromFile(fileToSend);
         } catch (Exception e) {
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
             e.printStackTrace();
         }
         String tFileData = Base64.encodeToString(bys, Base64.DEFAULT);//文件数据
@@ -333,6 +337,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     byte[] send_file_data = ObjectBytesUtils.ObjectToByte(baseMessage);
                     link.sendFrame(send_file_data);
             }catch (Exception e){
+                BleApplication.getExceptionLists().add(e);
+                BleApplication.getCrashHandler().saveCrashInfo2File(e);
                 e.printStackTrace();
             }
             setAdapter(baseMessage);

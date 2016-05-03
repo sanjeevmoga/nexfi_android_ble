@@ -10,6 +10,8 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+
 /**
  * Created by gengbaolong on 2016/4/20.
  */
@@ -101,7 +103,11 @@ public class TUtils {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
-        } finally {
+        } catch (Exception e){
+            BleApplication.getExceptionLists().add(e);
+            BleApplication.getCrashHandler().saveCrashInfo2File(e);
+            e.printStackTrace();
+        }finally {
             if (cursor != null)
                 cursor.close();
         }
