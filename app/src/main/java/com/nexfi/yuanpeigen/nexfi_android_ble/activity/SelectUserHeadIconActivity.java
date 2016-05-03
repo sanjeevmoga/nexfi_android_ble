@@ -22,10 +22,11 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
     private TextView tv_save;
     private RelativeLayout layout_back;
     private GridView gridView;
+    private boolean isSelected = false;
 
     private final String USER_AVATAR = "userAvatar";
 
-    private int userAvatar;
+    private int userAvatar, newUserAvatar;
 
     private SelectUserHeadIconGridViewAdapter mGridViewAdapter;
 
@@ -53,7 +54,8 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    userAvatar = UserInfo.userHeadIcon[position];
+                newUserAvatar = UserInfo.userHeadIcon[position];
+                isSelected = true;
             }
         });
     }
@@ -63,16 +65,23 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
+                Intent intent1 = new Intent(this, MainActivity.class);
+                intent1.putExtra(USER_AVATAR, userAvatar);
+                setResult(1, intent1);
                 finish();
                 break;
             case R.id.tv_save:
-                if (userAvatar != R.mipmap.img_default) {
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.putExtra(USER_AVATAR, userAvatar);
-                    setResult(1, intent);
-                    finish();
-                    UserInfo.saveUserHeadIcon(this, userAvatar);
-                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                if (isSelected) {
+                    if (userAvatar != newUserAvatar) {
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra(USER_AVATAR, newUserAvatar);
+                        setResult(1, intent);
+                        finish();
+                        UserInfo.saveUserHeadIcon(this, newUserAvatar);
+                        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "您还未重新选择头像哦", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(this, "您还未选择头像哦", Toast.LENGTH_SHORT).show();
                 }

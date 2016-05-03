@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
@@ -44,9 +45,11 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
 
     private LinearLayout ll;
 
-    private int userAge;
+    private int userAge, newUserAge;
 
     private final String USER_AGE = "userAge";
+
+    private boolean isSelected = false;
 
 
     @Override
@@ -81,14 +84,22 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_back:
+                Intent intent1 = new Intent(this, MainActivity.class);
+                intent1.putExtra(USER_AGE, userAge);
+                setResult(3, intent1);
                 finish();
                 break;
             case R.id.tv_save:
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra(USER_AGE, userAge);
-                setResult(3, intent);
-                finish();
-                UserInfo.saveUserAge(this, userAge);
+                if (isSelected && userAge != newUserAge) {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra(USER_AGE, newUserAge);
+                    setResult(3, intent);
+                    finish();
+                    UserInfo.saveUserAge(this, newUserAge);
+                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "请选择您的生日", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -143,11 +154,13 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
             int n_year = year.getCurrentItem() + 1950;//年
             int n_month = month.getCurrentItem() + 1;//月
 
+            isSelected = true;
+
             initDay(n_year, n_month);
 
             String birthday = new StringBuilder().append((year.getCurrentItem() + 1950)).append("-").append((month.getCurrentItem() + 1) < 10 ? "0" + (month.getCurrentItem() + 1) : (month.getCurrentItem() + 1)).append("-").append(((day.getCurrentItem() + 1) < 10) ? "0" + (day.getCurrentItem() + 1) : (day.getCurrentItem() + 1)).toString();
             tv_selectUserAge.setText(calculateDatePoor(birthday) + "岁");
-            userAge = Integer.parseInt(calculateDatePoor(birthday));
+            newUserAge = Integer.parseInt(calculateDatePoor(birthday));
         }
     };
 

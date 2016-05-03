@@ -1,11 +1,11 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.RadioButton;
@@ -45,17 +45,18 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 isExit = false;
             }
         };
+
     }
 
 
-    public static Node getNode(){
+    public static Node getNode() {
         return node;
     }
 
     private void startScan() {
-        if(null==node){
-            node=new Node(MainActivity.this);
-            Log.e("TAG",node+"----MainActivity---------------onCreate");
+        if (null == node) {
+            node = new Node(MainActivity.this);
+            Log.e("TAG", node + "----MainActivity---------------onCreate");
         }
         node.start();
     }
@@ -69,13 +70,13 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     }
 
     private void initFragment() {
-            initNearByFragment();
-            rb_nearby.setChecked(true);
+        initNearByFragment();
+        rb_nearby.setChecked(true);
     }
 
 
     public void initNearByFragment() {
-        mFragmentManager = getFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
         fragmentNearby = new FragmentNearby();
         fragmentMine = new FragmentMine();
         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
@@ -85,7 +86,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     }
 
     private void initMineFragment() {
-        mFragmentManager = getFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
         fragmentNearby = new FragmentNearby();
         fragmentMine = new FragmentMine();
         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
