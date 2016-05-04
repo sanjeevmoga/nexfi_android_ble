@@ -3,9 +3,11 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -18,8 +20,12 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUserAgeActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUsernameActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 
@@ -48,6 +54,9 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     private int userAge, newUserAge, newUserAvater, userAvatar;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     private Node node;
+    private Button bt_modify;
+    private boolean isModified=false;
+    private UserMessage user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,12 +78,38 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         rb_female = (RadioButton) view.findViewById(R.id.rb_female);
         rb_male = (RadioButton) view.findViewById(R.id.rb_male);
         radioSetOnCheckedListener();
+        bt_modify = (Button) view.findViewById(R.id.bt_modify);
     }
 
     private void setClickListener() {
         iv_userhead_icon.setOnClickListener(this);
         layout_username.setOnClickListener(this);
         layout_userAge.setOnClickListener(this);
+        if(isModified){
+            bt_modify.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //隐藏按钮
+                    bt_modify.setVisibility(View.GONE);
+                    //点击之后发送通知
+                    user.userNick = userNick;
+                    user.userAge = userAge;
+                    user.userGender = userGender;
+                    user.userAvatar = userAvatar;
+                    //将修改后的数据更新到数据库中
+                    bleDBDao.updateUserInfoByUserId(user, userSelfId);
+                    //
+                    Log.e("TAG", user.nodeId + "------------------fragmentMine-----------修改后的-nodeId--------------------------");
+                    bleDBDao.updateP2PMsgByUserId(user,userSelfId);
+                    //发送改变通知
+                    BaseMessage baseMessage = new BaseMessage();
+                    baseMessage.messageType = MessageType.MODIFY_USER_INFO;
+                    baseMessage.userMessage = user;
+                    byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
+                    node.broadcastFrame(notify_msg_bys);
+                }
+            });
+        }
     }
 
     private void setViewData() {
@@ -101,6 +136,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         userAvatar = UserInfo.initUserAvatar(userAvatar, BleApplication.getContext());
         userGender = UserInfo.initUserGender(userGender, BleApplication.getContext());
         userNick = UserInfo.initUserNick(userNick, BleApplication.getContext());
+        user = bleDBDao.findUserByUserId(userSelfId);//geng
     }
 
     private void radioSetOnCheckedListener() {
@@ -123,9 +159,11 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         if (userGender != null) {
             if (!userGender.equals(sex)) {
                 Toast.makeText(FragmentMine.this.getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+                bt_modify.setVisibility(View.VISIBLE);
+                isModified=true;
             }
         }
-        newUserGender = sex;
+        userGender = sex;
         UserInfo.saveUsersex(FragmentMine.this.getActivity(), userGender);
     }
 
@@ -151,15 +189,38 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == 1) {
-            newUserAvater = data.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
-            iv_userhead_icon.setImageResource(newUserAvater);
+            userAvatar = data.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
+            if(user.userAvatar==userAvatar){
+                //没有修改
+            }else{
+                //修改
+                bt_modify.setVisibility(View.VISIBLE);
+                isModified=true;
+            }
+            iv_userhead_icon.setImageResource(userAvatar);
         } else if (resultCode == 2) {
-            newUserNick = data.getStringExtra(USER_NICK);
-            tv_username.setText(newUserNick);
+            userNick = data.getStringExtra(USER_NICK);
+            if(user.userNick.equals(userNick)){
+                //没有修改
+            }else{
+                //修改
+                bt_modify.setVisibility(View.VISIBLE);
+                isModified=true;
+            }
+            tv_username.setText(userNick);
         } else if (resultCode == 3) {
-            newUserAge = data.getIntExtra(USER_AGE, 18);
-            tv_userAge.setText(newUserAge + "");
+            userAge = data.getIntExtra(USER_AGE, 18);
+            if(user.userAge==userAge){
+                //没有修改
+            }else{
+                //修改
+                bt_modify.setVisibility(View.VISIBLE);
+                isModified=true;
+            }
+            tv_userAge.setText(userAge + "");
         }
     }
+
 }

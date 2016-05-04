@@ -24,6 +24,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.util.Log;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -69,6 +70,7 @@ class BleCentralLink extends BluetoothGattCallback implements Link
 
 	public void connect()
 	{
+		Log.e("TAG", "---BleCentralLink------------------------------------connect------");
 		central.linkConnecting(this);
 
 		gattAdapter = new BleGattAdapter(this, central.queue);

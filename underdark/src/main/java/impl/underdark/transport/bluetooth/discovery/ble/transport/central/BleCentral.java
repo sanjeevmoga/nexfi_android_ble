@@ -23,17 +23,17 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import impl.underdark.transport.bluetooth.BtTransport;
+import impl.underdark.logging.Logger;
 import impl.underdark.transport.bluetooth.discovery.Scanner;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleDetector;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleDetectorFactory;
-import impl.underdark.logging.Logger;
 import io.underdark.Config;
 import io.underdark.util.dispatch.DispatchQueue;
 
@@ -72,6 +72,7 @@ public class BleCentral implements BleDetector.Listener, Scanner
 	@Override
 	public void startScan(long durationMs)
 	{
+		Log.e("TAG", "---BleCentral------------------------------------startScan------");
 		if(Build.VERSION.SDK_INT < 18)
 		{
 			queue.dispatch(new Runnable()

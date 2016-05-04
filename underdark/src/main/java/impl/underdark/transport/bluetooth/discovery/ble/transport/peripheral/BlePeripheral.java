@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.ParcelUuid;
+import android.util.Log;
 
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -108,6 +109,7 @@ public class BlePeripheral implements Advertiser, BleAdvCallback.Listener
 	@Override
 	public void startAdvertise(long durationMs)
 	{
+		Log.e("TAG", "---BlePeripheral------------------------------------startAdvertise------");
 		if(Build.VERSION.SDK_INT < 21)
 		{
 			queue.dispatch(new Runnable()

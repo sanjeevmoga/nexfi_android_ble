@@ -19,6 +19,7 @@ package impl.underdark.transport.bluetooth.discovery.ble.detector;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.util.Log;
 
 import impl.underdark.logging.Logger;
 import io.underdark.util.dispatch.DispatchQueue;
@@ -46,6 +47,7 @@ public class BleKitKatDetector implements BleDetector
 	@Override
 	public void startScan()
 	{
+		Log.e("TAG","---BleKitKatDetector------------------------------------startScan------");
 		if(this.scanCallback != null)
 			return;
 

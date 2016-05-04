@@ -86,7 +86,7 @@ public class InputUserAgeActivity extends AppCompatActivity implements View.OnCl
             case R.id.layout_back:
                 Intent intent1 = new Intent(this, MainActivity.class);
                 intent1.putExtra(USER_AGE, userAge);
-                setResult(3, intent1);
+                setResult(3,intent1);
                 finish();
                 break;
             case R.id.tv_save:

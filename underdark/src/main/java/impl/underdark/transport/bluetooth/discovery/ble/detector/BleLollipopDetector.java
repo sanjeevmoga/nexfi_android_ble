@@ -21,6 +21,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.util.Log;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class BleLollipopDetector implements BleDetector
 	@Override
 	public void startScan()
 	{
+		Log.e("TAG", "---BleLollipopDetector------------------------------------startScan------");
 		if(this.scanCallback != null)
 			return;
 
@@ -82,6 +84,7 @@ public class BleLollipopDetector implements BleDetector
 					public void run()
 					{
 						scanResult(result);
+						Log.e("TAG", "---BleLollipopDetector--------startScan--onScanResult----"+result.toString());
 					}
 				});
 			}
@@ -211,5 +214,6 @@ public class BleLollipopDetector implements BleDetector
 	{
 		// Queue.
 		listener.onDeviceDetected(result.getDevice(), result.getScanRecord().getBytes());
+		Log.e("TAG",result.getDevice().toString()+ "---BleLollipopDetector--------startScan--scanResult----" +result.getScanRecord());
 	}
 } // BleLollipopDetector

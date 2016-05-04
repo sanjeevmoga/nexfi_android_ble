@@ -16,6 +16,8 @@
 
 package impl.underdark.transport.bluetooth.discovery.ble;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +64,7 @@ public class ManufacturerData
 			List<Integer> channels
 	)
 	{
+		Log.e("TAG", "---ManufacturerData------------------------------------create------");
 		if(address == null || address.length != deviceAddressLen)
 			return null;
 
@@ -73,6 +76,7 @@ public class ManufacturerData
 
 	public static ManufacturerData parse(byte[] data)
 	{
+		Log.e("TAG", "---ManufacturerData---------------parse------"+new String(data));
 		if(data == null || data.length < (1 + 6 + 4) )
 			return null;
 

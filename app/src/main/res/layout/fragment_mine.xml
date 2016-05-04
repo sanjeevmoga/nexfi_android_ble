@@ -179,6 +179,12 @@
             </RadioGroup>
         </RelativeLayout>
 
+        <Button
+            android:id="@+id/bt_modify"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="完成修改"
+            android:visibility="gone"/>
         <View
             android:id="@+id/parent"
             android:layout_width="match_parent"

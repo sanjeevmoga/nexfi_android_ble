@@ -29,7 +29,7 @@ public class Config
 	public static final long btScanDuration = 4 * 1000;
 
 	// How long to scan for Bluetooth LE devices.
-	public static final long bleScanDuration = 5 * 1000;
+	public static final long bleScanDuration = 10 * 1000;
 
 	// How long to advertise for Bluetooth LE devices in foreground.
 	public static final long bleAdvertiseForegroundDuration = 10 * 1000;
@@ -41,6 +41,6 @@ public class Config
 	public static final long bleIdleBackgroundDuration = 2 * 60 * 1000;
 
 	// How long to remember that BLE device is unsuitable for connection.
-	public static final long bleUnsuitableCooldown = 30 * 1000;
+	public static final long bleUnsuitableCooldown = 30 * 1000;//记住BLE设备不适合连接多长时间
 
 } // Config

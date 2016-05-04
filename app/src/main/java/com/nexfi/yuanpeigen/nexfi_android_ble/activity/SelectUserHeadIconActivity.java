@@ -66,7 +66,7 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
         switch (v.getId()) {
             case R.id.layout_back:
                 Intent intent1 = new Intent(this, MainActivity.class);
-                intent1.putExtra(USER_AVATAR, userAvatar);
+//                intent1.putExtra(USER_AVATAR, userAvatar);//gengbaolong
                 setResult(1, intent1);
                 finish();
                 break;

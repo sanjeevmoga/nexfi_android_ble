@@ -23,11 +23,11 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.Arrays;
-import java.util.List;
 
-import impl.underdark.transport.bluetooth.BtTransport;
+import impl.underdark.logging.Logger;
 import impl.underdark.transport.bluetooth.BtUtils;
 import impl.underdark.transport.bluetooth.discovery.Scanner;
 import impl.underdark.transport.bluetooth.discovery.ble.BleConfig;
@@ -35,8 +35,6 @@ import impl.underdark.transport.bluetooth.discovery.ble.ManufacturerData;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleDetector;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleDetectorFactory;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleScanRecord;
-import impl.underdark.logging.Logger;
-import io.underdark.Config;
 import io.underdark.util.dispatch.DispatchQueue;
 
 @TargetApi(18)
@@ -69,8 +67,9 @@ public class BleScanner implements BleDetector.Listener, Scanner
 
 	//region Scanner
 	@Override
-	public void startScan(long durationMs)
+	public void startScan(final long durationMs)
 	{
+		Log.e("TAG", "---BleScanner------------------------------------startScan------"+durationMs);
 		if(Build.VERSION.SDK_INT < 18)
 		{
 			queue.dispatch(new Runnable()
@@ -128,6 +127,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 			{
 				//Logger.debug("ble scan started");
 				listener.onScanStarted(BleScanner.this);
+				Log.e("TAG", "---BleScanner------------------------------------onScanStarted------");
 			}
 		});
 
@@ -141,6 +141,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 					public void run()
 					{
 						stopScan();
+						Log.e("TAG", "---BleScanner----------stopScan------"+durationMs);
 					}
 				});
 	} // startScan()
@@ -188,7 +189,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	{
 		if(!running)
 			return;
-
+		Log.e("TAG", device.toString()+"---BleScanner---------onDeviceDetected------"+new String(scanRecordData));
 		BleScanRecord scanRecord = BleScanRecord.parseFromBytes(scanRecordData);
 		if(scanRecord == null)
 			return;
@@ -216,6 +217,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 			public void run()
 			{
 				listener.onDeviceChannelsDiscovered(BleScanner.this, remoteDevice, manufacturerData.getChannels());
+				Log.e("TAG", remoteDevice.toString()+ "---BleScanner---------onDeviceDetected---remoteDevice---" +manufacturerData.getChannels().size());
 			}
 		});
 	} // onDeviceDetected

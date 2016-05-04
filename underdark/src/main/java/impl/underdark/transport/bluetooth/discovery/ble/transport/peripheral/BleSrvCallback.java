@@ -25,6 +25,7 @@ import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -39,6 +40,7 @@ public class BleSrvCallback extends BluetoothGattServerCallback
 
 	public BleSrvCallback(BlePeripheral callback, DispatchQueue queue)
 	{
+		Log.e("TAG", "---BleSrvCallback------------------------------------构造------");
 		this.callback = callback;
 		this.queue = queue;
 	}
