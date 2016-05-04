@@ -144,14 +144,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initAdapter() {
         mDataArrays = bleDBDao.findMsgByChatId(userId);
-//        for (int i = 0; i <mDataArrays.size() ; i++) {
-//            BaseMessage baseMessage=mDataArrays.get(i);
-//            FileMessage fileMessage= (FileMessage) baseMessage.userMessage;
-//            if(fileMessage.userId.equals(userSelfId)){
-//
-//            }
-//        }
-        Log.e("TAG",mDataArrays.size()+"------------------------initAdapter------------------------");
         chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays);
         lv_chatPrivate.setAdapter(chatMessageAdapater);
         if (chatMessageAdapater != null) {
@@ -194,6 +186,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         userAvatar = intent.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
         nodeId = intent.getLongExtra(USER_NODE_ID, 1234568L);
         userId = intent.getStringExtra(USER_ID);
+
     }
 
     @Override
@@ -261,7 +254,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             baseMessage.userMessage = textMessage;
             byte[] send_text_data = ObjectBytesUtils.ObjectToByte(baseMessage);
             if (Debug.DEBUG) {
-                Log.e("TAG", link + "---ChatActivity-----" + nodeId);
+                Log.e("TAG", user.nodeId + "---ChatActivity-----" + nodeId);//1550168528556013745
             }
             if (null != link) {
                 if (Debug.DEBUG) {

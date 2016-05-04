@@ -51,7 +51,8 @@ public class BleDBDao {
         values.put("userAvatar", userMessage.userAvatar);
         db.insert("userInfomat", null, values);
         db.close();
-        Log.e("TAG", userMessage.userNick+"-保存到数据库---"+userMessage.userAvatar+"===="+userMessage.userId);
+        Log.e("TAG", userMessage.userNick+"-保存到数据库---"+userMessage.userAvatar+"===="+userMessage.userId);//dafc930f-be67-4b2c-bada-f52c5265d8d5
+        //ba8011cc-fcda-4a97-8074-492805d26a92
         //有新用户上线
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
@@ -287,7 +288,7 @@ public class BleDBDao {
         db.close();
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user_single.com"), null);
-        Log.e("TAG", userMessage.userNick + "---------------------用户数据改变了------------------" + userMessage.userAvatar);
+        Log.e("TAG", userMessage.userNick + "-----聊天数据改变了-------" + userMessage.userAvatar+"------"+userMessage.nodeId);
     }
 
 
@@ -391,7 +392,6 @@ public class BleDBDao {
             values.put("fileData", fileMessage.fileData);
             values.put("isPb", fileMessage.isPb);
         }
-        Log.e("TAG","addGroupTextMsg2--------------------------------------------");
         db.insert("textGroupMesg", null, values);
         db.close();
     }
@@ -403,7 +403,6 @@ public class BleDBDao {
      * @return
      */
     public List<BaseMessage> findGroupMsg() {
-        Log.e("TAG","findGroupMsg--------------------------------------------");
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query("textGroupMesg", null, null, null, null, null, null);
         List<BaseMessage> mDatas = new ArrayList<BaseMessage>();
@@ -439,7 +438,6 @@ public class BleDBDao {
             baseMessage.userMessage = fileMessage;
             mDatas.add(baseMessage);
         }
-        Log.e("TAG","findGroupMsg-----------------结束---------------------------");
         cursor.close();
         db.close();
         return mDatas;

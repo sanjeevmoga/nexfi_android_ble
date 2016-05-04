@@ -143,7 +143,10 @@ public class Node implements TransportListener {
             baseMessage.messageType = MessageType.REQUEST_USER_INFO;
             baseMessage.sendTime = TimeUtils.getNowTime();
             UserMessage userMessage = bleDBDao.findUserByUserId(userSelfId);
+            userMessage.nodeId=link.getNodeId();
+            Log.e("TAG", userMessage.nodeId + "------连接的nodeId-------------------------------");//7608227584490209377
             baseMessage.userMessage = userMessage;
+            bleDBDao.updateUserInfoByUserId(userMessage,userSelfId);
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
             broadcastFrame(data);
         }
@@ -192,7 +195,10 @@ public class Node implements TransportListener {
         } else if(MessageType.MODIFY_USER_INFO==baseMessage.messageType){//用户信息修改请求
             //接收到用户信息修改消息后，根据userId将对应的用户信息修改
             UserMessage userMessage=baseMessage.userMessage;
+            userMessage.nodeId=link.getNodeId();
+            Log.e("TAG",userMessage.nodeId+"-----------接收修改后的NOdeId------------"+link.getNodeId());
             bleDBDao.updateUserInfoByUserId(userMessage,userMessage.userId);//根据userId更新数据库中对应的用户信息
+            bleDBDao.updateP2PMsgByUserId(userMessage,userMessage.userId);
         }else if (MessageType.OFFINE_USER_INFO == baseMessage.messageType) {//用户下线通知
             //接收对方的下线信息，将该用户从数据库移除
             if (Debug.DEBUG) {

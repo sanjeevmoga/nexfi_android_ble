@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -177,7 +176,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userMessage.userGender = userGender;
         userMessage.userId = userIdOfFirstLogin;//每个用户第一次登录的时候生成一个用户id
         baseMessage.userMessage = userMessage;
-        Log.e("TAG",userMessage.userAvatar+"--------userMessage.userAvatar-------add------");//2130903068--------userMessage.userAvatar-------add------
         bleDBDao.add(baseMessage,userMessage);
     }
 
