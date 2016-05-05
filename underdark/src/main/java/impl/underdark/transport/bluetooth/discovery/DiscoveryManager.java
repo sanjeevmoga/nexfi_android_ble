@@ -19,15 +19,14 @@ package impl.underdark.transport.bluetooth.discovery;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.os.Build;
+import android.util.Log;
 
 import java.util.List;
 
-import impl.underdark.transport.bluetooth.BtLink;
 import impl.underdark.transport.bluetooth.BtTransport;
 import impl.underdark.transport.bluetooth.discovery.ble.ManufacturerData;
-import impl.underdark.transport.bluetooth.discovery.ble.scanner.BleScanner;
 import impl.underdark.transport.bluetooth.discovery.ble.advertiser.BleAdvertiser;
+import impl.underdark.transport.bluetooth.discovery.ble.scanner.BleScanner;
 import impl.underdark.transport.bluetooth.discovery.classic.BtScanner;
 import impl.underdark.transport.bluetooth.discovery.idle.IdleAdvertiser;
 import io.underdark.Config;
@@ -79,6 +78,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void start()
 	{
+		Log.e("TAG", "----------------DiscoveryManager执行---------start-------------");
 		if(running)
 			return;
 

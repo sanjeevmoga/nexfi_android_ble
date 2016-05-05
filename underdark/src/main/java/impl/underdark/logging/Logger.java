@@ -18,7 +18,6 @@ package impl.underdark.logging;
 
 import org.slf4j.LoggerFactory;
 
-import io.underdark.Underdark;
 
 // http://stackoverflow.com/questions/4561345/how-to-configure-java-util-logging-on-android
 

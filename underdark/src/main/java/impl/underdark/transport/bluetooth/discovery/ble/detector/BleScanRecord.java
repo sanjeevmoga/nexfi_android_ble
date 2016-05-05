@@ -17,7 +17,6 @@
 package impl.underdark.transport.bluetooth.discovery.ble.detector;
 
 import android.os.ParcelUuid;
-import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
@@ -150,7 +149,7 @@ public final class BleScanRecord
 		mAdvertiseFlags = advertiseFlags;
 		mTxPowerLevel = txPowerLevel;
 		mBytes = bytes;
-		Log.e("TAG", "---BleScanRecord------------------------------------构造------");
+//		Log.e("TAG", "---BleScanRecord------------------------------------构造------");
 	}
 
 	/**
@@ -168,7 +167,7 @@ public final class BleScanRecord
 		if (scanRecord == null) {
 			return null;
 		}
-		Log.e("TAG", "---BleScanRecord------------------------------------parseFromBytes------"+new String(scanRecord));
+//		Log.e("TAG", "---BleScanRecord------------------------------------parseFromBytes------"+new String(scanRecord));
 		int currentPos = 0;
 		int advertiseFlag = -1;
 		List<ParcelUuid> serviceUuids = new ArrayList<ParcelUuid>();

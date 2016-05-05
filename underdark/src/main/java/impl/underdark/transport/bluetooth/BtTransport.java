@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,7 +127,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 		int portsCountMax = uuids.size() / 2;
 		this.server = new BtServer(appId, uuids, portsCountMax, adapter, pool, this, queue);
-
+		Log.e("TAG","----------------------------BtTransport执行----------------------");
 		manager = new DiscoveryManager(this, adapter, queue, context, uuids);
 	} // BtTransport()
 
@@ -314,7 +315,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	private void onReceive(Context context, Intent intent)
 	{
 		// Transport queue.
-
+		Log.e("TAG","----------------BtTransport执行---------onReceive-------------");
 		if(intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED))
 		{
 			onReceive_ACTION_STATE_CHANGED(intent);

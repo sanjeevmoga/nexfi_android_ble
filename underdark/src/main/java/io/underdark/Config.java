@@ -23,19 +23,19 @@ public class Config
 	public static final int frameSizeMax = 50 * 1024 * 1024;
 
 	public static final int bnjHeartbeatInterval = 2 * 1000;
-	public static final int bnjTimeoutInterval = 7 * 1000;
+	public static final int bnjTimeoutInterval = 15 * 1000;
 
 	// How long to discover for Bluetooth devices.
 	public static final long btScanDuration = 4 * 1000;
 
 	// How long to scan for Bluetooth LE devices.
-	public static final long bleScanDuration = 10 * 1000;
+	public static final long bleScanDuration = 20 * 1000;
 
 	// How long to advertise for Bluetooth LE devices in foreground.
 	public static final long bleAdvertiseForegroundDuration = 10 * 1000;
 
 	// How long to advertise for Bluetooth LE devices in background.
-	public static final long bleAdvertiseBackgroundDuration = 30 * 1000;
+	public static final long bleAdvertiseBackgroundDuration = 40 * 1000;
 
 	// How long to wait between advertisements in background mode.
 	public static final long bleIdleBackgroundDuration = 2 * 60 * 1000;

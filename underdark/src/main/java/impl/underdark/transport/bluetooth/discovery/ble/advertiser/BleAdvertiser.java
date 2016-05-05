@@ -25,7 +25,6 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 
 import impl.underdark.logging.Logger;
 import impl.underdark.transport.bluetooth.discovery.Advertiser;
@@ -92,7 +91,7 @@ public class BleAdvertiser implements Advertiser, BleAdvCallback.Listener
 	@Override
 	public void startAdvertise(long durationMs)
 	{
-		Log.e("TAG", "---BleAdvertiser------------startAdvertise---durationMs---"+durationMs);
+//		Log.e("TAG", "---BleAdvertiser------------startAdvertise---durationMs---"+durationMs);
 		if(Build.VERSION.SDK_INT < 21)
 		{
 			queue.dispatch(new Runnable()
@@ -201,7 +200,7 @@ public class BleAdvertiser implements Advertiser, BleAdvCallback.Listener
 			stopAdvertise();
 
 		advertise(data);
-		Log.e("TAG", "---BleAdvertiser--------------startAdvertise----data--" + data);
+//		Log.e("TAG", "---BleAdvertiser--------------startAdvertise----data--" + data);
 	} // startAdvertise()
 
 	@Override

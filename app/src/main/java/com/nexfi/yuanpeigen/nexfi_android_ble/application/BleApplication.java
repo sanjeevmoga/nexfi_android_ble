@@ -17,6 +17,7 @@ public class BleApplication extends Application{
     private static String uuid= UUID.randomUUID().toString();
     private static CrashHandler crashHandler;
     private static List<Throwable> exceptionLists=new ArrayList<Throwable>();
+    private static List<String> logLists=new ArrayList<String>();
 
     @Override
     public void onCreate() {
@@ -43,6 +44,11 @@ public class BleApplication extends Application{
 
     public static List<Throwable> getExceptionLists(){
         return exceptionLists;
+    }
+
+
+    public static List<String> getLogLists(){
+        return logLists;
     }
 
 }
