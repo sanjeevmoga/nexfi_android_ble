@@ -20,12 +20,10 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUserAgeActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUsernameActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 
@@ -85,31 +83,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         iv_userhead_icon.setOnClickListener(this);
         layout_username.setOnClickListener(this);
         layout_userAge.setOnClickListener(this);
-        if(isModified){
-            bt_modify.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //隐藏按钮
-                    bt_modify.setVisibility(View.GONE);
-                    //点击之后发送通知
-                    user.userNick = userNick;
-                    user.userAge = userAge;
-                    user.userGender = userGender;
-                    user.userAvatar = userAvatar;
-                    //将修改后的数据更新到数据库中
-                    bleDBDao.updateUserInfoByUserId(user, userSelfId);
-                    //
-                    Log.e("TAG", user.nodeId + "------------------fragmentMine-----------修改后的-nodeId--------------------------");
-                    bleDBDao.updateP2PMsgByUserId(user,userSelfId);
-                    //发送改变通知
-                    BaseMessage baseMessage = new BaseMessage();
-                    baseMessage.messageType = MessageType.MODIFY_USER_INFO;
-                    baseMessage.userMessage = user;
-                    byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
-                    node.broadcastFrame(notify_msg_bys);
-                }
-            });
-        }
+
     }
 
     private void setViewData() {
@@ -223,4 +197,38 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(Debug.DEBUG) {
+            Log.e("TAG", user.nodeId + "---fragmentMine--------" + isModified);
+        }
+        if(isModified){
+            bt_modify.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //点击之后发送通知
+                    user.userNick = userNick;
+                    user.userAge = userAge;
+                    user.userGender = userGender;
+                    user.userAvatar = userAvatar;
+                    //将修改后的数据更新到数据库中
+//                    bleDBDao.updateUserInfoByUserId(user, userSelfId);
+//                    //
+//                    Log.e("TAG", user.nodeId + "------------------fragmentMine-----------修改后的-nodeId--------");
+//                    bleDBDao.updateP2PMsgByUserId(user,userSelfId);
+//                    //发送改变通知
+//                    BaseMessage baseMessage = new BaseMessage();
+//                    baseMessage.messageType = MessageType.MODIFY_USER_INFO;
+//                    baseMessage.userMessage = user;
+//                    byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
+//                    node.broadcastFrame(notify_msg_bys);
+                    //隐藏按钮
+                    bt_modify.setVisibility(View.GONE);
+                }
+            });
+        }
+    }
 }
