@@ -43,7 +43,7 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
 
 
     private String userSelfId;
-    private String userNick, newUserNick, userGender, newUserGender;
+    private String userNick, newUserNick, userGender;
     private int userAge, newUserAge, newUserAvater, userAvatar;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     private Node node;
@@ -102,23 +102,10 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         userAvatar = UserInfo.initUserAvatar(userAvatar, BleApplication.getContext());
         userGender = UserInfo.initUserGender(userGender, BleApplication.getContext());
         userNick = UserInfo.initUserNick(userNick, BleApplication.getContext());
-        Log.e("TAG","userAvatar: "+userAvatar+"userNick: "+userNick+"----------------------------------------"+userSelfId);//dafc930f-be67-4b2c-bada-f52c5265d8d5
+        Log.e("TAG", "userAvatar: " + userAvatar + "userNick: " + userNick + "----------------------------------------" + userSelfId);//dafc930f-be67-4b2c-bada-f52c5265d8d5
 //        user = bleDBDao.findUserByUserId(userSelfId);
 //        Log.e("TAG", user.userNick+"-----------------------"+ user.userId);
     }
-
-    //2130903069--------userMessage.userAvatar-------add------
-    //华为-保存到数据库---2130903069====0f4c60cc-0d0a-40c8-85a9-2bfddc44ee25
-    //Nexus-保存到数据库---2130903066====dca467f4-9289-4945-a377-d1ff20b0406a
-    //userAvatar: 2130903069userNick: 华为----------------------------------------0f4c60cc-0d0a-40c8-85a9-2bfddc44ee25
-    //华为-----------------------0f4c60cc-0d0a-40c8-85a9-2bfddc44ee25
-    //null-保存到数据库---0====5b317787-f69f-4842-b9ed-780414aa74ad
-    //------bleDBDao----------0
-
-
-
-    //2130903066--------userMessage.userAvatar-------add------
-    //Nexus-保存到数据库---2130903066====dca467f4-9289-4945-a377-d1ff20b0406a
 
 
     private void setClickListener() {
@@ -149,6 +136,7 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         if (userGender != null) {
             if (!userGender.equals(sex)) {
                 Toast.makeText(this, "发布成功", Toast.LENGTH_SHORT).show();
+                btn_finish.setText("确认修改");
             }
         }
         userGender = sex;
@@ -161,8 +149,8 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         switch (v.getId()) {
             case R.id.btn_finish:
                 user = bleDBDao.findUserByUserId(userSelfId);
-                if(userNick!=null && userAge!=0 && userAvatar!=0) {
-                    if (user.userNick.equals(userNick) && user.userAvatar == userAvatar && user.userAge == userAge && user.userGender.equals(userGender)) {
+                if (newUserNick != null && newUserAge != 0 && newUserAvater != 0) {
+                    if (user.userNick.equals(newUserNick) && user.userAvatar == newUserAvater && user.userAge == newUserAge && user.userGender.equals(userGender)) {
                         //不发消息
                         Log.e("TAG", userAvatar + "------不发修改消息----------" + userNick + "----" + userGender + "----" + userAge);
                     } else {
@@ -175,8 +163,8 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
                         //将修改后的数据更新到数据库中
                         bleDBDao.updateUserInfoByUserId(user, userSelfId);
                         //
-                        Log.e("TAG",user.nodeId+"-----------------------------修改后的-nodeId--------------------------");
-                        bleDBDao.updateP2PMsgByUserId(user,userSelfId);
+                        Log.e("TAG", user.nodeId + "-----------------------------修改后的-nodeId--------------------------");
+                        bleDBDao.updateP2PMsgByUserId(user, userSelfId);
                         //发送改变通知
                         BaseMessage baseMessage = new BaseMessage();
                         baseMessage.messageType = MessageType.MODIFY_USER_INFO;
@@ -202,18 +190,22 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 1) {
-            userAvatar = data.getIntExtra(USER_AVATAR, userAvatar);
-            iv_userhead_icon.setImageResource(userAvatar);
+            newUserAvater = data.getIntExtra(USER_AVATAR, userAvatar);
+            btn_finish.setText("确认修改");
+            iv_userhead_icon.setImageResource(newUserAvater);
         } else if (resultCode == 2) {
-            userNick = data.getStringExtra(USER_NICK);
-            tv_username.setText(userNick);
+            newUserNick = data.getStringExtra(USER_NICK);
+            btn_finish.setText("确认修改");
+            tv_username.setText(newUserNick);
         } else if (resultCode == 3) {
-            userAge = data.getIntExtra(USER_AGE, userAge);
-            tv_userAge.setText(userAge + "");
+            newUserAge = data.getIntExtra(USER_AGE, userAge);
+            btn_finish.setText("确认修改");
+            tv_userAge.setText(newUserAge + "");
         }
 
     }
