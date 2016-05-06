@@ -70,7 +70,6 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	public void startScan(final long durationMs)
 		{
 		Log.e("TAG", "---BleScanner------------------------------------startScan------"+durationMs);
-//		Log.e("TAG",System.currentTimeMillis()+"-------连接时间startScan-------------------------------------");
 		if(Build.VERSION.SDK_INT < 18)
 		{
 			queue.dispatch(new Runnable()
@@ -143,7 +142,6 @@ public class BleScanner implements BleDetector.Listener, Scanner
 					{
 						stopScan();
 						Log.e("TAG", "---BleScanner----------stopScan------" + durationMs);
-//						Log.e("TAG",System.currentTimeMillis()+"-------连接时间stopScan-------------------------------------");
 					}
 				});
 	} // startScan()

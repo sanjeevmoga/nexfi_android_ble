@@ -217,7 +217,8 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		});
 	}
 
-	public void startInternal()
+	public void
+	startInternal()
 	{
 		// Transport queue.
 		if(this.running)
