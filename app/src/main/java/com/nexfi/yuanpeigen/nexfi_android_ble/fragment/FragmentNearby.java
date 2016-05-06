@@ -44,8 +44,10 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
     private List<UserMessage> userMessageList = new ArrayList<UserMessage>();
     private UserListViewAdapter userListViewAdapter;
 
+    private Handler handler;
     private boolean isNewUser = false;
     private String userId;
+
 
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     Node node = MainActivity.getNode();//geng
@@ -59,9 +61,17 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         getActivity().getContentResolver().registerContentObserver(
                 Uri.parse("content://www.nexfi_ble_user.com"), true,
                 new Myobserve(new Handler()));
-
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (userMessageList.size() == 0)
+                    showLoginDialog();
+            }
+        }, 15 * 1000);
         return v_parent;
     }
+
 
     private void initMyprogressbar() {
         if (userMessageList.size() != 0) {
@@ -70,6 +80,10 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void showLoginDialog() {
+        FragmentDialogConnected dialog = new FragmentDialogConnected();
+        dialog.show(getFragmentManager(), "Dialog");
+    }
 
     private class Myobserve extends ContentObserver {
         public Myobserve(Handler handler) {
