@@ -78,7 +78,7 @@ public class BleDBDao {
         db.close();
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
-        Log.e("TAG", userMessage.userNick + "---------------------用户数据改变了------------------" + userMessage.userAvatar);
+//        Log.e("TAG", userMessage.userNick + "---------------------用户数据改变了------------------" + userMessage.userAvatar);
     }
 
 
@@ -288,7 +288,7 @@ public class BleDBDao {
         db.close();
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user_single.com"), null);
-        Log.e("TAG", userMessage.userNick + "-----聊天数据改变了-------" + userMessage.userAvatar+"------"+userMessage.nodeId);
+//        Log.e("TAG", userMessage.userNick + "-----聊天数据改变了-------" + userMessage.userAvatar+"------"+userMessage.nodeId);
     }
 
 

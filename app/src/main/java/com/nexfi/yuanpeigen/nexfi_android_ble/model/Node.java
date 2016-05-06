@@ -139,6 +139,7 @@ public class Node implements TransportListener {
         if(Debug.DEBUG){
             Log.e("TAG", "---node-------------------------------------transportLinkConnected------------");
         }
+
         links.add(link);
         Log.e("TAG", links.size() + "------连接数");
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
@@ -148,14 +149,14 @@ public class Node implements TransportListener {
             baseMessage.sendTime = TimeUtils.getNowTime();
             UserMessage userMessage = bleDBDao.findUserByUserId(userSelfId);
             if(Debug.DEBUG){
-                Log.e("TAG", userMessage.nodeId + "------连接的nodeId----------------------------link---"+link);
+                Log.e("TAG", userMessage + "------连接的nodeId----------------------------link---"+link);
             }
             userMessage.nodeId=link.getNodeId();
             if(Debug.DEBUG){
                 Log.e("TAG", userMessage.nodeId + "------连接的nodeId-------------------------------");//7608227584490209377
             }
             baseMessage.userMessage = userMessage;
-            bleDBDao.updateUserInfoByUserId(userMessage,userSelfId);
+            bleDBDao.updateUserInfoByUserId(userMessage, userSelfId);
             byte[] data = ObjectBytesUtils.ObjectToByte(baseMessage);
             broadcastFrame(data);
         }

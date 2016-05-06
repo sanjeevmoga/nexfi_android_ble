@@ -23,8 +23,10 @@ public class DebugActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
         list_debug = (ListView) findViewById(R.id.list_debug);
-        mExceLists = BleApplication.getExceptionLists();
-        DebugAdapter adapter=new DebugAdapter(getApplicationContext(),mExceLists);
+//        mExceLists = BleApplication.getExceptionLists();
+        List<String> logLists= BleApplication.getLogLists();
+        //
+        DebugAdapter adapter=new DebugAdapter(getApplicationContext(),logLists);
         list_debug.setAdapter(adapter);
     }
 }

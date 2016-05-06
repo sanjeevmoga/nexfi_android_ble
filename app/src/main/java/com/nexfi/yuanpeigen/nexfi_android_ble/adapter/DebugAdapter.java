@@ -13,10 +13,10 @@ import java.util.List;
  */
 public class DebugAdapter extends BaseAdapter {
 
-    List<Throwable> mExceLists;
+    List<String> mExceLists;
     Context mContext;
 
-    public DebugAdapter(Context context,List<Throwable> mExceLists){
+    public DebugAdapter(Context context,List<String> mExceLists){
         this.mExceLists=mExceLists;
         this.mContext=context;
     }
@@ -42,8 +42,8 @@ public class DebugAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         TextView textView=new TextView(mContext);
-        Throwable mThrowable =mExceLists.get(position);
-        textView.setText(mThrowable.getCause().toString());
+        String log =mExceLists.get(position);
+        textView.setText(log);
         return textView;
     }
 }

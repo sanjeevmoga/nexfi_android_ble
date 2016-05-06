@@ -228,6 +228,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
 //                    baseMessage.userMessage = user;
 //                    byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
 //                    node.broadcastFrame(notify_msg_bys);
+
                 }
             });
         }

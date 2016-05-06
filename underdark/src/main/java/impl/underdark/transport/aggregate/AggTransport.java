@@ -19,6 +19,7 @@ package impl.underdark.transport.aggregate;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +81,7 @@ public class AggTransport implements Transport, TransportListener
 			{
 				for (Transport transport : transports)
 				{
+					Log.e("TAG",System.currentTimeMillis()+"--------------------################################3--------AggTransport-----------------");
 					transport.start();
 				}
 
