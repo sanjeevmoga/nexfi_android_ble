@@ -179,18 +179,37 @@
             </RadioGroup>
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/bt_modify"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="完成修改"
-            android:visibility="gone"/>
-        <View
-            android:id="@+id/parent"
+        <LinearLayout
+            android:id="@+id/linearlayout_show"
             android:layout_width="match_parent"
-            android:layout_height="0.3dp"
-            android:background="@color/textNormol" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:background="#FFF"
+            android:orientation="vertical"
+            android:visibility="invisible">
 
+            <View
+                android:id="@+id/v1"
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:background="@color/textNormol" />
+
+            <Button
+                android:id="@+id/bt_modify"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@null"
+                android:text="确认修改"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View
+                android:id="@+id/v2"
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:background="@color/textNormol" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

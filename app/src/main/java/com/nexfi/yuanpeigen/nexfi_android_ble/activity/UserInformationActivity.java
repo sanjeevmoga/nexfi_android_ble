@@ -96,7 +96,20 @@ public class UserInformationActivity extends AppCompatActivity {
                 userGender = fileMessage.userGender;
                 userAge = fileMessage.userAge;
                 userAvatar = fileMessage.userAvatar;
+            } else if (baseMessage.messageType == MessageType.GROUP_SEND_TEXT_ONLY_MESSAGE_TYPE || baseMessage.messageType == MessageType.GROUP_RECEIVE_TEXT_ONLY_MESSAGE_TYPE) {
+                TextMessage textMessage = (TextMessage) baseMessage.userMessage;
+                userNick = textMessage.userNick;
+                userGender = textMessage.userGender;
+                userAge = textMessage.userAge;
+                userAvatar = textMessage.userAvatar;
+            } else if (baseMessage.messageType == MessageType.GROUP_SEND_FOLDER_MESSAGE_TYPE || baseMessage.messageType == MessageType.GROUP_RECEIVE_FOLDER_MESSAGE_TYPE || baseMessage.messageType == MessageType.GROUP_SEND_IMAGE_MESSAGE_TYPE || baseMessage.messageType == MessageType.GROUP_RECEIVE_IMAGE_MESSAGE_TYPE) {
+                FileMessage fileMessage = (FileMessage) baseMessage.userMessage;
+                userNick = fileMessage.userNick;
+                userGender = fileMessage.userGender;
+                userAge = fileMessage.userAge;
+                userAvatar = fileMessage.userAvatar;
             }
+
         }
 
     }

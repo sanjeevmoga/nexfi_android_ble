@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -27,7 +28,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 
-
 /**
  * Created by Mark on 2016/4/14.
  */
@@ -39,6 +39,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     private RadioButton rb_female, rb_male;
     private RadioGroup radioGrop;
     private RelativeLayout layout_username, layout_userAge;
+    private LinearLayout linearlayout_show;
 
     private final String USER_AGE = "userAge";
     private final String USER_AVATAR = "userAvatar";
@@ -53,7 +54,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     private Node node;
     private Button bt_modify;
-    private boolean isModified=false;
+    private boolean isModified = false;
     private UserMessage user;
 
     @Override
@@ -77,6 +78,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         rb_male = (RadioButton) view.findViewById(R.id.rb_male);
         radioSetOnCheckedListener();
         bt_modify = (Button) view.findViewById(R.id.bt_modify);
+        linearlayout_show = (LinearLayout) view.findViewById(R.id.linearlayout_show);
     }
 
     private void setClickListener() {
@@ -134,7 +136,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
             if (!userGender.equals(sex)) {
                 Toast.makeText(FragmentMine.this.getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
                 bt_modify.setVisibility(View.VISIBLE);
-                isModified=true;
+                isModified = true;
             }
         }
         userGender = sex;
@@ -166,32 +168,32 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
 
         if (resultCode == 1) {
             userAvatar = data.getIntExtra(USER_AVATAR, R.mipmap.img_head_6);
-            if(user.userAvatar==userAvatar){
+            if (user.userAvatar == userAvatar) {
                 //没有修改
-            }else{
+            } else {
                 //修改
-                bt_modify.setVisibility(View.VISIBLE);
-                isModified=true;
+                linearlayout_show.setVisibility(View.VISIBLE);
+                isModified = true;
             }
             iv_userhead_icon.setImageResource(userAvatar);
         } else if (resultCode == 2) {
             userNick = data.getStringExtra(USER_NICK);
-            if(user.userNick.equals(userNick)){
+            if (user.userNick.equals(userNick)) {
                 //没有修改
-            }else{
+            } else {
                 //修改
-                bt_modify.setVisibility(View.VISIBLE);
-                isModified=true;
+                linearlayout_show.setVisibility(View.VISIBLE);
+                isModified = true;
             }
             tv_username.setText(userNick);
         } else if (resultCode == 3) {
             userAge = data.getIntExtra(USER_AGE, 18);
-            if(user.userAge==userAge){
+            if (user.userAge == userAge) {
                 //没有修改
-            }else{
+            } else {
                 //修改
-                bt_modify.setVisibility(View.VISIBLE);
-                isModified=true;
+                linearlayout_show.setVisibility(View.VISIBLE);
+                isModified = true;
             }
             tv_userAge.setText(userAge + "");
         }
@@ -201,14 +203,15 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(Debug.DEBUG) {
+        if (Debug.DEBUG) {
             Log.e("TAG", user.nodeId + "---fragmentMine--------" + isModified);
         }
-        if(isModified){
+        if (isModified) {
             bt_modify.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    //隐藏按钮
+                    linearlayout_show.setVisibility(View.INVISIBLE);
                     //点击之后发送通知
                     user.userNick = userNick;
                     user.userAge = userAge;
@@ -225,8 +228,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
 //                    baseMessage.userMessage = user;
 //                    byte[] notify_msg_bys = ObjectBytesUtils.ObjectToByte(baseMessage);
 //                    node.broadcastFrame(notify_msg_bys);
-                    //隐藏按钮
-//                    bt_modify.setVisibility(View.GONE);
+
                 }
             });
         }
