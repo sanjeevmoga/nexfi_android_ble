@@ -18,6 +18,7 @@ package impl.underdark.transport.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 import com.google.protobuf.ByteString;
 
@@ -103,6 +104,7 @@ public class BtLink implements Link
 
 	private BtLink(BtTransport transport, BluetoothDevice device)
 	{
+		Log.e("TAG", "----------------BtLink---------构造-------------");
 		this.client = true;
 		this.transport = transport;
 		this.device = device;
@@ -110,6 +112,7 @@ public class BtLink implements Link
 
 	private BtLink(BtTransport transport, BluetoothSocket socket, String uuid)
 	{
+		Log.e("TAG", "----------------BtLink---------3构造-------------");
 		this.client = false;
 		this.transport = transport;
 		this.socket = socket;
@@ -289,6 +292,7 @@ public class BtLink implements Link
 
 	public void connect()
 	{
+		Log.e("TAG", "----------------BtLink---------connect-------------");
 		// Tansport queue.
 		transport.pool.execute(new Runnable()
 		{

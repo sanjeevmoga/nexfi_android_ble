@@ -212,5 +212,13 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_debug"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="调试"
+        android:visibility="visible"/>
+
 </LinearLayout>
 

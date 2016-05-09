@@ -66,7 +66,10 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
             @Override
             public void run() {
                 if (userMessageList.size() == 0)
-                    showLoginDialog();
+//                    node.stop();
+                if(isResumed()){
+                    showScanDialog();
+                }
             }
         }, 15 * 1000);
         return v_parent;
@@ -80,7 +83,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void showLoginDialog() {
+    private void showScanDialog() {
         FragmentDialogConnected dialog = new FragmentDialogConnected();
         dialog.show(getFragmentManager(), "Dialog");
     }

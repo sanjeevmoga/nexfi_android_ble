@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 
 /**
  * Created by Mark on 2016/5/6.
@@ -17,6 +19,7 @@ public class FragmentDialogConnected extends DialogFragment {
 
     private Button btn_continue;
     private AlertDialog alertDialog;
+    Node node = MainActivity.getNode();
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -27,6 +30,7 @@ public class FragmentDialogConnected extends DialogFragment {
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                node.start();
                 alertDialog.dismiss();
             }
         });

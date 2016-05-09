@@ -83,7 +83,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.add(R.id.container, fragmentMine)
                 .add(R.id.container, fragmentNearby)
-                .hide(fragmentMine).commit();
+                .hide(fragmentMine).commitAllowingStateLoss();
     }
 
     private void initMineFragment() {
@@ -93,7 +93,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.add(R.id.container, fragmentMine)
                 .add(R.id.container, fragmentNearby)
-                .hide(fragmentNearby).commit();
+                .hide(fragmentNearby).commitAllowingStateLoss();
     }
 
 
@@ -102,11 +102,11 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         switch (checkedId) {
             case R.id.rb_nearby:
                 mFragmentManager.beginTransaction()
-                        .show(fragmentNearby).hide(fragmentMine).commit();
+                        .show(fragmentNearby).hide(fragmentMine).commitAllowingStateLoss();
                 break;
             case R.id.rb_mine:
                 mFragmentManager.beginTransaction()
-                        .show(fragmentMine).hide(fragmentNearby).commit();
+                        .show(fragmentMine).hide(fragmentNearby).commitAllowingStateLoss();
                 break;
         }
     }

@@ -21,6 +21,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.UUID;
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 isExit = false;
             }
         };
+        Debug.debugLog("----登录-------------------------------------------------------------------");
     }
 
     private void initView() {
@@ -90,6 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         iv_userhead_icon.setOnClickListener(this);
         layout_username.setOnClickListener(this);
         layout_userAge.setOnClickListener(this);
+        Debug.debugLog("----登录-----------设置监听--------------------------------------------------------");
     }
 
     private void setViewData() {
@@ -110,6 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userGender = UserInfo.initUserGender(userGender, this);
         userNick = UserInfo.initUserNick(userNick, this);
         isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, this);
+        Debug.debugLog("----登录----------初始化数据---------------------------------------------------------");
     }
 
     private void radioSetOnCheckedListener() {

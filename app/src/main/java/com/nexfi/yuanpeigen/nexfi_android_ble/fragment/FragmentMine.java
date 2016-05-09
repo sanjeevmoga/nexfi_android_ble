@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.DebugActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUserAgeActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.InputUsernameActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SelectUserHeadIconActivity;
@@ -56,6 +57,7 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
     private Button bt_modify;
     private boolean isModified = false;
     private UserMessage user;
+    private Button bt_debug;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,12 +81,24 @@ public class FragmentMine extends Fragment implements View.OnClickListener {
         radioSetOnCheckedListener();
         bt_modify = (Button) view.findViewById(R.id.bt_modify);
         linearlayout_show = (LinearLayout) view.findViewById(R.id.linearlayout_show);
+        bt_debug = (Button) view.findViewById(R.id.bt_debug);
     }
 
     private void setClickListener() {
         iv_userhead_icon.setOnClickListener(this);
         layout_username.setOnClickListener(this);
         layout_userAge.setOnClickListener(this);
+        if(Debug.DEBUG){
+            bt_debug.setVisibility(View.VISIBLE);
+            bt_debug.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //点击之后跳转到日志界面----ListView
+                    Intent intent=new Intent(getActivity(), DebugActivity.class);
+                    getActivity().startActivity(intent);
+                }
+            });
+        }
 
     }
 
